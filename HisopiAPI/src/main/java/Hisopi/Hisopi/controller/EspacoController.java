@@ -22,6 +22,7 @@ import Hisopi.Hisopi.model.MembroEspaco.PapelMembro;
 import Hisopi.Hisopi.model.Usuario;
 import Hisopi.Hisopi.repository.EspacoRepository;
 import Hisopi.Hisopi.repository.MembroEspacoRepository;
+import Hisopi.Hisopi.repository.UsuarioRepository;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
