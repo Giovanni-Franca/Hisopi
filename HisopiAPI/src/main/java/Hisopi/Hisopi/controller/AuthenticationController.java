@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import Hisopi.Hisopi.DTO.LoginResponseDTO;
+import Hisopi.Hisopi.DTO.RefreshTokenDTO;
 import Hisopi.Hisopi.DTO.RegisterDTO;
 import Hisopi.Hisopi.DTO.authenticationDTO;
 import Hisopi.Hisopi.infra.security.TokenService;
@@ -35,8 +36,9 @@ public class AuthenticationController {
 		var auth = this.authenticationManager.authenticate(usernamePassword);
 		
 		var token = tokenService.generateToken((Usuario) auth.getPrincipal());
+		var refreshToken = tokenService.generateRefreshToken((Usuario) auth.getPrincipal());
 		
-		return ResponseEntity.ok(new LoginResponseDTO(token));
+		return ResponseEntity.ok(new LoginResponseDTO(token, refreshToken));
 	}
 	
 	@PostMapping("/register")
@@ -48,5 +50,24 @@ public class AuthenticationController {
 		this.repU.save(newUser);
 		
 		return ResponseEntity.ok().build();
+	}
+	
+	@PostMapping("/refresh")
+	public ResponseEntity<LoginResponseDTO> refresh(@RequestBody @Valid RefreshTokenDTO data) {
+	    String email = tokenService.validateRefreshToken(data.refreshToken());
+
+	    if (email.isEmpty()) {
+	        return ResponseEntity.status(401).build();
+	    }
+
+	    Usuario usuario = (Usuario) repU.findByEmail(email);
+	    if (usuario == null) {
+	        return ResponseEntity.status(401).build();
+	    }
+
+	    var newAccessToken = tokenService.generateToken(usuario);
+	    var newRefreshToken = tokenService.generateRefreshToken(usuario); // rotação
+
+	    return ResponseEntity.ok(new LoginResponseDTO(newAccessToken, newRefreshToken));
 	}
 }
