@@ -33,7 +33,7 @@ public class Receita {
     @Column(nullable = false)
     private TipoReceita tipo;
 
-    @Lob
+    @Column(columnDefinition = "TEXT")
     private String modoPreparo;
 
     @Column(nullable = false)

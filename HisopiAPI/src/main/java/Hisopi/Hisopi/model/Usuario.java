@@ -12,6 +12,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import Hisopi.Hisopi.Enum.UserRole;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -43,13 +45,14 @@ public class Usuario implements UserDetails{
     @Column(nullable = false)
     private LocalDateTime criadoEm = LocalDateTime.now();
     
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private UserRole role;
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		if(this.role == UserRole.ADMIN) return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_USER"));
-		else return List.of(new SimpleGrantedAuthority("Role_USER"));
+		else return List.of(new SimpleGrantedAuthority("ROLE_USER"));
 	}
 
 	@Override
@@ -59,7 +62,7 @@ public class Usuario implements UserDetails{
 
 	@Override
 	public String getUsername() {
-		return nome;
+		return email;
 	}
 
 	public Usuario(String nome, String email, String senha, UserRole role) {
