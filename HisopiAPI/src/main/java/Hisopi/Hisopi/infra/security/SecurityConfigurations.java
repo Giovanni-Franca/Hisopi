@@ -31,6 +31,7 @@ public class SecurityConfigurations {
 						.requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
 						.requestMatchers(HttpMethod.POST, "/auth/refresh").permitAll()
 						.requestMatchers(HttpMethod.POST, "/endpoint").hasRole("ADMIN")
+
 						.requestMatchers(HttpMethod.GET, "/espacos/*").permitAll()
 						.requestMatchers(HttpMethod.POST, "/espacos/*").permitAll()
 						.requestMatchers(HttpMethod.PUT, "/espacos/*").permitAll()
@@ -49,7 +50,6 @@ public class SecurityConfigurations {
 						.requestMatchers(HttpMethod.POST, "/espacos/{idEspaco}/receitas/*").permitAll()
 						.requestMatchers(HttpMethod.PUT, "/espacos/{idEspaco}/receitas/*").permitAll()
 						.requestMatchers(HttpMethod.DELETE, "/espacos/{idEspaco}/receitas/*").permitAll()
-						.anyRequest().authenticated()
 					)
 				.addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
 				.build();
