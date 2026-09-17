@@ -17,10 +17,6 @@ export function AuthShell({ title, subtitle, children, footer }: AuthShellProps)
 
   return (
     <View style={[styles.screen, isDesktop && styles.screenDesktop]}>
-      {/* =====================================================
-          PAINEL DECORATIVO (apenas desktop)
-      ===================================================== */}
-
       {isDesktop && (
         <View style={styles.panel}>
           <View style={styles.panelCircleLarge} />
@@ -36,9 +32,11 @@ export function AuthShell({ title, subtitle, children, footer }: AuthShellProps)
         </View>
       )}
 
-      {/* =====================================================
-          FORMULÁRIO
-      ===================================================== */}
+      {/* 
+===============================================================
+formulario
+=============================================================== 
+      */}
 
       <KeyboardAwareScrollView
         style={styles.formContainer}
@@ -77,13 +75,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
 
-  /*
-   * PAINEL DECORATIVO
-   *
-   * Ocupa metade da tela no desktop. Usa cores sólidas (sem
-   * dependência de lib de gradiente) + círculos sobrepostos
-   * para dar profundidade visual sem precisar de imagem.
-   */
   panel: {
     flex: 1,
     backgroundColor: colors.primary,
@@ -131,9 +122,6 @@ const styles = StyleSheet.create({
     color: colors.accentSoft,
   },
 
-  /*
-   * FORMULÁRIO
-   */
   formContainer: {
     flex: 1,
   },

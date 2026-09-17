@@ -4,7 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import Hisopi.Hisopi.DTO.LoginResponseDTO;
 import Hisopi.Hisopi.DTO.RefreshTokenDTO;
 import Hisopi.Hisopi.DTO.RegisterDTO;
+import Hisopi.Hisopi.DTO.UsuarioResponseDTO;
 import Hisopi.Hisopi.DTO.authenticationDTO;
 import Hisopi.Hisopi.infra.security.TokenService;
 import Hisopi.Hisopi.model.Usuario;
@@ -69,5 +72,16 @@ public class AuthenticationController {
 	    var newRefreshToken = tokenService.generateRefreshToken(usuario); // rotação
 
 	    return ResponseEntity.ok(new LoginResponseDTO(newAccessToken, newRefreshToken));
+	}
+	
+	@GetMapping("/me")
+	public ResponseEntity<UsuarioResponseDTO> me(@AuthenticationPrincipal Usuario usuario) {
+		System.out.println("Foi");
+	    return ResponseEntity.ok(new UsuarioResponseDTO(
+	        usuario.getId(),
+	        usuario.getNome(),
+	        usuario.getEmail(),
+	        usuario.getRole()
+	    ));
 	}
 }

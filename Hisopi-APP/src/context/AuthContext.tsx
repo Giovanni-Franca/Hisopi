@@ -1,14 +1,8 @@
 import { createContext, useContext, useState, useEffect } from 'react'
-import AsyncStorage from '@react-native-async-storage/async-storage'
 
-const TOKEN_KEY = '@controle_insumos:token'
-
-type Usuario = {
-  id: number
-  nome: string
-  email: string
-  role: 'USER' | 'ADMIN'
-}
+import * as authService from '@/src/services/authService'
+import { getAccessToken } from '@/src/services/api'
+import type { Usuario } from '@/src/services/authService'
 
 type AuthContextType = {
   usuario: Usuario | null
@@ -27,13 +21,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     async function restoreSession() {
-      // TODO: quando o endpoint de auth estiver pronto, validar o
-      // token salvo (ex: GET /auth/me) em vez de só checar se existe.
-      const token = await AsyncStorage.getItem(TOKEN_KEY)
+      const token = await getAccessToken()
 
       if (token) {
-        // Placeholder — troque por uma chamada real que valida o
-        // token e retorna os dados do usuário autenticado.
+        try {
+          const dadosUsuario = await authService.buscarUsuarioLogado()
+          setUsuario(dadosUsuario)
+        } catch {
+          setUsuario(null)
+        }
       }
 
       setLoading(false)
@@ -43,23 +39,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [])
 
   async function login(email: string, senha: string) {
-    // TODO: integrar com POST /auth/login
-    // const { token, usuario } = await apiFetch('/auth/login', {
-    //   method: 'POST',
-    //   body: JSON.stringify({ email, senha }),
-    // })
-    // await AsyncStorage.setItem(TOKEN_KEY, token)
-    // setUsuario(usuario)
-    throw new Error('Endpoint de login ainda não integrado')
+    await authService.login(email, senha)
+    const dadosUsuario = await authService.buscarUsuarioLogado()
+    setUsuario(dadosUsuario)
   }
 
   async function cadastrar(nome: string, email: string, senha: string) {
-    // TODO: integrar com POST /auth/cadastro
-    throw new Error('Endpoint de cadastro ainda não integrado')
+    await authService.cadastrar(nome, email, senha)
+    const dadosUsuario = await authService.buscarUsuarioLogado()
+    setUsuario(dadosUsuario)
   }
 
   async function logout() {
-    await AsyncStorage.removeItem(TOKEN_KEY)
+    await authService.logout()
     setUsuario(null)
   }
 

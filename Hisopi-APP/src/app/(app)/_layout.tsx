@@ -1,25 +1,29 @@
-import { Redirect } from 'expo-router'
+import { Redirect, Slot } from 'expo-router'
 import { ActivityIndicator, StyleSheet, View } from 'react-native'
 
 import { useAuth } from '@/src/context/AuthContext'
 import { colors } from '@/src/theme/colors'
 
-export default function Index() {
+export default function AppGroupLayout() {
   const { authenticated, loading } = useAuth()
 
   if (loading) {
     return (
-      <View style={styles.container}>
+      <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color={colors.primary} />
       </View>
     )
   }
 
-  return <Redirect href={authenticated ? '/perfil' : '/login'} />
+  if (!authenticated) {
+    return <Redirect href="/login" />
+  }
+
+  return <Slot />
 }
 
 const styles = StyleSheet.create({
-  container: {
+  loadingContainer: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
