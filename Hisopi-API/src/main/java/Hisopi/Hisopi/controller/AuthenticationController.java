@@ -76,7 +76,6 @@ public class AuthenticationController {
 	
 	@GetMapping("/me")
 	public ResponseEntity<UsuarioResponseDTO> me(@AuthenticationPrincipal Usuario usuario) {
-		System.out.println("Foi");
 	    return ResponseEntity.ok(new UsuarioResponseDTO(
 	        usuario.getId(),
 	        usuario.getNome(),

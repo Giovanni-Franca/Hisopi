@@ -5,13 +5,13 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import Hisopi.Hisopi.DTO.EspacoDTO;
@@ -38,14 +38,11 @@ public class EspacoController {
     @Autowired
     private UsuarioRepository repU;
 
-    // TODO: substituir por Long vindo do token/contexto de autenticação
-    // quando o login for integrado. Por ora, aceita como query param.
+    
     @PostMapping
     public ResponseEntity<Espaco> criarEspaco(
-            @RequestBody @Valid EspacoDTO dto, @RequestParam Long idUsuarioCriador) {
-
-        Usuario usuario = repU.findById(idUsuarioCriador)
-            .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+            @RequestBody @Valid EspacoDTO dto,
+            @AuthenticationPrincipal Usuario usuarioLogado) {
 
         Espaco espaco = new Espaco();
         espaco.setNome(dto.nome());
@@ -54,7 +51,7 @@ public class EspacoController {
 
         MembroEspaco membro = new MembroEspaco();
         membro.setEspaco(espaco);
-        membro.setUsuario(usuario);
+        membro.setUsuario(usuarioLogado);
         membro.setPapel(PapelMembro.DONO);
         repM.save(membro);
 
@@ -68,9 +65,9 @@ public class EspacoController {
             .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @GetMapping("/usuario/{idUsuario}")
-    public ResponseEntity<?> listarEspacosDoUsuario(@PathVariable Long idUsuario) {
-        List<MembroEspaco> memberships = repM.findByEspacoId(idUsuario); // ajustar: ver nota abaixo
+    @GetMapping("/minhas")
+    public ResponseEntity<?> listarMeusEspacos(@AuthenticationPrincipal Usuario usuarioLogado) {
+        List<MembroEspaco> memberships = repM.findByUsuarioId(usuarioLogado.getId());
         return ResponseEntity.ok(memberships);
     }
 
