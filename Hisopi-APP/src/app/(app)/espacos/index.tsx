@@ -119,7 +119,7 @@ export default function EspacosScreen() {
                 ]}
               >
                 <Text style={styles.cardIconText}>
-                  {item.tipo === 'ORGANIZACAO' ? '🏢' : '🏠'}
+                  {item.tipo === 'ORGANIZACAO' ? 'O' : 'P'}
                 </Text>
               </View>
 

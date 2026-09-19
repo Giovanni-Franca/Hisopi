@@ -79,7 +79,7 @@ export default function NovoEspacoScreen() {
             ]}
             onPress={() => setTipo('PESSOAL')}
           >
-            <Text style={styles.tipoIcon}>🏠</Text>
+            <Text style={styles.tipoIcon}>P</Text>
             <Text
               style={[
                 styles.tipoTitle,
@@ -100,7 +100,7 @@ export default function NovoEspacoScreen() {
             ]}
             onPress={() => setTipo('ORGANIZACAO')}
           >
-            <Text style={styles.tipoIcon}>🏢</Text>
+            <Text style={styles.tipoIcon}>O</Text>
             <Text
               style={[
                 styles.tipoTitle,

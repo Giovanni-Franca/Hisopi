@@ -50,7 +50,7 @@ public class InsumoController {
     private EspacoRepository repE;
 
     // =====================================================
-    // INSUMOS
+    // insumos
     // =====================================================
 
     @PostMapping
@@ -129,8 +129,15 @@ public class InsumoController {
         return ResponseEntity.ok(Map.of("message", "Insumo desativado"));
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<Insumo> buscarInsumo(@PathVariable Long idEspaco, @PathVariable Long id) {
+        return repI.findById(id)
+            .map(ResponseEntity::ok)
+            .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+    
     // =====================================================
-    // LOTES (entrada de estoque + FEFO)
+    // LOTES 
     // =====================================================
 
     @PostMapping("/{id}/lotes")
@@ -160,7 +167,6 @@ public class InsumoController {
 
     @GetMapping("/{id}/lotes")
     public ResponseEntity<?> listarLotes(@PathVariable Long idEspaco, @PathVariable Long id) {
-        // Já ordenado por validade ASC — o primeiro item é o próximo a vencer (FEFO)
         return ResponseEntity.ok(
             repL.findByInsumoIdAndQuantidadeAtualGreaterThanOrderByDataValidadeAsc(id, 0.0)
         );
