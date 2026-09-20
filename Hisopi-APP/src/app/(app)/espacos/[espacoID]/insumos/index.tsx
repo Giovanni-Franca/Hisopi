@@ -26,7 +26,7 @@ function getStockLevel(insumo: Insumo): StockLevel {
 }
 
 export default function InsumosScreen() {
-  const { espacoId } = useLocalSearchParams<{ espacoId: string }>()
+  const { espacoID } = useLocalSearchParams<{ espacoID: string }>()
   const { isDesktop } = useResponsive()
 
   const [insumos, setInsumos] = useState<Insumo[]>([])
@@ -36,12 +36,12 @@ export default function InsumosScreen() {
   const [filtro, setFiltro] = useState<'todos' | 'baixo'>('todos')
 
   const load = useCallback(async () => {
-    if (!espacoId) return
+    if (!espacoID) return
 
     try {
       const [dataInsumos, dataVencendo] = await Promise.all([
-        listarInsumos(espacoId),
-        listarVencendo(espacoId, 7),
+        listarInsumos(espacoID),
+        listarVencendo(espacoID, 7),
       ])
       setInsumos(dataInsumos)
       setLotesVencendo(dataVencendo)
@@ -50,7 +50,7 @@ export default function InsumosScreen() {
     } finally {
       setLoading(false)
     }
-  }, [espacoId])
+  }, [espacoID])
 
   useFocusEffect(
     useCallback(() => {
@@ -79,7 +79,7 @@ export default function InsumosScreen() {
   return (
     <View style={styles.screen}>
       <View style={[styles.content, isDesktop && styles.contentDesktop]}>
-        <Pressable style={styles.backButton} onPress={() => router.push('/espacos')}>
+        <Pressable style={styles.backButton} onPress={() =>  router.push(`/espacos/${espacoID}`)}>
           <Text style={styles.backButtonText}>Voltar</Text>
         </Pressable>
 
@@ -93,7 +93,7 @@ export default function InsumosScreen() {
 
           <Pressable
             style={styles.newButton}
-            onPress={() => router.push(`/${espacoId}/insumos/adicionar` as any)}
+            onPress={() => router.push(`/espacos/${espacoID}/insumos/adicionar`)}
           >
             <Text style={styles.newButtonText}>+ Novo insumo</Text>
           </Pressable>
@@ -168,7 +168,7 @@ export default function InsumosScreen() {
                 <Pressable
                   style={[styles.card, isDesktop && styles.cardDesktop]}
                   onPress={() =>
-                    router.push(`/${espacoId}/insumos/${item.id}` as any)
+                    router.push(`/espacos/${espacoID}/insumos/${item.id}`)
                   }
                 >
                   <Text style={styles.cardNome} numberOfLines={1}>

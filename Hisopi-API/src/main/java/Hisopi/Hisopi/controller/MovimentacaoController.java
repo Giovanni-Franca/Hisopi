@@ -18,7 +18,6 @@ import Hisopi.Hisopi.repository.MovimentacaoEstoqueRepository;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
-@Tag(name = "movimentacoes", description = "Histórico de movimentações e relatórios de desperdício")
 @RestController
 @RequestMapping(value = "/espacos/{idEspaco}")
 public class MovimentacaoController {

@@ -8,7 +8,7 @@ import { criarInsumo } from '@/src/services/insumoService'
 import { colors } from '@/src/theme/colors'
 
 export default function AdicionarInsumoScreen() {
-  const { espacoId } = useLocalSearchParams<{ espacoId: string }>()
+  const { espacoID } = useLocalSearchParams<{ espacoID: string }>()
 
   const [nome, setNome] = useState('')
   const [categoria, setCategoria] = useState('')
@@ -36,7 +36,7 @@ export default function AdicionarInsumoScreen() {
     try {
       setSaving(true)
 
-      await criarInsumo(espacoId, {
+      await criarInsumo(espacoID, {
         nome: nome.trim(),
         categoria: categoria.trim() || null,
         unidadeMedida: unidadeMedida.trim(),
@@ -46,7 +46,7 @@ export default function AdicionarInsumoScreen() {
           : null,
       })
 
-      router.replace(`/${espacoId}/insumos` as any)
+      router.replace(`/espacos/${espacoID}/insumos` as any)
     } catch (error) {
       setErro(
         error instanceof Error
@@ -67,7 +67,7 @@ export default function AdicionarInsumoScreen() {
     >
       <Pressable
         style={styles.backButton}
-        onPress={() => router.push(`/${espacoId}/insumos` as any)}
+        onPress={() => router.push(`/espacos/${espacoID}/insumos`)}
       >
         <Text style={styles.backButtonText}>Voltar</Text>
       </Pressable>

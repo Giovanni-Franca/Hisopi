@@ -15,7 +15,7 @@ export default function Index() {
     )
   }
 
-  return <Redirect href={authenticated ? '/perfil' : '/login'} />
+  return <Redirect href={authenticated ? '/espacos' : '/login'} />
 }
 
 const styles = StyleSheet.create({

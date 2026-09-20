@@ -26,7 +26,6 @@ import Hisopi.Hisopi.repository.UsuarioRepository;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
-@Tag(name = "espacos", description = "Gerenciamento de espaços (pessoais ou organizacionais) e seus membros")
 @RestController
 @RequestMapping(value = "/espacos")
 public class EspacoController {

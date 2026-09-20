@@ -26,7 +26,6 @@ import Hisopi.Hisopi.repository.ReceitaRepository;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
-@Tag(name = "receitas", description = "Fichas técnicas de produtos e sugestões de consumo para evitar desperdício")
 @RestController
 @RequestMapping(value = "/espacos/{idEspaco}/receitas")
 public class ReceitaController {
@@ -87,16 +86,11 @@ public class ReceitaController {
         return ResponseEntity.ok(repRI.findByReceitaId(id));
     }
 
-    // Sugestão simples: receitas do tipo SUGESTAO_CONSUMO cujos insumos
-    // batem com o que está vencendo no espaço. A lógica de "match" fica
-    // no service quando você for implementar de fato — aqui é o esqueleto
-    // do endpoint que o front vai consumir.
     @GetMapping("/sugestoes")
     public ResponseEntity<?> sugerirReceitas(@PathVariable Long idEspaco) {
         List<Receita> sugestoes = repR.findByTipo(Receita.TipoReceita.SUGESTAO_CONSUMO);
         return ResponseEntity.ok(sugestoes);
-        // TODO: cruzar com /insumos/vencendo do mesmo espaço e ordenar
-        // por relevância (quantas receitas usam os insumos vencendo).
+
     }
 
     @DeleteMapping("/{id}/insumos/{idReceitaInsumo}")

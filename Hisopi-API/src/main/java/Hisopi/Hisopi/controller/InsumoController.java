@@ -35,7 +35,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
 
-@Tag(name = "insumos", description = "Controle de insumos, lotes, validade e registro de perdas")
+@Tag(name = "insumos")
 @RestController
 @RequestMapping(value = "/espacos/{idEspaco}/insumos")
 public class InsumoController {
@@ -137,7 +137,7 @@ public class InsumoController {
     }
     
     // =====================================================
-    // LOTES 
+    // lotes
     // =====================================================
 
     @PostMapping("/{id}/lotes")

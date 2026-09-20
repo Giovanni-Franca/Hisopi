@@ -18,6 +18,11 @@ export type LoteInsumo = {
   dataEntrada: string
   dataValidade: string
   fornecedor: string | null
+  insumo?: {
+    id: number
+    nome: string
+    unidadeMedida: string
+  }
 }
 
 export type InsumoPayload = {
@@ -30,12 +35,12 @@ export type InsumoPayload = {
 
 export type LotePayload = {
   quantidade: number
-  dataValidade: string // 'YYYY-MM-DD'
+  dataValidade: string        //YYYY-MM-DD
   fornecedor?: string | null
 }
 
 export type PerdaPayload = {
-  quantidade?: number // se omitido, descarta o restante do lote
+  quantidade?: number 
   tipo: 'PERDA_VALIDADE' | 'PERDA_OUTRO'
   motivo?: string | null
 }
@@ -89,8 +94,6 @@ export async function listarLotes(
   idEspaco: string | number,
   idInsumo: number
 ): Promise<LoteInsumo[]> {
-  // Já vem ordenado por validade ASC no backend — o primeiro item é
-  // sempre o próximo lote a vencer (FEFO).
   return apiFetch(`/espacos/${idEspaco}/insumos/${idInsumo}/lotes`)
 }
 

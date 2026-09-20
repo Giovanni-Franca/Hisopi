@@ -110,7 +110,7 @@ export default function EspacosScreen() {
           renderItem={({ item }) => (
             <Pressable
               style={[styles.card, isDesktop && styles.cardDesktop]}
-              onPress={() => router.push(`/${item.id}` as any)}
+              onPress={() => router.push(`/espacos/${item.id}`)}
             >
               <View
                 style={[

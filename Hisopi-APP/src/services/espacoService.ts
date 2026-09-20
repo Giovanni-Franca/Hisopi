@@ -9,11 +9,6 @@ export type Espaco = {
   tipo: TipoEspaco
   criadoEm: string
 }
-
-// GET /espacos/usuario/{id} retorna os vínculos (MembroEspaco) do
-// usuário, cada um com o espaço aninhado — não uma lista de Espaco
-// "pura". Normalizamos isso no service para a tela não precisar
-// conhecer esse detalhe do backend.
 type MembroEspacoResponse = {
   id: number
   papel: PapelMembro
@@ -22,6 +17,10 @@ type MembroEspacoResponse = {
 }
 
 export type EspacoComPapel = Espaco & { papel: PapelMembro }
+
+export async function buscarEspaco(id: string | number): Promise<Espaco> {
+  return apiFetch(`/espacos/${id}`)
+}
 
 export async function listarEspacosDoUsuario(): Promise<EspacoComPapel[]> {
   const memberships: MembroEspacoResponse[] = await apiFetch('/espacos/minhas')

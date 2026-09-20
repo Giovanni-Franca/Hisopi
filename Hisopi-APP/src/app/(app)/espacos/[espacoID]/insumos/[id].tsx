@@ -149,7 +149,7 @@ export default function InsumoDetalheScreen() {
       <View style={styles.content}>
         <Pressable
           style={styles.backButton}
-          onPress={() => router.push(`/${espacoId}/insumos` as any)}
+          onPress={() => router.push(`/espacos/${espacoId}/insumos`)}
         >
           <Text style={styles.backButtonText}>Voltar</Text>
         </Pressable>
