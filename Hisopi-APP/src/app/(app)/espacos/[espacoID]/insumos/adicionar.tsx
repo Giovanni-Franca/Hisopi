@@ -67,7 +67,7 @@ export default function AdicionarInsumoScreen() {
     >
       <Pressable
         style={styles.backButton}
-        onPress={() => router.push(`/espacos/${espacoID}/insumos`)}
+        onPress={() => router.push(`/espacos/${espacoID}/insumos` as any)}
       >
         <Text style={styles.backButtonText}>Voltar</Text>
       </Pressable>

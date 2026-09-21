@@ -77,13 +77,13 @@ export default function EspacoDashboardScreen() {
         </Text>
 
         {/* =====================================================
-            cards
+            CARDS DE NÚMEROS
         ===================================================== */}
 
         <View style={[styles.statsRow, isDesktop && styles.statsRowDesktop]}>
           <Pressable
             style={[styles.statCard, isDesktop && styles.statCardDesktop]}
-            onPress={() => router.push(`/espacos/${espacoID}/insumos`)}
+            onPress={() => router.push(`/espacos/${espacoID}/insumos` as any)}
           >
             <Text style={styles.statValue}>{totalInsumos}</Text>
             <Text style={styles.statLabel}>Insumos cadastrados</Text>
@@ -95,7 +95,7 @@ export default function EspacoDashboardScreen() {
               isDesktop && styles.statCardDesktop,
               baixoEstoque.length > 0 && styles.statCardWarning,
             ]}
-            onPress={() => router.push(`/espacos/${espacoID}/insumos`)}
+            onPress={() => router.push(`/espacos/${espacoID}/insumos` as any)}
           >
             <Text
               style={[
@@ -114,7 +114,7 @@ export default function EspacoDashboardScreen() {
               isDesktop && styles.statCardDesktop,
               vencendo.length > 0 && styles.statCardWarning,
             ]}
-            onPress={() => router.push(`/espacos/${espacoID}/insumos`)}
+            onPress={() => router.push(`/espacos/${espacoID}/insumos` as any)}
           >
             <Text
               style={[

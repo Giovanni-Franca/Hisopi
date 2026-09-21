@@ -140,7 +140,7 @@ export default function ReceitaDetalheScreen() {
       <View style={styles.content}>
         <Pressable
           style={styles.backButton}
-          onPress={() => router.push(`/espacos/${espacoID}/receitas`)}
+          onPress={() => router.push(`/espacos/${espacoID}/receitas` as any)}
         >
           <Text style={styles.backButtonText}>Voltar</Text>
         </Pressable>

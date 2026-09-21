@@ -131,7 +131,7 @@ export default function ReceitasScreen() {
               <Pressable
                 style={[styles.card, isDesktop && styles.cardDesktop]}
                 onPress={() =>
-                  router.push(`/espacos/${espacoID}/receitas/${item.id}`)
+                  router.push(`/espacos/${espacoID}/receitas/${item.id}` as any)
                 }
               >
                 <Text style={styles.cardNome} numberOfLines={1}>

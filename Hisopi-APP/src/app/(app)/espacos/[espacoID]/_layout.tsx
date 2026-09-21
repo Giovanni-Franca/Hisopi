@@ -13,9 +13,9 @@ type NavItem = {
 }
 
 const NAV_ITEMS: NavItem[] = [
-  { key: 'dashboard', label: 'Dashboard', getHref: (id) => `/${id}` },
-  { key: 'insumos', label: 'Insumos', getHref: (id) => `/${id}/insumos` },
-  { key: 'receitas', label: 'Receitas', getHref: (id) => `/${id}/receitas` },
+  { key: 'dashboard', label: 'Dashboard', getHref: (id) => `/espacos/${id}` },
+  { key: 'insumos', label: 'Insumos', getHref: (id) => `/espacos/${id}/insumos` },
+  { key: 'receitas', label: 'Receitas', getHref: (id) => `/espacos/${id}/receitas` },
 ]
 
 export default function EspacoLayout() {

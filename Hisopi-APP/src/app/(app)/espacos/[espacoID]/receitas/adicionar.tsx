@@ -33,7 +33,7 @@ export default function AdicionarReceitaScreen() {
         modoPreparo: modoPreparo.trim() || null,
       })
 
-      router.replace(`/${espacoID}/receitas` as any)
+      router.replace(`/espacos/${espacoID}/receitas` as any)
     } catch (error) {
       setErro(
         error instanceof Error
@@ -54,7 +54,7 @@ export default function AdicionarReceitaScreen() {
     >
       <Pressable
         style={styles.backButton}
-        onPress={() => router.push(`/espacos/${espacoID}/receitas`)}
+        onPress={() => router.push(`/espacos/${espacoID}/receitas` as any)}
       >
         <Text style={styles.backButtonText}>Voltar</Text>
       </Pressable>

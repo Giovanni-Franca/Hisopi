@@ -32,7 +32,7 @@ function diasAteVencimento(dataValidade: string) {
 }
 
 export default function InsumoDetalheScreen() {
-  const { espacoId, id } = useLocalSearchParams<{ espacoId: string; id: string }>()
+  const { espacoID, id } = useLocalSearchParams<{ espacoID: string; id: string }>()
 
   const [insumo, setInsumo] = useState<Insumo | null>(null)
   const [lotes, setLotes] = useState<LoteInsumo[]>([])
@@ -51,12 +51,12 @@ export default function InsumoDetalheScreen() {
   const [savingPerda, setSavingPerda] = useState(false)
 
   const load = useCallback(async () => {
-    if (!espacoId || !id) return
+    if (!espacoID || !id) return
 
     try {
       const [todosInsumos, dataLotes] = await Promise.all([
-        listarInsumos(espacoId),
-        listarLotes(espacoId, Number(id)),
+        listarInsumos(espacoID),
+        listarLotes(espacoID, Number(id)),
       ])
 
       setInsumo(todosInsumos.find((i) => i.id === Number(id)) ?? null)
@@ -66,7 +66,7 @@ export default function InsumoDetalheScreen() {
     } finally {
       setLoading(false)
     }
-  }, [espacoId, id])
+  }, [espacoID, id])
 
   useFocusEffect(
     useCallback(() => {
@@ -85,7 +85,7 @@ export default function InsumoDetalheScreen() {
     try {
       setSavingLote(true)
 
-      await registrarLote(espacoId, Number(id), {
+      await registrarLote(espacoID, Number(id), {
         quantidade: Number(novaQuantidade.replace(',', '.')),
         dataValidade: novaValidade.trim(),
         fornecedor: novoFornecedor.trim() || null,
@@ -119,7 +119,7 @@ export default function InsumoDetalheScreen() {
     try {
       setSavingPerda(true)
 
-      await registrarPerda(espacoId, loteSelecionado.id, {
+      await registrarPerda(espacoID, loteSelecionado.id, {
         tipo,
         motivo: motivoPerda.trim() || null,
       })
@@ -149,7 +149,7 @@ export default function InsumoDetalheScreen() {
       <View style={styles.content}>
         <Pressable
           style={styles.backButton}
-          onPress={() => router.push(`/espacos/${espacoId}/insumos`)}
+          onPress={() => router.push(`/espacos/${espacoID}/insumos` as any)}
         >
           <Text style={styles.backButtonText}>Voltar</Text>
         </Pressable>

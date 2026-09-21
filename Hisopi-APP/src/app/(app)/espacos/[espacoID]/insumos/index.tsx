@@ -79,7 +79,7 @@ export default function InsumosScreen() {
   return (
     <View style={styles.screen}>
       <View style={[styles.content, isDesktop && styles.contentDesktop]}>
-        <Pressable style={styles.backButton} onPress={() =>  router.push(`/espacos/${espacoID}`)}>
+        <Pressable style={styles.backButton} onPress={() => router.push(`/espacos/${espacoID}` as any)}>
           <Text style={styles.backButtonText}>Voltar</Text>
         </Pressable>
 
@@ -93,7 +93,7 @@ export default function InsumosScreen() {
 
           <Pressable
             style={styles.newButton}
-            onPress={() => router.push(`/espacos/${espacoID}/insumos/adicionar`)}
+            onPress={() => router.push(`/espacos/${espacoID}/insumos/adicionar` as any)}
           >
             <Text style={styles.newButtonText}>+ Novo insumo</Text>
           </Pressable>
@@ -168,7 +168,7 @@ export default function InsumosScreen() {
                 <Pressable
                   style={[styles.card, isDesktop && styles.cardDesktop]}
                   onPress={() =>
-                    router.push(`/espacos/${espacoID}/insumos/${item.id}`)
+                    router.push(`/espacos/${espacoID}/insumos/${item.id}` as any)
                   }
                 >
                   <Text style={styles.cardNome} numberOfLines={1}>
