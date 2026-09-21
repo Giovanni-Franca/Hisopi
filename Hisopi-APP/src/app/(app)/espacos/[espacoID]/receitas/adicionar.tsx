@@ -6,6 +6,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import { AuthInput } from '@/src/components/auth/AuthInput'
 import { criarReceita, type TipoReceita } from '@/src/services/receitaService'
 import { colors } from '@/src/theme/colors'
+import { useResponsive } from '@/src/hooks/useResponsive'
 
 export default function AdicionarReceitaScreen() {
   const { espacoID } = useLocalSearchParams<{ espacoID: string }>()
@@ -15,6 +16,7 @@ export default function AdicionarReceitaScreen() {
   const [modoPreparo, setModoPreparo] = useState('')
   const [erro, setErro] = useState('')
   const [saving, setSaving] = useState(false)
+  const { isDesktop } = useResponsive()
 
   async function handleSalvar() {
     setErro('')
@@ -52,12 +54,11 @@ export default function AdicionarReceitaScreen() {
       enableOnAndroid
       keyboardShouldPersistTaps="handled"
     >
-      <Pressable
-        style={styles.backButton}
-        onPress={() => router.push(`/espacos/${espacoID}/receitas` as any)}
-      >
+      {!isDesktop && (
+      <Pressable style={styles.backButton} onPress={() => router.push(`/espacos/${espacoID}`)}>
         <Text style={styles.backButtonText}>Voltar</Text>
       </Pressable>
+      )}
 
       <View style={styles.card}>
         <Text style={styles.title}>Nova receita</Text>

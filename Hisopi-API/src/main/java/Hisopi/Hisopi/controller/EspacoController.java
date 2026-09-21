@@ -71,17 +71,24 @@ public class EspacoController {
     }
 
     @PostMapping("/{id}/membros")
-    public ResponseEntity<MembroEspaco> adicionarMembro(
+    public ResponseEntity<?> adicionarMembro(
             @PathVariable Long id, @RequestBody @Valid MembroDTO dto) {
 
         Espaco espaco = repE.findById(id)
             .orElseThrow(() -> new RuntimeException("Espaço não encontrado"));
 
-        Usuario usuario = repU.findById(dto.idUsuario())
-            .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+        Usuario usuario = repU.findByEmail(dto.email());
 
-        if (repM.existsByEspacoIdAndUsuarioId(id, dto.idUsuario())) {
-            return ResponseEntity.badRequest().build();
+        if (usuario == null) {
+            return ResponseEntity.badRequest().body(
+                Map.of("message", "Nenhum usuário encontrado com esse e-mail")
+            );
+        }
+
+        if (repM.existsByEspacoIdAndUsuarioId(id, usuario.getId())) {
+            return ResponseEntity.badRequest().body(
+                Map.of("message", "Este usuário já é membro do espaço")
+            );
         }
 
         MembroEspaco membro = new MembroEspaco();

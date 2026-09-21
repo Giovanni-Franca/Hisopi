@@ -13,6 +13,7 @@ import {
 
 import { AuthInput } from '@/src/components/auth/AuthInput'
 import { colors } from '@/src/theme/colors'
+import { useResponsive } from '@/src/hooks/useResponsive'
 import {
   listarInsumos,
   listarLotes,
@@ -33,6 +34,8 @@ function diasAteVencimento(dataValidade: string) {
 
 export default function InsumoDetalheScreen() {
   const { espacoID, id } = useLocalSearchParams<{ espacoID: string; id: string }>()
+
+  const { isDesktop } = useResponsive()
 
   const [insumo, setInsumo] = useState<Insumo | null>(null)
   const [lotes, setLotes] = useState<LoteInsumo[]>([])
@@ -147,12 +150,11 @@ export default function InsumoDetalheScreen() {
   return (
     <View style={styles.screen}>
       <View style={styles.content}>
-        <Pressable
-          style={styles.backButton}
-          onPress={() => router.push(`/espacos/${espacoID}/insumos` as any)}
-        >
+        {!isDesktop && (
+        <Pressable style={styles.backButton} onPress={() => router.push(`/espacos/${espacoID}` as any)}>
           <Text style={styles.backButtonText}>Voltar</Text>
         </Pressable>
+        )}
 
         <Text style={styles.title}>{insumo?.nome ?? 'Insumo'}</Text>
 

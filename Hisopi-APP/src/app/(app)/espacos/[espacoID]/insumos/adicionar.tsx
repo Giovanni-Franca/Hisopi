@@ -6,10 +6,11 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import { AuthInput } from '@/src/components/auth/AuthInput'
 import { criarInsumo } from '@/src/services/insumoService'
 import { colors } from '@/src/theme/colors'
+import { useResponsive } from '@/src/hooks/useResponsive'
 
 export default function AdicionarInsumoScreen() {
   const { espacoID } = useLocalSearchParams<{ espacoID: string }>()
-
+  const { isDesktop } = useResponsive()
   const [nome, setNome] = useState('')
   const [categoria, setCategoria] = useState('')
   const [unidadeMedida, setUnidadeMedida] = useState('')
@@ -65,13 +66,14 @@ export default function AdicionarInsumoScreen() {
       enableOnAndroid
       keyboardShouldPersistTaps="handled"
     >
+      {!isDesktop && (
       <Pressable
         style={styles.backButton}
         onPress={() => router.push(`/espacos/${espacoID}/insumos` as any)}
       >
         <Text style={styles.backButtonText}>Voltar</Text>
       </Pressable>
-
+       )}
       <View style={styles.card}>
         <Text style={styles.title}>Cadastrar insumo</Text>
         <Text style={styles.subtitle}>

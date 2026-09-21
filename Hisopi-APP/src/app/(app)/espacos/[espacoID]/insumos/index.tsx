@@ -79,10 +79,12 @@ export default function InsumosScreen() {
   return (
     <View style={styles.screen}>
       <View style={[styles.content, isDesktop && styles.contentDesktop]}>
+
+        {!isDesktop && (
         <Pressable style={styles.backButton} onPress={() => router.push(`/espacos/${espacoID}` as any)}>
           <Text style={styles.backButtonText}>Voltar</Text>
         </Pressable>
-
+        )}
         <View style={[styles.header, isDesktop && styles.headerDesktop]}>
           <View>
             <Text style={styles.title}>Insumos</Text>

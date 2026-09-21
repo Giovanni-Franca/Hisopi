@@ -7,6 +7,7 @@ import { useAuth } from '@/src/context/AuthContext'
 import { AuthInput } from '@/src/components/auth/AuthInput'
 import { criarEspaco, type TipoEspaco } from '@/src/services/espacoService'
 import { colors } from '@/src/theme/colors'
+import { useResponsive } from '@/src/hooks/useResponsive'
 
 export default function NovoEspacoScreen() {
   const { usuario } = useAuth()
@@ -15,6 +16,7 @@ export default function NovoEspacoScreen() {
   const [tipo, setTipo] = useState<TipoEspaco>('PESSOAL')
   const [erro, setErro] = useState('')
   const [saving, setSaving] = useState(false)
+  const { isDesktop } = useResponsive()
 
   async function handleCriar() {
     setErro('')
@@ -48,9 +50,11 @@ export default function NovoEspacoScreen() {
       enableOnAndroid
       keyboardShouldPersistTaps="handled"
     >
-      <Pressable style={styles.backButton} onPress={() => router.push('/espacos')}>
+      {!isDesktop && (
+      <Pressable style={styles.backButton} onPress={() => router.push(`/espacos`)}>
         <Text style={styles.backButtonText}>Voltar</Text>
       </Pressable>
+      )}
 
       <View style={styles.card}>
         <Text style={styles.title}>Criar novo espaço</Text>

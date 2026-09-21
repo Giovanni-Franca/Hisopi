@@ -10,12 +10,14 @@ type NavItem = {
   key: string
   label: string
   getHref: (espacoID: string) => string
+  onlyOrg?: boolean
 }
 
 const NAV_ITEMS: NavItem[] = [
   { key: 'dashboard', label: 'Dashboard', getHref: (id) => `/espacos/${id}` },
   { key: 'insumos', label: 'Insumos', getHref: (id) => `/espacos/${id}/insumos` },
   { key: 'receitas', label: 'Receitas', getHref: (id) => `/espacos/${id}/receitas` },
+  { key: 'membros', label: 'Membros', getHref: (id) => `/espacos/${id}/membros`, onlyOrg: true },
 ]
 
 export default function EspacoLayout() {
@@ -91,7 +93,9 @@ export default function EspacoLayout() {
         </View>
 
         <View style={[styles.navItems, isDesktop && styles.navItemsDesktop]}>
-          {NAV_ITEMS.map((item) => {
+          {NAV_ITEMS.filter(
+            (item) => !item.onlyOrg || espaco?.tipo === 'ORGANIZACAO'
+          ).map((item) => {
             const href = item.getHref(espacoID)
             const active = pathname === href
 
@@ -140,13 +144,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
 
-  /*
-   * NAVEGAÇÃO
-   *
-   * Mobile: barra horizontal no topo, com as abas rolando se
-   * necessário.
-   * Desktop: vira uma sidebar fixa à esquerda.
-   */
   nav: {
     backgroundColor: colors.surface,
     borderBottomWidth: 1,

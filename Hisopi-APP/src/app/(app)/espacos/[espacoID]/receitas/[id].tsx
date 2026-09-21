@@ -13,6 +13,7 @@ import {
 import { AuthInput } from '@/src/components/auth/AuthInput'
 import { colors } from '@/src/theme/colors'
 import { listarInsumos, type Insumo } from '@/src/services/insumoService'
+import { useResponsive } from '@/src/hooks/useResponsive'
 import {
   listarReceitas,
   listarFichaTecnica,
@@ -30,6 +31,8 @@ const TIPO_LABEL: Record<TipoReceita, string> = {
 
 export default function ReceitaDetalheScreen() {
   const { espacoID, id } = useLocalSearchParams<{ espacoID: string; id: string }>()
+
+  const { isDesktop } = useResponsive()
 
   const [receita, setReceita] = useState<Receita | null>(null)
   const [fichaTecnica, setFichaTecnica] = useState<ReceitaInsumo[]>([])
@@ -138,12 +141,11 @@ export default function ReceitaDetalheScreen() {
   return (
     <View style={styles.screen}>
       <View style={styles.content}>
-        <Pressable
-          style={styles.backButton}
-          onPress={() => router.push(`/espacos/${espacoID}/receitas` as any)}
-        >
+        {!isDesktop && (
+        <Pressable style={styles.backButton} onPress={() => router.push(`/espacos/${espacoID}` as any)}>
           <Text style={styles.backButtonText}>Voltar</Text>
         </Pressable>
+        )}
 
         <Text style={styles.title}>{receita?.nome ?? 'Receita'}</Text>
 

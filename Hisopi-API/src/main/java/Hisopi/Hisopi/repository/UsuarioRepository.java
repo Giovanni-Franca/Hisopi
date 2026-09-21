@@ -7,4 +7,6 @@ import Hisopi.Hisopi.model.Usuario;
 
 public interface UsuarioRepository extends JpaRepository<Usuario, Long>{
 	UserDetails findByEmail(String email);
+
+	Usuario findByEmail(UserDetails email);
 }

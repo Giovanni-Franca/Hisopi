@@ -1,8 +1,10 @@
 package Hisopi.Hisopi.DTO;
 
+import org.springframework.security.core.userdetails.UserDetails;
+
 import Hisopi.Hisopi.model.MembroEspaco.PapelMembro;
 
 public record MembroDTO(
-	    Long idUsuario,
+	    UserDetails email,
 	    PapelMembro papel
 	) {}
