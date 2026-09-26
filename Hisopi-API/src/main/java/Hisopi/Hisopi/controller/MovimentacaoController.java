@@ -13,12 +13,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import Hisopi.Hisopi.Enum.PapelMembro;
 import Hisopi.Hisopi.Enum.TipoMovimentacao;
+import Hisopi.Hisopi.infra.security.interceptor.AcessoEspaco;
 import Hisopi.Hisopi.model.MovimentacaoEstoque;
 import Hisopi.Hisopi.repository.MovimentacaoEstoqueRepository;
 
 @RestController
 @RequestMapping(value = "/espacos/{idEspaco}")
+@AcessoEspaco
 public class MovimentacaoController {
 
     @Autowired

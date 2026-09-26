@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import Hisopi.Hisopi.DTO.EspacoDTO;
 import Hisopi.Hisopi.DTO.MembroDTO;
 import Hisopi.Hisopi.Enum.PapelMembro;
+import Hisopi.Hisopi.infra.security.interceptor.AcessoEspaco;
 import Hisopi.Hisopi.model.Espaco;
 import Hisopi.Hisopi.model.MembroEspaco;
 import Hisopi.Hisopi.model.Usuario;
@@ -38,10 +39,7 @@ public class EspacoController {
 
     
     @PostMapping
-    public ResponseEntity<Espaco> criarEspaco(
-            @RequestBody @Valid EspacoDTO dto,
-            @AuthenticationPrincipal Usuario usuarioLogado) {
-
+    public ResponseEntity<Espaco> criarEspaco(@RequestBody @Valid EspacoDTO dto, @AuthenticationPrincipal Usuario usuarioLogado) {
         Espaco espaco = new Espaco();
         espaco.setNome(dto.nome());
         espaco.setTipo(dto.tipo());
@@ -56,10 +54,10 @@ public class EspacoController {
         return ResponseEntity.ok(espaco);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Espaco> buscarEspaco(@PathVariable Long id, @AuthenticationPrincipal Usuario usuarioLogado) {
-    	
-        return repE.findById(id)
+    @GetMapping("/{idEspaco}")
+    @AcessoEspaco
+    public ResponseEntity<Espaco> buscarEspaco(@PathVariable Long idEspaco, @AuthenticationPrincipal Usuario usuarioLogado) {
+        return repE.findById(idEspaco)
             .map(ResponseEntity::ok)
             .orElseGet(() -> ResponseEntity.notFound().build());
     }
@@ -70,11 +68,10 @@ public class EspacoController {
         return ResponseEntity.ok(memberships);
     }
 
-    @PostMapping("/{id}/membros")
-    public ResponseEntity<?> adicionarMembro(
-            @PathVariable Long id, @RequestBody @Valid MembroDTO dto) {
-
-        Espaco espaco = repE.findById(id)
+    @PostMapping("/{idEspaco}/membros")
+    @AcessoEspaco(papelMinimo = PapelMembro.ADMIN)
+    public ResponseEntity<?> adicionarMembro(@PathVariable Long idEspaco, @RequestBody @Valid MembroDTO dto) {
+        Espaco espaco = repE.findById(idEspaco)
             .orElseThrow(() -> new RuntimeException("Espaço não encontrado"));
 
         Usuario usuario = repU.findByEmail(dto.email());
@@ -85,7 +82,7 @@ public class EspacoController {
             );
         }
 
-        if (repM.existsByEspacoIdAndUsuarioId(id, usuario.getId())) {
+        if (repM.existsByEspacoIdAndUsuarioId(idEspaco, usuario.getId())) {
             return ResponseEntity.badRequest().body(
                 Map.of("message", "Este usuário já é membro do espaço")
             );
@@ -100,15 +97,15 @@ public class EspacoController {
         return ResponseEntity.ok(membro);
     }
 
-    @GetMapping("/{id}/membros")
-    public ResponseEntity<?> listarMembros(@PathVariable Long id) {
-        return ResponseEntity.ok(repM.findByEspacoId(id));
+    @GetMapping("/{idEspaco}/membros")
+    @AcessoEspaco
+    public ResponseEntity<?> listarMembros(@PathVariable Long idEspaco) {
+        return ResponseEntity.ok(repM.findByEspacoId(idEspaco));
     }
 
-    @DeleteMapping("/{id}/membros/{idMembro}")
-    public ResponseEntity<Map<String, String>> removerMembro(
-            @PathVariable Long id, @PathVariable Long idMembro) {
-
+    @DeleteMapping("/{idEspaco}/membros/{idMembro}")
+    @AcessoEspaco(papelMinimo = PapelMembro.ADMIN)
+    public ResponseEntity<Map<String, String>> removerMembro(@PathVariable Long idEspaco, @PathVariable Long idMembro) {
         if (!repM.existsById(idMembro)) {
             return ResponseEntity.notFound().build();
         }
