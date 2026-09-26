@@ -13,6 +13,7 @@ public interface MembroEspacoRepository extends JpaRepository<MembroEspaco, Long
     List<MembroEspaco> findByEspacoId(Long idEspaco);
     Optional<MembroEspaco> findByEspacoIdAndUsuarioId(Long idEspaco, Long idUsuario);
     boolean existsByEspacoIdAndUsuarioId(Long idEspaco, Long idUsuario);
-    
     List<MembroEspaco> findByUsuarioId(Long idUsuario);
+    
+    
 }

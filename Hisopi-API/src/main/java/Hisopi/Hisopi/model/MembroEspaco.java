@@ -2,14 +2,22 @@ package Hisopi.Hisopi.model;
 
 import java.time.LocalDateTime;
 
-import jakarta.persistence.*;
+import Hisopi.Hisopi.Enum.PapelMembro;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-// Tabela de junção N:N entre Usuario e Espaco, com papel de acesso.
-// Numa conta PESSOAL, normalmente só existe 1 registro (o dono).
-// Numa ORGANIZACAO, pode ter vários colaboradores com papéis distintos.
 @Entity
 @Table(
     name = "membros_espaco",
@@ -39,10 +47,4 @@ public class MembroEspaco {
     @Column(nullable = false)
     private LocalDateTime entradaEm = LocalDateTime.now();
 
-    public enum PapelMembro {
-        DONO,     // criador do espaço, permissões totais
-        ADMIN,    // gerencia membros e configurações
-        GERENTE,  // gerencia insumos, lotes, relatórios
-        OPERADOR  // registra entradas/saídas do dia a dia
-    }
 }

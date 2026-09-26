@@ -32,8 +32,6 @@ public class Insumo {
     @Column(nullable = false)
     private String unidadeMedida; // "g", "kg", "ml", "l", "un"
 
-    // Saldo agregado, mantido pelo service ao registrar movimentações —
-    // evita ter que somar todos os lotes a cada leitura.
     @Column(nullable = false)
     private Double estoqueAtual = 0.0;
 

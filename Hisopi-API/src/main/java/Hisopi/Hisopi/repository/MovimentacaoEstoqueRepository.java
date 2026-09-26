@@ -5,12 +5,13 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import Hisopi.Hisopi.Enum.TipoMovimentacao;
 import Hisopi.Hisopi.model.MovimentacaoEstoque;
 
 public interface MovimentacaoEstoqueRepository extends JpaRepository<MovimentacaoEstoque, Long> {
     List<MovimentacaoEstoque> findByInsumoIdOrderByDataMovimentacaoDesc(Long idInsumo);
 
     List<MovimentacaoEstoque> findByInsumoEspacoIdAndTipoAndDataMovimentacaoBetween(
-        Long idEspaco, MovimentacaoEstoque.TipoMovimentacao tipo,
+        Long idEspaco, TipoMovimentacao tipo,
         LocalDateTime inicio, LocalDateTime fim);
 }

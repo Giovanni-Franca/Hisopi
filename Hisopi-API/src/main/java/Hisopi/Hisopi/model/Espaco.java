@@ -2,6 +2,7 @@ package Hisopi.Hisopi.model;
 
 import java.time.LocalDateTime;
 
+import Hisopi.Hisopi.Enum.TipoEspaco;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -28,9 +29,6 @@ public class Espaco {
     @Column(nullable = false)
     private String nome;
 
-    // PESSOAL: despensa/geladeira de uma pessoa física.
-    // ORGANIZACAO: empresa, pode ter múltiplos membros e filiais (cada
-    // filial vira outro Espaco do tipo ORGANIZACAO).
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private TipoEspaco tipo;
@@ -38,8 +36,4 @@ public class Espaco {
     @Column(nullable = false)
     private LocalDateTime criadoEm = LocalDateTime.now();
 
-    public enum TipoEspaco {
-        PESSOAL,
-        ORGANIZACAO
-    }
 }

@@ -1,6 +1,6 @@
 package Hisopi.Hisopi.DTO;
 
-import Hisopi.Hisopi.model.Receita.TipoReceita;
+import Hisopi.Hisopi.Enum.TipoReceita;
 
 public record ReceitaDTO(
 	    String nome,

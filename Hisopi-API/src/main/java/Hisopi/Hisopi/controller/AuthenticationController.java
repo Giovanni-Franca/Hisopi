@@ -69,7 +69,7 @@ public class AuthenticationController {
 	    }
 
 	    var newAccessToken = tokenService.generateToken(usuario);
-	    var newRefreshToken = tokenService.generateRefreshToken(usuario); // rotação
+	    var newRefreshToken = tokenService.generateRefreshToken(usuario);
 
 	    return ResponseEntity.ok(new LoginResponseDTO(newAccessToken, newRefreshToken));
 	}

@@ -2,15 +2,21 @@ package Hisopi.Hisopi.model;
 
 import java.time.LocalDateTime;
 
-import jakarta.persistence.*;
+import Hisopi.Hisopi.Enum.TipoReceita;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-// PRODUTO_VENDA: ficha técnica de um item vendido (uso empresarial).
-// SUGESTAO_CONSUMO: receita recomendada para aproveitar insumos
-// perto do vencimento (uso doméstico — motor de "o que fazer com
-// o que vai vencer").
 @Entity
 @Table(name = "receitas")
 @Getter
@@ -24,7 +30,7 @@ public class Receita {
 
     @ManyToOne
     @JoinColumn(name = "espaco_id")
-    private Espaco espaco; // nulo para sugestões genéricas da plataforma
+    private Espaco espaco;
 
     @Column(nullable = false)
     private String nome;
@@ -39,8 +45,4 @@ public class Receita {
     @Column(nullable = false)
     private LocalDateTime criadoEm = LocalDateTime.now();
 
-    public enum TipoReceita {
-        PRODUTO_VENDA,
-        SUGESTAO_CONSUMO
-    }
 }

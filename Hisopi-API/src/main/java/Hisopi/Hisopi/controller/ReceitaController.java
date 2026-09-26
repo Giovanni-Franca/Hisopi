@@ -13,8 +13,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
 import Hisopi.Hisopi.DTO.ReceitaDTO;
 import Hisopi.Hisopi.DTO.ReceitaInsumoDTO;
+import Hisopi.Hisopi.Enum.TipoReceita;
 import Hisopi.Hisopi.model.Espaco;
 import Hisopi.Hisopi.model.Insumo;
 import Hisopi.Hisopi.model.Receita;
@@ -23,7 +25,6 @@ import Hisopi.Hisopi.repository.EspacoRepository;
 import Hisopi.Hisopi.repository.InsumoRepository;
 import Hisopi.Hisopi.repository.ReceitaInsumoRepository;
 import Hisopi.Hisopi.repository.ReceitaRepository;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
 @RestController
@@ -88,7 +89,7 @@ public class ReceitaController {
 
     @GetMapping("/sugestoes")
     public ResponseEntity<?> sugerirReceitas(@PathVariable Long idEspaco) {
-        List<Receita> sugestoes = repR.findByTipo(Receita.TipoReceita.SUGESTAO_CONSUMO);
+        List<Receita> sugestoes = repR.findByTipo(TipoReceita.SUGESTAO_CONSUMO);
         return ResponseEntity.ok(sugestoes);
 
     }
