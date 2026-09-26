@@ -8,8 +8,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-// Cada "entrada" física do insumo, com validade própria — é o que
-// permite FEFO (First-Expire-First-Out) e alertas de vencimento.
 @Entity
 @Table(name = "lotes_insumo")
 @Getter

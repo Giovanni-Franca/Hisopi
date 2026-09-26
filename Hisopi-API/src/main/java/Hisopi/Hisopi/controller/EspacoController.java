@@ -16,9 +16,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import Hisopi.Hisopi.DTO.EspacoDTO;
 import Hisopi.Hisopi.DTO.MembroDTO;
+import Hisopi.Hisopi.Enum.PapelMembro;
 import Hisopi.Hisopi.model.Espaco;
 import Hisopi.Hisopi.model.MembroEspaco;
-import Hisopi.Hisopi.model.MembroEspaco.PapelMembro;
 import Hisopi.Hisopi.model.Usuario;
 import Hisopi.Hisopi.repository.EspacoRepository;
 import Hisopi.Hisopi.repository.MembroEspacoRepository;

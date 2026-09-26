@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-// Ficha técnica: quanto de cada insumo uma receita consome por unidade.
 @Entity
 @Table(name = "receita_insumo")
 @Getter

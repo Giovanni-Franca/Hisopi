@@ -1,6 +1,6 @@
 package Hisopi.Hisopi.DTO;
 
-import Hisopi.Hisopi.model.Espaco.TipoEspaco;
+import Hisopi.Hisopi.Enum.TipoEspaco;
 
 public record EspacoDTO(
 	    String nome,

@@ -2,14 +2,21 @@ package Hisopi.Hisopi.model;
 
 import java.time.LocalDateTime;
 
-import jakarta.persistence.*;
+import Hisopi.Hisopi.Enum.TipoMovimentacao;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-// Log de auditoria de toda entrada/saída — é o que permite os
-// relatórios de desperdício (sem isso você só tem o saldo final,
-// sem saber quanto foi vendido/usado vs. perdido).
 @Entity
 @Table(name = "movimentacoes_estoque")
 @Getter
@@ -27,7 +34,7 @@ public class MovimentacaoEstoque {
 
     @ManyToOne
     @JoinColumn(name = "lote_id")
-    private LoteInsumo lote; // pode ser nulo em ajustes manuais sem lote específico
+    private LoteInsumo lote; // pode ser nulo
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -45,12 +52,4 @@ public class MovimentacaoEstoque {
     @Column(nullable = false)
     private LocalDateTime dataMovimentacao = LocalDateTime.now();
 
-    public enum TipoMovimentacao {
-        ENTRADA,
-        SAIDA_USO,       // consumo (venda, receita preparada, uso doméstico)
-        PERDA_VALIDADE,
-        PERDA_OUTRO,     // quebra, contaminação, erro de manuseio etc.
-        DOACAO,
-        AJUSTE           // correção manual de inventário (contagem física)
-    }
 }
