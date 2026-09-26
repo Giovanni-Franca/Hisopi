@@ -73,9 +73,8 @@ public class EspacoController {
     public ResponseEntity<?> adicionarMembro(@PathVariable Long idEspaco, @RequestBody @Valid MembroDTO dto) {
         Espaco espaco = repE.findById(idEspaco)
             .orElseThrow(() -> new RuntimeException("Espaço não encontrado"));
-
-        Usuario usuario = repU.findByEmail(dto.email());
-
+        Usuario usuario = (Usuario) repU.findByEmail(dto.email());
+        
         if (usuario == null) {
             return ResponseEntity.badRequest().body(
                 Map.of("message", "Nenhum usuário encontrado com esse e-mail")
