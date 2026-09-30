@@ -65,8 +65,8 @@ async function refreshAccessToken(): Promise<string | null> {
       }
 
       const data = await response.json()
-      await saveTokens(data.token, data.refreshToken)
-      return data.token
+      await saveTokens(data.accessToken, data.refreshToken)
+      return data.accessToken
     } catch {
       await clearTokens()
       return null
