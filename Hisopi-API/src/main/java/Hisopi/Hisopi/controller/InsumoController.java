@@ -22,7 +22,9 @@ import org.springframework.web.bind.annotation.RestController;
 import Hisopi.Hisopi.DTO.InsumoDTO;
 import Hisopi.Hisopi.DTO.LoteDTO;
 import Hisopi.Hisopi.DTO.PerdaDTO;
+import Hisopi.Hisopi.Enum.PapelMembro;
 import Hisopi.Hisopi.Enum.TipoMovimentacao;
+import Hisopi.Hisopi.infra.security.interceptor.AcessoEspaco;
 import Hisopi.Hisopi.model.Espaco;
 import Hisopi.Hisopi.model.Insumo;
 import Hisopi.Hisopi.model.LoteInsumo;
@@ -54,9 +56,8 @@ public class InsumoController {
     // =====================================================
 
     @PostMapping
-    public ResponseEntity<Insumo> criarInsumo(
-            @PathVariable Long idEspaco, @RequestBody @Valid InsumoDTO dto) {
-
+    @AcessoEspaco(papelMinimo = PapelMembro.GERENTE)
+    public ResponseEntity<Insumo> criarInsumo(@PathVariable Long idEspaco, @RequestBody @Valid InsumoDTO dto) {
         Espaco espaco = repE.findById(idEspaco)
             .orElseThrow(() -> new RuntimeException("Espaço não encontrado"));
 
@@ -76,11 +77,13 @@ public class InsumoController {
     }
 
     @GetMapping
+    @AcessoEspaco
     public ResponseEntity<?> listarInsumos(@PathVariable Long idEspaco) {
         return ResponseEntity.ok(repI.findByEspacoIdAndAtivoTrue(idEspaco));
     }
 
     @GetMapping("/baixoEstoque")
+    @AcessoEspaco
     public ResponseEntity<?> listarBaixoEstoque(@PathVariable Long idEspaco) {
         List<Insumo> baixoEstoque = repI.findByEspacoIdAndAtivoTrue(idEspaco).stream()
             .filter(i -> i.getEstoqueAtual() <= i.getEstoqueMinimo())
@@ -90,9 +93,8 @@ public class InsumoController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Insumo> editarInsumo(
-            @PathVariable Long idEspaco, @PathVariable Long id,
-            @RequestBody @Valid InsumoDTO dto) {
+    @AcessoEspaco(papelMinimo = PapelMembro.GERENTE)
+    public ResponseEntity<Insumo> editarInsumo(@PathVariable Long idEspaco, @PathVariable Long id,@RequestBody @Valid InsumoDTO dto) {
 
         Optional<Insumo> insumoExistente = repI.findById(id);
 
@@ -113,6 +115,7 @@ public class InsumoController {
     }
 
     @DeleteMapping("/{id}")
+    @AcessoEspaco(papelMinimo = PapelMembro.GERENTE)
     public ResponseEntity<Map<String, String>> desativarInsumo(
             @PathVariable Long idEspaco, @PathVariable Long id) {
 
@@ -130,6 +133,7 @@ public class InsumoController {
     }
 
     @GetMapping("/{id}")
+    @AcessoEspaco
     public ResponseEntity<Insumo> buscarInsumo(@PathVariable Long idEspaco, @PathVariable Long id) {
         return repI.findById(id)
             .map(ResponseEntity::ok)
@@ -141,6 +145,7 @@ public class InsumoController {
     // =====================================================
 
     @PostMapping("/{id}/lotes")
+    @AcessoEspaco(papelMinimo = PapelMembro.GERENTE)
     public ResponseEntity<LoteInsumo> registrarEntrada(
             @PathVariable Long idEspaco, @PathVariable Long id,
             @RequestBody @Valid LoteDTO dto) {
@@ -166,6 +171,7 @@ public class InsumoController {
     }
 
     @GetMapping("/{id}/lotes")
+    @AcessoEspaco
     public ResponseEntity<?> listarLotes(@PathVariable Long idEspaco, @PathVariable Long id) {
         return ResponseEntity.ok(
             repL.findByInsumoIdAndQuantidadeAtualGreaterThanOrderByDataValidadeAsc(id, 0.0)
@@ -173,6 +179,7 @@ public class InsumoController {
     }
 
     @GetMapping("/vencendo")
+    @AcessoEspaco
     public ResponseEntity<?> listarVencendo(
             @PathVariable Long idEspaco, @RequestParam(defaultValue = "7") int dias) {
 
@@ -186,6 +193,7 @@ public class InsumoController {
     }
 
     @PutMapping("/lotes/{idLote}/perda")
+    @AcessoEspaco(papelMinimo = PapelMembro.GERENTE)
     public ResponseEntity<Map<String, String>> registrarPerda(
             @PathVariable Long idEspaco, @PathVariable Long idLote,
             @RequestBody @Valid PerdaDTO dto) {

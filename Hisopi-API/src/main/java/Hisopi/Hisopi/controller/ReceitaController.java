@@ -16,7 +16,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import Hisopi.Hisopi.DTO.ReceitaDTO;
 import Hisopi.Hisopi.DTO.ReceitaInsumoDTO;
+import Hisopi.Hisopi.Enum.PapelMembro;
 import Hisopi.Hisopi.Enum.TipoReceita;
+import Hisopi.Hisopi.infra.security.interceptor.AcessoEspaco;
 import Hisopi.Hisopi.model.Espaco;
 import Hisopi.Hisopi.model.Insumo;
 import Hisopi.Hisopi.model.Receita;
@@ -29,6 +31,7 @@ import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping(value = "/espacos/{idEspaco}/receitas")
+@AcessoEspaco
 public class ReceitaController {
 
     @Autowired
@@ -63,6 +66,7 @@ public class ReceitaController {
     }
 
     @PostMapping("/{id}/insumos")
+    @AcessoEspaco (papelMinimo = PapelMembro.GERENTE)
     public ResponseEntity<ReceitaInsumo> vincularInsumo(
             @PathVariable Long idEspaco, @PathVariable Long id,
             @RequestBody @Valid ReceitaInsumoDTO dto) {
