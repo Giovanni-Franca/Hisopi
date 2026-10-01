@@ -50,6 +50,7 @@ export default function InsumoDetalheScreen() {
 
   const [perdaModalVisible, setPerdaModalVisible] = useState(false)
   const [loteSelecionado, setLoteSelecionado] = useState<LoteInsumo | null>(null)
+  const [quantidadePerda, setQuantidadePerda] = useState('')
   const [motivoPerda, setMotivoPerda] = useState('')
   const [savingPerda, setSavingPerda] = useState(false)
 
@@ -113,6 +114,11 @@ export default function InsumoDetalheScreen() {
 
   async function handleRegistrarPerda() {
     if (!loteSelecionado) return
+    
+    const quantidade = Number(quantidadePerda.replace(',','.'))
+    if(!Number.isFinite(quantidade) || quantidade <=0) {
+      return
+    }
 
     const tipo =
       diasAteVencimento(loteSelecionado.dataValidade) <= 0
@@ -123,6 +129,7 @@ export default function InsumoDetalheScreen() {
       setSavingPerda(true)
 
       await registrarPerda(espacoID, loteSelecionado.id, {
+        quantidade,
         tipo,
         motivo: motivoPerda.trim() || null,
       })
@@ -130,6 +137,7 @@ export default function InsumoDetalheScreen() {
       setPerdaModalVisible(false)
       setLoteSelecionado(null)
       setMotivoPerda('')
+      setQuantidadePerda('')
 
       await load()
     } catch (error) {
@@ -312,6 +320,13 @@ export default function InsumoDetalheScreen() {
               {loteSelecionado?.quantidadeAtual} {insumo?.unidadeMedida} serão
               descartados deste lote.
             </Text>
+
+            <AuthInput
+              label={`Quantidade (${insumo?.unidadeMedida})`}
+              value={quantidadePerda}
+              onChangeText={setQuantidadePerda}
+              keyboardType='decimal-pad'
+            />
 
             <AuthInput
               label="Motivo (opcional)"
