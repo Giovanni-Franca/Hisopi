@@ -18,7 +18,7 @@ import Hisopi.Hisopi.DTO.ReceitaDTO;
 import Hisopi.Hisopi.DTO.ReceitaInsumoDTO;
 import Hisopi.Hisopi.Enum.PapelMembro;
 import Hisopi.Hisopi.Enum.TipoReceita;
-import Hisopi.Hisopi.infra.security.interceptor.AcessoEspaco;
+import Hisopi.Hisopi.infra.interceptor.AcessoEspaco;
 import Hisopi.Hisopi.model.Espaco;
 import Hisopi.Hisopi.model.Insumo;
 import Hisopi.Hisopi.model.Receita;

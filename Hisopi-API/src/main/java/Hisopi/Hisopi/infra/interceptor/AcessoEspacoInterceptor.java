@@ -1,4 +1,4 @@
-package Hisopi.Hisopi.infra.security.interceptor;
+package Hisopi.Hisopi.infra.interceptor;
 
 import java.util.List;
 import java.util.Map;
