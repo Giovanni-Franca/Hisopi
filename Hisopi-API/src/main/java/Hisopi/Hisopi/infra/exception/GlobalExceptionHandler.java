@@ -14,6 +14,7 @@ import Hisopi.Hisopi.DTO.ErrorResponseDTO;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+	
 	@ExceptionHandler (RegraNegocioException.class)
 	public ResponseEntity<ErrorResponseDTO> tratarRegraNegocio(RegraNegocioException ex){
 		ErrorResponseDTO error = new ErrorResponseDTO(
@@ -62,4 +63,15 @@ public class GlobalExceptionHandler {
 	    );
 	    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(erro);
 	}
+	
+	@ExceptionHandler(AcessoNegadoException.class)
+		public ResponseEntity<ErrorResponseDTO> tratarAcessoNegado(AcessoNegadoException ex) {
+	    ErrorResponseDTO erro = new ErrorResponseDTO(
+	            403,
+	            "FORBIDDEN",
+	            ex.getMessage()
+	    );
+	    return ResponseEntity.status(HttpStatus.FORBIDDEN).body(erro);
+	}
+	
 }

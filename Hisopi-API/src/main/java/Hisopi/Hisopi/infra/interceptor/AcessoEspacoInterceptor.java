@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.jspecify.annotations.Nullable;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
@@ -14,6 +14,8 @@ import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 import Hisopi.Hisopi.Enum.PapelMembro;
+import Hisopi.Hisopi.infra.exception.AcessoNegadoException;
+import Hisopi.Hisopi.infra.exception.ErrorResponseWriter;
 import Hisopi.Hisopi.model.MembroEspaco;
 import Hisopi.Hisopi.model.Usuario;
 import Hisopi.Hisopi.repository.MembroEspacoRepository;
@@ -23,7 +25,7 @@ import jakarta.servlet.http.HttpServletResponse;
 @Component
 public class AcessoEspacoInterceptor implements HandlerInterceptor{
 
-	@Autowired
+	private ErrorResponseWriter errorResponseWriter;
 	private MembroEspacoRepository repM;
 	
 	// ordem dos papéis em ordem decrescente
@@ -49,7 +51,7 @@ public class AcessoEspacoInterceptor implements HandlerInterceptor{
 		
 		var auth = SecurityContextHolder.getContext().getAuthentication();
 		if (auth == null || !(auth.getPrincipal() instanceof Usuario usuarioLogado)) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+			errorResponseWriter.write(response,HttpStatus.UNAUTHORIZED,"UNAUTHORIZED","Usuário não autenticado");
             return false;
         }
 		
@@ -58,12 +60,28 @@ public class AcessoEspacoInterceptor implements HandlerInterceptor{
 		String idEspacoStr = pathVars != null ? pathVars.get("idEspaco") : null;
 		
 		if(idEspacoStr == null) {
-			throw new IllegalStateException("Endpoint com anotacao precisa de {idEspaco}");
+			throw new AcessoNegadoException("Acesso negado ao espaço");
 		}
-		long idEspaco = Long.valueOf(idEspacoStr);
+		
+		long idEspaco;
+		try {
+			idEspaco = Long.parseLong(idEspacoStr);
+		} catch (NumberFormatException e) {
+			errorResponseWriter.write(
+					response, 
+					HttpStatus.BAD_REQUEST, 
+					"BAD_REQUEST", 
+					"Identificador inválido");
+			return false;
+		}
+		
 		Optional <MembroEspaco> membro = repM.findByEspacoIdAndUsuarioId(idEspaco, usuarioLogado.getId());
 		if(membro.isEmpty()) {
-			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+			errorResponseWriter.write(
+					response, 
+					HttpStatus.FORBIDDEN, 
+					"FORBIDDEN",
+					"Não foi possivel acessar o espaço");
 			return false;
 		}
 		
@@ -71,8 +89,11 @@ public class AcessoEspacoInterceptor implements HandlerInterceptor{
 		int nivelExigido = ordem.indexOf(anotacao.papelMinimo());
 		
 		// meio contra-intuitivo, mas o indice maior do usuario indica um cargo menor
-		if(nivelUsuario > nivelExigido) {
-			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+		if(nivelUsuario > nivelExigido) {errorResponseWriter.write(
+					response, 
+					HttpStatus.FORBIDDEN, 
+					"FORBIDDEN",
+					"Cargo insuficiente para realizar a ação");
 			return false;
 		}
 		
