@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 import Hisopi.Hisopi.DTO.EspacoDTO;
 import Hisopi.Hisopi.DTO.MembroDTO;
 import Hisopi.Hisopi.DTO.MembroResponseDTO;
-import Hisopi.Hisopi.DTO.MeuEspacoDTO;
 import Hisopi.Hisopi.Enum.PapelMembro;
 import Hisopi.Hisopi.infra.exception.AcessoNegadoException;
 import Hisopi.Hisopi.infra.exception.ConflitoException;
