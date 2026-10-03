@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.jspecify.annotations.Nullable;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -26,6 +27,7 @@ import jakarta.servlet.http.HttpServletResponse;
 public class AcessoEspacoInterceptor implements HandlerInterceptor{
 
 	private ErrorResponseWriter errorResponseWriter;
+	@Autowired
 	private MembroEspacoRepository repM;
 	
 	// ordem dos papéis em ordem decrescente

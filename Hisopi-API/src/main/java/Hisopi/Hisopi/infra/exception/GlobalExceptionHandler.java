@@ -14,26 +14,23 @@ import Hisopi.Hisopi.DTO.ErrorResponseDTO;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+	private ResponseEntity<ErrorResponseDTO> montar(HttpStatus status, String mensagem){
+		return ResponseEntity.status(status).body(new ErrorResponseDTO(
+				status.value(), 
+				status.name(), 
+				mensagem
+				));
+	}
 	
 	@ExceptionHandler (RegraNegocioException.class)
 	public ResponseEntity<ErrorResponseDTO> tratarRegraNegocio(RegraNegocioException ex){
-		ErrorResponseDTO error = new ErrorResponseDTO(
-				400,
-				"BAD_REQUEST",
-				ex.getMessage()
-		);
-		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+		return montar(HttpStatus.BAD_REQUEST,ex.getMessage());
 	}
 	
 	// login invalido
 	@ExceptionHandler (BadCredentialsException.class)
 	public ResponseEntity<ErrorResponseDTO> tratarCredencialInvalida(BadCredentialsException ex){
-		ErrorResponseDTO error = new ErrorResponseDTO(
-				401,
-				"UNAUTHORIZED",
-				"Usuário ou senha inválidos"
-		);
-		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
+		return montar(HttpStatus.UNAUTHORIZED, ex.getMessage());
 	}
 
 	// senha recebida invalida
@@ -61,17 +58,22 @@ public class GlobalExceptionHandler {
 	            "UNAUTHORIZED",
 	            ex.getMessage()
 	    );
-	    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(erro);
+	    return montar(HttpStatus.UNAUTHORIZED, ex.getMessage());
 	}
 	
 	@ExceptionHandler(AcessoNegadoException.class)
 		public ResponseEntity<ErrorResponseDTO> tratarAcessoNegado(AcessoNegadoException ex) {
-	    ErrorResponseDTO erro = new ErrorResponseDTO(
-	            403,
-	            "FORBIDDEN",
-	            ex.getMessage()
-	    );
-	    return ResponseEntity.status(HttpStatus.FORBIDDEN).body(erro);
+	    return montar(HttpStatus.FORBIDDEN, ex.getMessage());
+	}
+	
+	@ExceptionHandler(NaoEncontradoException.class)
+		public ResponseEntity<ErrorResponseDTO> tratarNaoLocalizado(NaoEncontradoException ex){
+			return montar(HttpStatus.NOT_FOUND, ex.getMessage());
+	}
+	
+	@ExceptionHandler(ConflitoException.class)
+		public ResponseEntity<ErrorResponseDTO> tratarConflito(ConflitoException ex){
+			return montar(HttpStatus.CONFLICT, ex.getMessage());
 	}
 	
 }

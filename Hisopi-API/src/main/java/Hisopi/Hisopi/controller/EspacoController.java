@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RestController;
 import Hisopi.Hisopi.DTO.EspacoDTO;
 import Hisopi.Hisopi.DTO.MembroDTO;
 import Hisopi.Hisopi.Enum.PapelMembro;
+import Hisopi.Hisopi.infra.exception.ConflitoException;
+import Hisopi.Hisopi.infra.exception.NaoEncontradoException;
 import Hisopi.Hisopi.infra.interceptor.AcessoEspaco;
 import Hisopi.Hisopi.model.Espaco;
 import Hisopi.Hisopi.model.MembroEspaco;
@@ -72,19 +74,15 @@ public class EspacoController {
     @AcessoEspaco(papelMinimo = PapelMembro.ADMIN)
     public ResponseEntity<?> adicionarMembro(@PathVariable Long idEspaco, @RequestBody @Valid MembroDTO dto) {
         Espaco espaco = repE.findById(idEspaco)
-            .orElseThrow(() -> new RuntimeException("Espaço não encontrado"));
+            .orElseThrow(() -> new NaoEncontradoException("Espaço não encontrado"));
         Usuario usuario = (Usuario) repU.findByEmail(dto.email());
         
         if (usuario == null) {
-            return ResponseEntity.badRequest().body(
-                Map.of("message", "Nenhum usuário encontrado com esse e-mail")
-            );
+            throw new NaoEncontradoException("Usuário não encontrado");
         }
 
         if (repM.existsByEspacoIdAndUsuarioId(idEspaco, usuario.getId())) {
-            return ResponseEntity.badRequest().body(
-                Map.of("message", "Este usuário já é membro do espaço")
-            );
+            throw new ConflitoException("Usuário já adicionado");
         }
 
         MembroEspaco membro = new MembroEspaco();
@@ -105,11 +103,11 @@ public class EspacoController {
     @DeleteMapping("/{idEspaco}/membros/{idMembro}")
     @AcessoEspaco(papelMinimo = PapelMembro.ADMIN)
     public ResponseEntity<Map<String, String>> removerMembro(@PathVariable Long idEspaco, @PathVariable Long idMembro) {
-        if (!repM.existsById(idMembro)) {
-            return ResponseEntity.notFound().build();
-        }
+    	MembroEspaco alvo = repM.findById(idMembro)
+    		    .filter(m -> m.getEspaco().getId().equals(idEspaco))
+    		    .orElseThrow(() -> new NaoEncontradoException("Membro não encontrado neste espaço"));
 
-        repM.deleteById(idMembro);
+        repM.delete(alvo);
         return ResponseEntity.ok(Map.of("message", "Membro removido do espaço"));
     }
 }
