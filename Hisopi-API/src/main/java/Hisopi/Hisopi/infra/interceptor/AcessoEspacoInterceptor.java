@@ -78,27 +78,11 @@ public class AcessoEspacoInterceptor implements HandlerInterceptor{
 		}
 		
 		Optional <MembroEspaco> membro = repM.findByEspacoIdAndUsuarioId(idEspaco, usuarioLogado.getId());
-		if(membro.isEmpty()) {
-			errorResponseWriter.write(
-					response, 
-					HttpStatus.FORBIDDEN, 
-					"FORBIDDEN",
-					"Não foi possivel acessar o espaço");
-			return false;
+		if(membro.isEmpty() || !membro.get().getPapel().temPermissao(anotacao.papelMinimo())) {
+			throw new AcessoNegadoException("Acesso negado");
 		}
 		
-		int nivelUsuario = ordem.indexOf(membro.get().getPapel());
-		int nivelExigido = ordem.indexOf(anotacao.papelMinimo());
-		
-		// meio contra-intuitivo, mas o indice maior do usuario indica um cargo menor
-		if(nivelUsuario > nivelExigido) {errorResponseWriter.write(
-					response, 
-					HttpStatus.FORBIDDEN, 
-					"FORBIDDEN",
-					"Cargo insuficiente para realizar a ação");
-			return false;
-		}
-		
+		request.setAttribute("membroLogado", membro.get());
 		return true;
 	}
 

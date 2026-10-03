@@ -1,18 +1,22 @@
 package Hisopi.Hisopi.Enum;
 
 public enum PapelMembro {
-	DONO("dono"),     
-    ADMIN("admin"),    
-    GERENTE("gerente"),  
-    OPERADOR("operador");
+	DONO(4),     
+    ADMIN(3),    
+    GERENTE(2),  
+    OPERADOR(1);
     
-	private String PapelMembro;
+	private final int PapelMembro;
 	
-	PapelMembro(String PapelMembro){
+	PapelMembro(int PapelMembro){
 		this.PapelMembro = PapelMembro;
 	}
 	
-	public String getPapelMembro() {
-		return PapelMembro;
+	public boolean temPermissao(PapelMembro exigido) {
+		return this.PapelMembro >= exigido.PapelMembro;
+	}
+	
+	public boolean superior(PapelMembro outro) {
+		return this.PapelMembro > outro.PapelMembro;
 	}
 }
