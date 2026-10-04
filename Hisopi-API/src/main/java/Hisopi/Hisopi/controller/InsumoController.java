@@ -24,7 +24,9 @@ import Hisopi.Hisopi.DTO.LoteDTO;
 import Hisopi.Hisopi.DTO.PerdaDTO;
 import Hisopi.Hisopi.Enum.PapelMembro;
 import Hisopi.Hisopi.Enum.TipoMovimentacao;
-import Hisopi.Hisopi.infra.security.interceptor.AcessoEspaco;
+import Hisopi.Hisopi.infra.exception.NaoEncontradoException;
+import Hisopi.Hisopi.infra.exception.RegraNegocioException;
+import Hisopi.Hisopi.infra.interceptor.AcessoEspaco;
 import Hisopi.Hisopi.model.Espaco;
 import Hisopi.Hisopi.model.Insumo;
 import Hisopi.Hisopi.model.LoteInsumo;
@@ -59,7 +61,7 @@ public class InsumoController {
     @AcessoEspaco(papelMinimo = PapelMembro.GERENTE)
     public ResponseEntity<Insumo> criarInsumo(@PathVariable Long idEspaco, @RequestBody @Valid InsumoDTO dto) {
         Espaco espaco = repE.findById(idEspaco)
-            .orElseThrow(() -> new RuntimeException("Espaço não encontrado"));
+            .orElseThrow(() -> new NaoEncontradoException("Espaço não encontrado"));
 
         Insumo insumo = new Insumo();
         insumo.setEspaco(espaco);
@@ -96,10 +98,10 @@ public class InsumoController {
     @AcessoEspaco(papelMinimo = PapelMembro.GERENTE)
     public ResponseEntity<Insumo> editarInsumo(@PathVariable Long idEspaco, @PathVariable Long id,@RequestBody @Valid InsumoDTO dto) {
 
-        Optional<Insumo> insumoExistente = repI.findById(id);
+        Optional<Insumo> insumoExistente = repI.findByIdAndEspacoId(id, idEspaco);
 
         if (insumoExistente.isEmpty()) {
-            return ResponseEntity.notFound().build();
+            throw new NaoEncontradoException("Insumo não encontrado");
         }
 
         Insumo insumo = insumoExistente.get();
@@ -116,28 +118,28 @@ public class InsumoController {
 
     @DeleteMapping("/{id}")
     @AcessoEspaco(papelMinimo = PapelMembro.GERENTE)
-    public ResponseEntity<Map<String, String>> desativarInsumo(
+    public ResponseEntity<String> desativarInsumo(
             @PathVariable Long idEspaco, @PathVariable Long id) {
 
-        Optional<Insumo> insumoOpt = repI.findById(id);
+        Optional<Insumo> insumoOpt = repI.findByIdAndEspacoId(id, idEspaco);
 
         if (insumoOpt.isEmpty()) {
-            return ResponseEntity.notFound().build();
+        	throw new NaoEncontradoException("Insumo não encontrado");
         }
 
         Insumo insumo = insumoOpt.get();
         insumo.setAtivo(false);
         repI.save(insumo);
 
-        return ResponseEntity.ok(Map.of("message", "Insumo desativado"));
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/{id}")
     @AcessoEspaco
     public ResponseEntity<Insumo> buscarInsumo(@PathVariable Long idEspaco, @PathVariable Long id) {
-        return repI.findById(id)
-            .map(ResponseEntity::ok)
-            .orElseGet(() -> ResponseEntity.notFound().build());
+        return ResponseEntity.ok(
+            repI.findByIdAndEspacoId(id, idEspaco)
+            .orElseThrow(() ->  new NaoEncontradoException("Insumo Não encontrado")));
     }
     
     // =====================================================
@@ -150,8 +152,8 @@ public class InsumoController {
             @PathVariable Long idEspaco, @PathVariable Long id,
             @RequestBody @Valid LoteDTO dto) {
 
-        Insumo insumo = repI.findById(id)
-            .orElseThrow(() -> new RuntimeException("Insumo não encontrado"));
+        Insumo insumo = repI.findByIdAndEspacoId(id, idEspaco)
+            .orElseThrow(() -> new NaoEncontradoException("Insumo não encontrado"));
 
         LoteInsumo lote = new LoteInsumo();
         lote.setInsumo(insumo);
@@ -173,7 +175,10 @@ public class InsumoController {
     @GetMapping("/{id}/lotes")
     @AcessoEspaco
     public ResponseEntity<?> listarLotes(@PathVariable Long idEspaco, @PathVariable Long id) {
-        return ResponseEntity.ok(
+        repI.findByIdAndEspacoId(id, idEspaco)
+        .orElseThrow(() -> new NaoEncontradoException("Insumo não encontrado"));
+    	
+    	return ResponseEntity.ok(
             repL.findByInsumoIdAndQuantidadeAtualGreaterThanOrderByDataValidadeAsc(id, 0.0)
         );
     }
@@ -185,7 +190,7 @@ public class InsumoController {
 
         LocalDate hoje = LocalDate.now();
         LocalDate limite = hoje.plusDays(dias);
-
+        
         return ResponseEntity.ok(
             repL.findByInsumoEspacoIdAndDataValidadeBetweenAndQuantidadeAtualGreaterThan(
                 idEspaco, hoje, limite, 0.0)
@@ -194,14 +199,14 @@ public class InsumoController {
 
     @PutMapping("/lotes/{idLote}/perda")
     @AcessoEspaco(papelMinimo = PapelMembro.GERENTE)
-    public ResponseEntity<Map<String, String>> registrarPerda(
+    public ResponseEntity<String> registrarPerda(
             @PathVariable Long idEspaco, @PathVariable Long idLote,
             @RequestBody @Valid PerdaDTO dto) {
 
-        Optional<LoteInsumo> loteOpt = repL.findById(idLote);
+        Optional<LoteInsumo> loteOpt = repL.findByIdAndInsumoEspacoId(idLote, idEspaco);
 
         if (loteOpt.isEmpty()) {
-            return ResponseEntity.notFound().build();
+        	throw new NaoEncontradoException("Lote não encontrado");
         }
 
         LoteInsumo lote = loteOpt.get();
@@ -209,6 +214,12 @@ public class InsumoController {
             ? dto.quantidade()
             : lote.getQuantidadeAtual();
 
+        if(quantidadePerdida <= 0 ) {
+        	throw new RegraNegocioException("A quantidade deve ser maior que zero");
+        } else if(quantidadePerdida > lote.getQuantidadeAtual()) {
+        	throw new RegraNegocioException("Quantidade maior que a disponivel no lote "+lote.getQuantidadeAtual());
+        }
+        
         lote.setQuantidadeAtual(lote.getQuantidadeAtual() - quantidadePerdida);
         repL.save(lote);
 
@@ -218,7 +229,7 @@ public class InsumoController {
 
         registrarMovimentacao(insumo, lote, dto.tipo(), quantidadePerdida, dto.motivo());
 
-        return ResponseEntity.ok(Map.of("message", "Perda registrada"));
+        return ResponseEntity.noContent().build();
     }
 
     private void registrarMovimentacao(

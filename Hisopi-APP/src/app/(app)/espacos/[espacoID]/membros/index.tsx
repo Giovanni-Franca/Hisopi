@@ -21,6 +21,7 @@ import {
   type MembroEspaco,
 } from '@/src/services/membroService'
 
+const ORDEM: PapelMembro[] = ['OPERADOR', 'GERENTE', 'ADMIN', 'DONO']
 const PAPEL_LABEL: Record<PapelMembro, string> = {
   DONO: 'Dono',
   ADMIN: 'Admin',
@@ -28,8 +29,6 @@ const PAPEL_LABEL: Record<PapelMembro, string> = {
   OPERADOR: 'Operador',
 }
 
-// DONO não é atribuível ao convidar — só existe um, criado
-// automaticamente junto com o espaço.
 const PAPEIS_CONVITE: PapelMembro[] = ['ADMIN', 'GERENTE', 'OPERADOR']
 
 export default function MembrosScreen() {
@@ -45,10 +44,10 @@ export default function MembrosScreen() {
   const [papel, setPapel] = useState<PapelMembro>('OPERADOR')
   const [erroModal, setErroModal] = useState('')
   const [saving, setSaving] = useState(false)
+  const [erroLista, setErroLista] = useState('')
 
   const load = useCallback(async () => {
-    if (!espacoID) return
-
+  if (!espacoID) return
     try {
       const [espaco, dataMembros] = await Promise.all([
         buscarEspaco(espacoID),
@@ -57,8 +56,12 @@ export default function MembrosScreen() {
 
       setTipoEspaco(espaco.tipo)
       setMembros(dataMembros)
-    } catch (error) {
-      console.log('Erro ao carregar membros:', error)
+    } catch (error: any) {
+      if (error?.status === 403 || error?.status === 404) {
+        router.replace('/espacos' as any)
+      } else {
+        console.log('Erro ao carregar membros:', error)
+      }
     } finally {
       setLoading(false)
     }
@@ -104,11 +107,14 @@ export default function MembrosScreen() {
   }
 
   async function handleRemover(membro: MembroEspaco) {
+    setErroLista('')
     try {
       await removerMembro(espacoID, membro.id)
       await load()
     } catch (error) {
-      console.log('Erro ao remover membro:', error)
+      setErroLista(
+        error instanceof Error ? error.message : 'Não foi possível remover o membro.'
+      )
     }
   }
 
@@ -137,6 +143,15 @@ export default function MembrosScreen() {
       </View>
     )
   }
+  
+  const meuPapel = membros.find((m) => m.idUsuario === usuario?.id)?.papel
+  function podeRemover(alvo: MembroEspaco) {
+    return !!meuPapel && ORDEM.indexOf(meuPapel) > ORDEM.indexOf(alvo.papel)
+  }
+  const papeisDisponiveis = PAPEIS_CONVITE.filter(
+    (p) => !!meuPapel && ORDEM.indexOf(meuPapel) > ORDEM.indexOf(p)
+  )
+  const podeConvidar = !!meuPapel && ORDEM.indexOf(meuPapel) >= ORDEM.indexOf('ADMIN')
 
   return (
     <View style={styles.screen}>
@@ -149,10 +164,14 @@ export default function MembrosScreen() {
             </Text>
           </View>
 
-          <Pressable style={styles.newButton} onPress={abrirModal}>
-            <Text style={styles.newButtonText}>+ Convidar</Text>
-          </Pressable>
+          {podeConvidar && (
+            <Pressable style={styles.newButton} onPress={abrirModal}>
+              <Text style={styles.newButtonText}>+ Convidar</Text>
+            </Pressable>
+          )}
         </View>
+
+        {erroLista ? <Text style={styles.errorBanner}>{erroLista}</Text> : null}
 
         <FlatList
           data={membros}
@@ -160,37 +179,28 @@ export default function MembrosScreen() {
           scrollEnabled={false}
           ItemSeparatorComponent={() => <View style={{ height: 10 }} />}
           renderItem={({ item }) => {
-            const souEu = item.usuario.id === usuario?.id
-            const ehDono = item.papel === 'DONO'
-
+            const souEu = item.idUsuario === usuario?.id
             return (
               <View style={styles.membroCard}>
                 <View style={styles.avatar}>
                   <Text style={styles.avatarText}>
-                    {item.usuario.nome.charAt(0).toUpperCase()}
+                    {item.nome?.charAt(0).toUpperCase() ?? '?'}
                   </Text>
                 </View>
 
                 <View style={{ flex: 1 }}>
                   <Text style={styles.membroNome}>
-                    {item.usuario.nome} {souEu && '(você)'}
+                    {item.nome} {souEu ? '(você)' : ''}
                   </Text>
-                  <Text style={styles.membroEmail}>{item.usuario.email}</Text>
+                  <Text style={styles.membroEmail}>{item.email}</Text>
                 </View>
 
                 <View style={styles.papelBadge}>
-                  <Text style={styles.papelBadgeText}>
-                    {PAPEL_LABEL[item.papel]}
-                  </Text>
+                  <Text style={styles.papelBadgeText}>{PAPEL_LABEL[item.papel]}</Text>
                 </View>
 
-                {/* O dono não pode ser removido por aqui — evitaria um
-                    espaço sem ninguém responsável por ele. */}
-                {!ehDono && !souEu && (
-                  <Pressable
-                    style={styles.removeButton}
-                    onPress={() => handleRemover(item)}
-                  >
+                {podeRemover(item) && (
+                  <Pressable style={styles.removeButton} onPress={() => handleRemover(item)}>
                     <Text style={styles.removeButtonText}>Remover</Text>
                   </Pressable>
                 )}
@@ -198,7 +208,7 @@ export default function MembrosScreen() {
             )
           }}
         />
-      </View>
+    </View>
 
       {/* =====================================================
           MODAL: CONVIDAR MEMBRO
@@ -234,7 +244,7 @@ export default function MembrosScreen() {
             <Text style={styles.fieldLabel}>Papel</Text>
 
             <View style={styles.papelRow}>
-              {PAPEIS_CONVITE.map((p) => (
+              {papeisDisponiveis.map((p) => (
                 <Pressable
                   key={p}
                   style={[styles.papelOption, papel === p && styles.papelOptionActive]}

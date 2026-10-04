@@ -17,6 +17,8 @@ import Hisopi.Hisopi.DTO.RefreshTokenDTO;
 import Hisopi.Hisopi.DTO.RegisterDTO;
 import Hisopi.Hisopi.DTO.UsuarioResponseDTO;
 import Hisopi.Hisopi.DTO.authenticationDTO;
+import Hisopi.Hisopi.infra.exception.RegraNegocioException;
+import Hisopi.Hisopi.infra.exception.TokenInvalidoException;
 import Hisopi.Hisopi.infra.security.TokenService;
 import Hisopi.Hisopi.model.Usuario;
 import Hisopi.Hisopi.repository.UsuarioRepository;
@@ -46,7 +48,10 @@ public class AuthenticationController {
 	
 	@PostMapping("/register")
 	public ResponseEntity register(@RequestBody @Valid RegisterDTO data) {
-		if(this.repU.findByEmail(data.login()) != null) return ResponseEntity.badRequest().build();
+		if(this.repU.findByEmail(data.login()) != null) {
+			throw new RegraNegocioException("E-mail já cadastrado");
+		}
+		
 		String encryptedPassword = new BCryptPasswordEncoder().encode(data.senha());
 		Usuario newUser = new Usuario(data.nome(), data.login(), encryptedPassword, data.role());
 		
@@ -60,12 +65,12 @@ public class AuthenticationController {
 	    String email = tokenService.validateRefreshToken(data.refreshToken());
 
 	    if (email.isEmpty()) {
-	        return ResponseEntity.status(401).build();
+	        throw new TokenInvalidoException("Refresh token invalido ou expirado");
 	    }
 
 	    Usuario usuario = (Usuario) repU.findByEmail(email);
 	    if (usuario == null) {
-	        return ResponseEntity.status(401).build();
+	    	throw new TokenInvalidoException("Usuario não encontrado");
 	    }
 
 	    var newAccessToken = tokenService.generateToken(usuario);

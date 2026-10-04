@@ -1,5 +1,12 @@
 package Hisopi.Hisopi.DTO;
 
-public record authenticationDTO(String login, String senha) {
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
-}
+public record authenticationDTO(
+		@NotBlank
+		String login,
+		@NotBlank
+		@Size(min = 8)
+		String senha
+) {}

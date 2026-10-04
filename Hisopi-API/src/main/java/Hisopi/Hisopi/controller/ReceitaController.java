@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,9 +17,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import Hisopi.Hisopi.DTO.ReceitaDTO;
 import Hisopi.Hisopi.DTO.ReceitaInsumoDTO;
+import Hisopi.Hisopi.DTO.ReceitaInsumoResponseDTO;
+import Hisopi.Hisopi.DTO.ReceitaResponseDTO;
 import Hisopi.Hisopi.Enum.PapelMembro;
 import Hisopi.Hisopi.Enum.TipoReceita;
-import Hisopi.Hisopi.infra.security.interceptor.AcessoEspaco;
+import Hisopi.Hisopi.infra.exception.ConflitoException;
+import Hisopi.Hisopi.infra.exception.NaoEncontradoException;
+import Hisopi.Hisopi.infra.interceptor.AcessoEspaco;
 import Hisopi.Hisopi.model.Espaco;
 import Hisopi.Hisopi.model.Insumo;
 import Hisopi.Hisopi.model.Receita;
@@ -67,15 +72,19 @@ public class ReceitaController {
 
     @PostMapping("/{id}/insumos")
     @AcessoEspaco (papelMinimo = PapelMembro.GERENTE)
-    public ResponseEntity<ReceitaInsumo> vincularInsumo(
+    public ResponseEntity<ReceitaInsumoResponseDTO> vincularInsumo(
             @PathVariable Long idEspaco, @PathVariable Long id,
             @RequestBody @Valid ReceitaInsumoDTO dto) {
 
-        Receita receita = repR.findById(id)
-            .orElseThrow(() -> new RuntimeException("Receita não encontrada"));
+        Receita receita = repR.findByIdAndEspacoId(id, idEspaco)
+            .orElseThrow(() -> new NaoEncontradoException("Receita não encontrada"));
 
-        Insumo insumo = repI.findById(dto.idInsumo())
-            .orElseThrow(() -> new RuntimeException("Insumo não encontrado"));
+        Insumo insumo = repI.findByIdAndEspacoId(dto.idInsumo(), idEspaco)
+            .orElseThrow(() -> new NaoEncontradoException("Insumo não encontrado"));
+
+        if (repRI.existsByReceitaIdAndInsumoId(id, insumo.getId())) {
+            throw new ConflitoException("Este insumo já está na ficha técnica da receita");
+        }
 
         ReceitaInsumo vinculo = new ReceitaInsumo();
         vinculo.setReceita(receita);
@@ -83,31 +92,41 @@ public class ReceitaController {
         vinculo.setQuantidadePorUnidade(dto.quantidadePorUnidade());
         repRI.save(vinculo);
 
-        return ResponseEntity.ok(vinculo);
+        return ResponseEntity.status(HttpStatus.CREATED)
+            .body(ReceitaInsumoResponseDTO.de(vinculo));
     }
 
     @GetMapping("/{id}/insumos")
-    public ResponseEntity<?> listarFichaTecnica(@PathVariable Long idEspaco, @PathVariable Long id) {
-        return ResponseEntity.ok(repRI.findByReceitaId(id));
+    public ResponseEntity<List<ReceitaInsumoResponseDTO>> listarFichaTecnica(
+            @PathVariable Long idEspaco, @PathVariable Long id) {
+
+        repR.findByIdAndEspacoId(id, idEspaco)
+            .orElseThrow(() -> new NaoEncontradoException("Receita não encontrada"));
+
+        return ResponseEntity.ok(
+            repRI.findByReceitaId(id).stream().map(ReceitaInsumoResponseDTO::de).toList());
     }
 
     @GetMapping("/sugestoes")
-    public ResponseEntity<?> sugerirReceitas(@PathVariable Long idEspaco) {
-        List<Receita> sugestoes = repR.findByTipo(TipoReceita.SUGESTAO_CONSUMO);
-        return ResponseEntity.ok(sugestoes);
-
+    public ResponseEntity<List<ReceitaResponseDTO>> sugerirReceitas(@PathVariable Long idEspaco) {
+        return ResponseEntity.ok(
+            repR.findByEspacoIdAndTipo(idEspaco, TipoReceita.SUGESTAO_CONSUMO).stream()
+                .map(ReceitaResponseDTO::de).toList());
     }
 
     @DeleteMapping("/{id}/insumos/{idReceitaInsumo}")
-    public ResponseEntity<Map<String, String>> removerVinculo(
+    @AcessoEspaco(papelMinimo = PapelMembro.GERENTE)
+    public ResponseEntity<Void> removerVinculo(
             @PathVariable Long idEspaco, @PathVariable Long id,
             @PathVariable Long idReceitaInsumo) {
 
-        if (!repRI.existsById(idReceitaInsumo)) {
-            return ResponseEntity.notFound().build();
-        }
+        repR.findByIdAndEspacoId(id, idEspaco)
+            .orElseThrow(() -> new NaoEncontradoException("Receita não encontrada"));
 
-        repRI.deleteById(idReceitaInsumo);
-        return ResponseEntity.ok(Map.of("message", "Vínculo removido da ficha técnica"));
+        ReceitaInsumo vinculo = repRI.findByIdAndReceitaId(idReceitaInsumo, id)
+            .orElseThrow(() -> new NaoEncontradoException("Vínculo não encontrado nesta receita"));
+
+        repRI.delete(vinculo);
+        return ResponseEntity.noContent().build();
     }
 }

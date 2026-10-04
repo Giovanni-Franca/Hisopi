@@ -1,4 +1,4 @@
-package Hisopi.Hisopi.infra.security.interceptor;
+package Hisopi.Hisopi.infra.interceptor;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
