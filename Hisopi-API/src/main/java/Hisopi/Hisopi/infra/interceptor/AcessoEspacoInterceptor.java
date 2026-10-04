@@ -26,13 +26,15 @@ import jakarta.servlet.http.HttpServletResponse;
 @Component
 public class AcessoEspacoInterceptor implements HandlerInterceptor{
 
-	private ErrorResponseWriter errorResponseWriter;
+	private final ErrorResponseWriter errorResponseWriter;
 	@Autowired
 	private MembroEspacoRepository repM;
 	
-	// ordem dos papéis em ordem decrescente
-	private static final List<PapelMembro> ordem = List.of(PapelMembro.DONO,PapelMembro.ADMIN,PapelMembro.GERENTE,PapelMembro.OPERADOR);
-	
+	public AcessoEspacoInterceptor(ErrorResponseWriter errorResponseWriter,
+            MembroEspacoRepository repM) {
+		this.errorResponseWriter = errorResponseWriter;
+		this.repM = repM;
+	}
 	
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {

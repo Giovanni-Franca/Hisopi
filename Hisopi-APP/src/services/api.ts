@@ -45,6 +45,16 @@ class ApiError extends Error {
 
 let refreshPromise: Promise<string | null> | null = null
 
+async function lerCorpo(response: Response) {
+  const text = await response.text()
+  if (!text) return null
+  try {
+    return JSON.parse(text)
+  } catch {
+    return text // corpo não era JSON, devolve como texto
+  }
+}
+
 async function refreshAccessToken(): Promise<string | null> {
   if (refreshPromise) return refreshPromise
 
@@ -113,17 +123,14 @@ export async function apiFetch(path: string, options: ApiFetchOptions = {}) {
   }
 
   if (!response.ok) {
-    let message = 'Erro ao comunicar com o servidor.'
+  const body = await lerCorpo(response)
+  const message =
+    (typeof body === 'object' && body !== null
+      ? body.mensagem ?? body.message ?? body.erro
+      : null) ?? 'Erro ao comunicar com o servidor.'
 
-    try {
-      const body = await response.json()
-      message = body.message ?? body.error ?? message
-    } catch {
-    }
+  throw new ApiError(message, response.status)
+}
 
-    throw new ApiError(message, response.status)
-  }
-
-  const text = await response.text()
-  return text ? JSON.parse(text) : null
+return lerCorpo(response)
 }

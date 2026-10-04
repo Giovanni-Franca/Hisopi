@@ -3,13 +3,10 @@ import type { PapelMembro } from './espacoService'
 
 export type MembroEspaco = {
   id: number
+  idUsuario: number
+  nome: string
+  email: string
   papel: PapelMembro
-  entradaEm: string
-  usuario: {
-    id: number
-    nome: string
-    email: string
-  }
 }
 
 export async function listarMembros(idEspaco: string | number): Promise<MembroEspaco[]> {

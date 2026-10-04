@@ -2,6 +2,7 @@ package Hisopi.Hisopi.repository;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -15,4 +16,6 @@ public interface LoteInsumoRepository extends JpaRepository<LoteInsumo, Long> {
 
     List<LoteInsumo> findByInsumoEspacoIdAndDataValidadeBetweenAndQuantidadeAtualGreaterThan(
         Long idEspaco, LocalDate inicio, LocalDate fim, Double zero);
+
+	Optional<LoteInsumo> findByIdAndInsumoEspacoId(Long idLote, Long idEspaco);
 }

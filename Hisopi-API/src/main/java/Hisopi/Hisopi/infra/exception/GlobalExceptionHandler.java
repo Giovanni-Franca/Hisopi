@@ -4,10 +4,13 @@ import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import Hisopi.Hisopi.DTO.ErrorResponseDTO;
 
@@ -62,18 +65,34 @@ public class GlobalExceptionHandler {
 	}
 	
 	@ExceptionHandler(AcessoNegadoException.class)
-		public ResponseEntity<ErrorResponseDTO> tratarAcessoNegado(AcessoNegadoException ex) {
-	    return montar(HttpStatus.FORBIDDEN, ex.getMessage());
+	public ResponseEntity<ErrorResponseDTO> tratarAcessoNegado(AcessoNegadoException ex) {
+		return montar(HttpStatus.FORBIDDEN, ex.getMessage());
 	}
 	
 	@ExceptionHandler(NaoEncontradoException.class)
-		public ResponseEntity<ErrorResponseDTO> tratarNaoLocalizado(NaoEncontradoException ex){
-			return montar(HttpStatus.NOT_FOUND, ex.getMessage());
+	public ResponseEntity<ErrorResponseDTO> tratarNaoLocalizado(NaoEncontradoException ex){
+		return montar(HttpStatus.NOT_FOUND, ex.getMessage());
 	}
 	
 	@ExceptionHandler(ConflitoException.class)
-		public ResponseEntity<ErrorResponseDTO> tratarConflito(ConflitoException ex){
-			return montar(HttpStatus.CONFLICT, ex.getMessage());
+	public ResponseEntity<ErrorResponseDTO> tratarConflito(ConflitoException ex){
+		return montar(HttpStatus.CONFLICT, ex.getMessage());
 	}
 	
+	@ExceptionHandler(ObjectOptimisticLockingFailureException.class)
+	public ResponseEntity<ErrorResponseDTO> concorrencia(ObjectOptimisticLockingFailureException ex){
+		return montar (HttpStatus.CONFLICT, "O registro foi alterado por outra operação, tente novamente");
+	}
+	
+	@ExceptionHandler(MethodArgumentTypeMismatchException.class)
+	public ResponseEntity<ErrorResponseDTO> parametroInvalido(MethodArgumentTypeMismatchException ex) {
+	    return montar(HttpStatus.BAD_REQUEST,
+	            "Valor inválido para o parâmetro '" + ex.getName() + "'");
+	}
+	 
+	@ExceptionHandler(MissingServletRequestParameterException.class)
+	public ResponseEntity<ErrorResponseDTO> parametroAusente(MissingServletRequestParameterException ex) {
+	    return montar(HttpStatus.BAD_REQUEST, "Parâmetro obrigatório ausente: '" + ex.getParameterName() + "'");
+	}
+
 }

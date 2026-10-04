@@ -18,6 +18,7 @@ const NAV_ITEMS: NavItem[] = [
   { key: 'insumos', label: 'Insumos', getHref: (id) => `/espacos/${id}/insumos` },
   { key: 'receitas', label: 'Receitas', getHref: (id) => `/espacos/${id}/receitas` },
   { key: 'membros', label: 'Membros', getHref: (id) => `/espacos/${id}/membros`, onlyOrg: true },
+  { key: 'relatorios', label: 'Relatórios', getHref: (id) => `/espacos/${id}/relatorios`}
 ]
 
 export default function EspacoLayout() {
