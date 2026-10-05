@@ -27,6 +27,9 @@ public class SecurityConfigurations {
 	
 	@Autowired
 	SecurityFilter securityFilter;
+
+	@Autowired
+	RateLimitFilter rateLimitFilter;
 	
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception{
@@ -51,6 +54,7 @@ public class SecurityConfigurations {
 						
 						.anyRequest().authenticated()
 					)
+				.addFilterBefore(rateLimitFilter, UsernamePasswordAuthenticationFilter.class)
 				.addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
 				.build();
 	}
