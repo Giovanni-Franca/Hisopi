@@ -5,30 +5,17 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Component
 public class RateLimitFilter extends OncePerRequestFilter {
 
-    private static class RequestInfo {
-        private int requests;
-        private long startTime;
-
-        public RequestInfo() {
-            this.requests = 0;
-            this.startTime = System.currentTimeMillis();
-        }
-    }
-
-    private final Map<String, RequestInfo> requests = new ConcurrentHashMap<>();
-
-    private static final int MAX_REQUESTS = 60;
-    private static final long WINDOW_MILLIS = 60_000;
+    @Autowired
+    private RateLimitService rateLimitService;
 
     @Override
     protected void doFilterInternal(
@@ -38,33 +25,20 @@ public class RateLimitFilter extends OncePerRequestFilter {
     ) throws ServletException, IOException {
 
         String clientIp = getClientIp(request);
+        String endpoint = request.getRequestURI();
 
-        RequestInfo requestInfo = requests.computeIfAbsent(
+        boolean allowed = rateLimitService.isAllowed(
                 clientIp,
-                key -> new RequestInfo()
+                endpoint
         );
 
-        synchronized (requestInfo) {
-
-            long currentTime = System.currentTimeMillis();
-
-            // Reinicia a janela de 1 minuto
-            if (currentTime - requestInfo.startTime >= WINDOW_MILLIS) {
-                requestInfo.requests = 0;
-                requestInfo.startTime = currentTime;
-            }
-
-            requestInfo.requests++;
-
-            // Limite atingido
-            if (requestInfo.requests > MAX_REQUESTS) {
-                response.setStatus(429);
-                response.setContentType("application/json");
-                response.getWriter().write(
-                        "{\"status\":429,\"message\":\"Muitas requisições. Tente novamente mais tarde.\"}"
-                );
-                return;
-            }
+        if (!allowed) {
+            response.setStatus(429);
+            response.setContentType("application/json");
+            response.getWriter().write(
+                    "{\"status\":429,\"message\":\"Muitas requisições. Tente novamente mais tarde.\"}"
+            );
+            return;
         }
 
         filterChain.doFilter(request, response);
