@@ -47,27 +47,11 @@ import Hisopi.Hisopi.repository.EspacoRepository;
 import Hisopi.Hisopi.repository.MembroEspacoRepository;
 import Hisopi.Hisopi.repository.UsuarioRepository;
 
-/**
- * Testes do EspacoController.
- *
- * COMO FUNCIONA
- *  - Os repositories são mocks (sem banco). O interceptor @AcessoEspaco consulta
- *    repM.findByEspacoIdAndUsuarioId para descobrir o papel do usuário logado, então
- *    cada teste "escolhe" o papel com logadoComPapel(...) ou logadoSemSerMembro().
- *  - O usuário autenticado é um mock de Usuario com id 1.
- *  - Os testes de hierarquia são parametrizados: uma linha por combinação
- *    (papel de quem executa, papel do alvo, status esperado).
- *
- * TESTES QUE PODEM FALHAR HOJE (e por quê)
- *  - listarMeusEspacosNaoExpoeSenha: falha se o endpoint ainda devolve a entidade
- *    MembroEspaco (com Usuario aninhado) em vez de um DTO.
- *  - idEspacoNaoNumerico...: falha se o interceptor ainda não trata o NumberFormatException.
- */
 @SpringBootTest
 @AutoConfigureMockMvc
 public class EspacoControllerTest {
 
-	private static final String TIPO_ESPACO = "ORGANIZACAO"; // valor real do seu enum de tipo
+	private static final String TIPO_ESPACO = "ORGANIZACAO"; 
 
 	@Autowired
 	private MockMvc mockMvc;

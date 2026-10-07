@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import Hisopi.Hisopi.DTO.EspacoDTO;
+import Hisopi.Hisopi.DTO.EspacoResponseDTO;
 import Hisopi.Hisopi.DTO.MembroDTO;
 import Hisopi.Hisopi.DTO.MembroResponseDTO;
 import Hisopi.Hisopi.DTO.MeuEspacoDTO;
@@ -45,7 +46,7 @@ public class EspacoController {
 
     
     @PostMapping
-    public ResponseEntity<Espaco> criarEspaco(@RequestBody @Valid EspacoDTO dto, @AuthenticationPrincipal Usuario usuarioLogado) {
+    public ResponseEntity<EspacoResponseDTO> criarEspaco(@RequestBody @Valid EspacoDTO dto, @AuthenticationPrincipal Usuario usuarioLogado) {
         Espaco espaco = new Espaco();
         espaco.setNome(dto.nome());
         espaco.setTipo(dto.tipo());
@@ -57,17 +58,17 @@ public class EspacoController {
         membro.setPapel(PapelMembro.DONO);
         repM.save(membro);
 
-        return ResponseEntity.ok(espaco);
+        return ResponseEntity.ok(EspacoResponseDTO.de(espaco));
     }
 
     @GetMapping("/{idEspaco}")
     @AcessoEspaco
-    public ResponseEntity<Espaco> buscarEspaco(@PathVariable Long idEspaco, @AuthenticationPrincipal Usuario usuarioLogado) {
-        return ResponseEntity.ok(
-        		repE.findById(idEspaco)
-        		.orElseThrow(() -> new NaoEncontradoException("Espaço não encontrado")));
+    public ResponseEntity<EspacoResponseDTO> buscarEspaco(@PathVariable Long idEspaco, @AuthenticationPrincipal Usuario usuarioLogado) {
+    	Espaco espaco = repE.findById(idEspaco)
+    			.orElseThrow(() -> new NaoEncontradoException("Espaço não encontrado"));
+    	return ResponseEntity.ok(EspacoResponseDTO.de(espaco));
     }
-
+    
     @GetMapping("/minhas")
     public ResponseEntity<List<MeuEspacoDTO>> listarMeusEspacos(@AuthenticationPrincipal Usuario usuarioLogado) {
         List<MeuEspacoDTO> lista = repM.findByUsuarioId(usuarioLogado.getId()).stream()
