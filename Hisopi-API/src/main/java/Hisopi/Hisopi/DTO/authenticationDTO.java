@@ -4,9 +4,9 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
 public record authenticationDTO(
-		@NotBlank
+		@NotBlank (message = "Login é obrigatório")
 		String login,
-		@NotBlank
+		@NotBlank (message = "Senha é obrigatória")
 		@Size(min = 8)
 		String senha
 ) {}

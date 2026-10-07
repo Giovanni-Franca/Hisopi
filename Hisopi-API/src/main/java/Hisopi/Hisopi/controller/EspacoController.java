@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import Hisopi.Hisopi.DTO.EspacoDTO;
 import Hisopi.Hisopi.DTO.MembroDTO;
 import Hisopi.Hisopi.DTO.MembroResponseDTO;
+import Hisopi.Hisopi.DTO.MeuEspacoDTO;
 import Hisopi.Hisopi.Enum.PapelMembro;
 import Hisopi.Hisopi.infra.exception.AcessoNegadoException;
 import Hisopi.Hisopi.infra.exception.ConflitoException;
@@ -68,9 +69,11 @@ public class EspacoController {
     }
 
     @GetMapping("/minhas")
-    public ResponseEntity<?> listarMeusEspacos(@AuthenticationPrincipal Usuario usuarioLogado) {
-        List<MembroEspaco> memberships = repM.findByUsuarioId(usuarioLogado.getId());
-        return ResponseEntity.ok(memberships);
+    public ResponseEntity<List<MeuEspacoDTO>> listarMeusEspacos(@AuthenticationPrincipal Usuario usuarioLogado) {
+        List<MeuEspacoDTO> lista = repM.findByUsuarioId(usuarioLogado.getId()).stream()
+                .map(MeuEspacoDTO::de)
+                .toList();
+        return ResponseEntity.ok(lista);
     }
 
     @PostMapping("/{idEspaco}/membros")

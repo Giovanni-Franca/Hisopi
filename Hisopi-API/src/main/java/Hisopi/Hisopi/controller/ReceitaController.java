@@ -53,7 +53,7 @@ public class ReceitaController {
             @PathVariable Long idEspaco, @RequestBody @Valid ReceitaDTO dto) {
 
         Espaco espaco = repE.findById(idEspaco)
-            .orElseThrow(() -> new RuntimeException("Espaço não encontrado"));
+            .orElseThrow(() -> new NaoEncontradoException("Espaço não encontrado"));
 
         Receita receita = new Receita();
         receita.setEspaco(espaco);
