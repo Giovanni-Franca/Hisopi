@@ -2,6 +2,7 @@ package Hisopi.Hisopi.infra.exception;
 
 import java.util.stream.Collectors;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -106,4 +107,8 @@ public class GlobalExceptionHandler {
 	    return montar(HttpStatus.INTERNAL_SERVER_ERROR, "Erro interno do servidor");
 	}
 	
+	@ExceptionHandler(DataIntegrityViolationException.class)
+	public ResponseEntity<ErrorResponseDTO> dataIntegrityViolation(DataIntegrityViolationException ex){
+		return montar(HttpStatus.CONFLICT, "complicado");
+	}
 }

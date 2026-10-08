@@ -1,11 +1,11 @@
 package Hisopi.Hisopi.controller;
 
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.EnumSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -53,6 +53,10 @@ public class InsumoController {
     @Autowired
     private EspacoRepository repE;
 
+    private static final Set<TipoMovimentacao> TIPOS_DE_PERDA =
+	        EnumSet.of(TipoMovimentacao.PERDA_VALIDADE, TipoMovimentacao.PERDA_OUTRO);
+
+    
     // =====================================================
     // insumos
     // =====================================================
@@ -139,7 +143,7 @@ public class InsumoController {
     public ResponseEntity<Insumo> buscarInsumo(@PathVariable Long idEspaco, @PathVariable Long id) {
         return ResponseEntity.ok(
             repI.findByIdAndEspacoId(id, idEspaco)
-            .orElseThrow(() ->  new NaoEncontradoException("Insumo Não encontrado")));
+            .orElseThrow(() ->  new NaoEncontradoException("Insumo não encontrado")));
     }
     
     // =====================================================
@@ -188,13 +192,8 @@ public class InsumoController {
     public ResponseEntity<?> listarVencendo(
             @PathVariable Long idEspaco, @RequestParam(defaultValue = "7") int dias) {
 
-        LocalDate hoje = LocalDate.now();
-        LocalDate limite = hoje.plusDays(dias);
-        
-        return ResponseEntity.ok(
-            repL.findByInsumoEspacoIdAndDataValidadeBetweenAndQuantidadeAtualGreaterThan(
-                idEspaco, hoje, limite, 0.0)
-        );
+        LocalDate limite = LocalDate.now().plusDays(dias);
+        return ResponseEntity.ok(repL.buscarVencidosOuVencendo(idEspaco, limite));
     }
 
     @PutMapping("/lotes/{idLote}/perda")
@@ -203,6 +202,10 @@ public class InsumoController {
             @PathVariable Long idEspaco, @PathVariable Long idLote,
             @RequestBody @Valid PerdaDTO dto) {
 
+    	
+    	if (!TIPOS_DE_PERDA.contains(dto.tipo())) {
+    	    throw new RegraNegocioException("Selecione o tipo de perda");
+    	}
         Optional<LoteInsumo> loteOpt = repL.findByIdAndInsumoEspacoId(idLote, idEspaco);
 
         if (loteOpt.isEmpty()) {

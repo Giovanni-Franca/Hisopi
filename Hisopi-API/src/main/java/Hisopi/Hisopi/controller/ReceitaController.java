@@ -2,7 +2,6 @@ package Hisopi.Hisopi.controller;
 
 
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -49,7 +48,8 @@ public class ReceitaController {
     private EspacoRepository repE;
 
     @PostMapping
-    public ResponseEntity<Receita> criarReceita(
+    @AcessoEspaco(papelMinimo = PapelMembro.GERENTE)
+    public ResponseEntity<ReceitaResponseDTO> criarReceita(
             @PathVariable Long idEspaco, @RequestBody @Valid ReceitaDTO dto) {
 
         Espaco espaco = repE.findById(idEspaco)
@@ -62,12 +62,13 @@ public class ReceitaController {
         receita.setModoPreparo(dto.modoPreparo());
         repR.save(receita);
 
-        return ResponseEntity.ok(receita);
+        return ResponseEntity.ok(ReceitaResponseDTO.de(receita));
     }
 
     @GetMapping
-    public ResponseEntity<?> listarReceitas(@PathVariable Long idEspaco) {
-        return ResponseEntity.ok(repR.findByEspacoId(idEspaco));
+    public ResponseEntity<List<ReceitaResponseDTO>> listarReceitas(@PathVariable Long idEspaco) {
+        return ResponseEntity.ok(
+            repR.findByEspacoId(idEspaco).stream().map(ReceitaResponseDTO::de).toList());
     }
 
     @PostMapping("/{id}/insumos")
