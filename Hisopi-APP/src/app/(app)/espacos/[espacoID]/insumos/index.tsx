@@ -103,7 +103,6 @@ export default function InsumosScreen() {
 
         {lotesVencendo.length > 0 && (
           <View style={styles.alertBanner}>
-            <Text style={styles.alertBannerIcon}>⚠️</Text>
             <Text style={styles.alertBannerText}>
               {lotesVencendo.length}{' '}
               {lotesVencendo.length === 1 ? 'lote vence' : 'lotes vencem'} nos

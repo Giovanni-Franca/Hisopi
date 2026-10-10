@@ -1,4 +1,5 @@
 import { StyleSheet, Text, TextInput, TextInputProps, View } from 'react-native'
+import { useId } from 'react'
 
 import { colors } from '@/src/theme/colors'
 
@@ -8,17 +9,36 @@ type AuthInputProps = TextInputProps & {
 }
 
 export function AuthInput({ label, error, style, ...rest }: AuthInputProps) {
+  const errorId = useId()
+
   return (
     <View style={styles.wrapper}>
-      <Text style={styles.label}>{label}</Text>
+      <Text style={styles.label} maxFontSizeMultiplier={1.5}>
+        {label}
+      </Text>
 
       <TextInput
         placeholderTextColor={colors.textMuted}
         style={[styles.input, error && styles.inputError, style]}
+        maxFontSizeMultiplier={1.5}
+        accessibilityLabel={label}
+        aria-invalid={!!error}
+        aria-describedby={error ? errorId : undefined} 
+        accessibilityHint={error ?? undefined} 
         {...rest}
       />
 
-      {error && <Text style={styles.errorText}>{error}</Text>}
+      {error ? (
+        <Text
+          nativeID={errorId}
+          style={styles.errorText}
+          accessibilityRole="alert"
+          accessibilityLiveRegion="polite"
+          maxFontSizeMultiplier={1.5}
+        >
+          {error}
+        </Text>
+      ) : null}
     </View>
   )
 }
