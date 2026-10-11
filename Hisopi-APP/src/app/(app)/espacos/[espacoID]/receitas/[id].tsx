@@ -74,7 +74,7 @@ export default function ReceitaDetalheScreen() {
   // Insumos que ainda não estão vinculados a esta receita — evita
   // deixar escolher o mesmo insumo duas vezes na mesma ficha técnica.
   const insumosParaVincular = useMemo(() => {
-    const idsVinculados = new Set(fichaTecnica.map((f) => f.insumo.id))
+    const idsVinculados = new Set(fichaTecnica.map((f) => f.idInsumo))
     return insumosDisponiveis.filter((i) => !idsVinculados.has(i.id))
   }, [insumosDisponiveis, fichaTecnica])
 
@@ -202,9 +202,9 @@ export default function ReceitaDetalheScreen() {
           renderItem={({ item }) => (
             <View style={styles.insumoRow}>
               <View style={{ flex: 1 }}>
-                <Text style={styles.insumoNome}>{item.insumo.nome}</Text>
+                <Text style={styles.insumoNome}>{item.nomeInsumo}</Text>
                 <Text style={styles.insumoQuantidade}>
-                  {item.quantidadePorUnidade} {item.insumo.unidadeMedida} por
+                  {item.quantidadePorUnidade} {item.unidadeMedida} por
                   unidade
                 </Text>
               </View>

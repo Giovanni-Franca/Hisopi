@@ -7,27 +7,31 @@ export type Espaco = {
   id: number
   nome: string
   tipo: TipoEspaco
-  criadoEm: string
-}
-type MembroEspacoResponse = {
-  id: number
-  papel: PapelMembro
-  entradaEm: string
-  espaco: Espaco
+  criadoEm?: string
 }
 
-export type EspacoComPapel = Espaco & { papel: PapelMembro }
+type MeuEspacoResponse = {
+  idEspaco: number
+  nome: string
+  tipo: TipoEspaco
+  meuPapel: PapelMembro
+}
+export type EspacoComPapel = Pick<Espaco, 'id' | 'nome' | 'tipo'> & {
+  papel: PapelMembro
+}
 
 export async function buscarEspaco(id: string | number): Promise<Espaco> {
   return apiFetch(`/espacos/${id}`)
 }
 
 export async function listarEspacosDoUsuario(): Promise<EspacoComPapel[]> {
-  const memberships: MembroEspacoResponse[] = await apiFetch('/espacos/minhas')
+  const lista: MeuEspacoResponse[] = await apiFetch('/espacos/minhas')
 
-  return memberships.map((m) => ({
-    ...m.espaco,
-    papel: m.papel,
+  return lista.map((e) => ({
+    id: e.idEspaco,
+    nome: e.nome,
+    tipo: e.tipo,
+    papel: e.meuPapel,
   }))
 }
 

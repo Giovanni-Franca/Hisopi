@@ -1,6 +1,6 @@
 import { router } from 'expo-router'
 import { useState } from 'react'
-import { Pressable, StyleSheet, Text, View } from 'react-native'
+import { AccessibilityInfo,Pressable, StyleSheet, Text, View } from 'react-native'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
 import { useAuth } from '@/src/context/AuthContext'
@@ -16,13 +16,19 @@ export default function NovoEspacoScreen() {
   const [tipo, setTipo] = useState<TipoEspaco>('PESSOAL')
   const [erro, setErro] = useState('')
   const [saving, setSaving] = useState(false)
+  const[erroNome, setErroNome] = useState('')
   const { isDesktop } = useResponsive()
+
+  function mostrarErro(mensagem: string) {
+    setErro(mensagem)
+    AccessibilityInfo.announceForAccessibility(mensagem)
+  }
 
   async function handleCriar() {
     setErro('')
 
     if (!nome.trim()) {
-      setErro('Dê um nome para o seu espaço.')
+      setErroNome('Dê um nome para o seu espaço.')
       return
     }
 
@@ -33,7 +39,7 @@ export default function NovoEspacoScreen() {
       await criarEspaco(nome.trim(), tipo)
       router.replace('/espacos')
     } catch (error) {
-      setErro(
+      mostrarErro(
         error instanceof Error
           ? error.message
           : 'Não foi possível criar o espaço. Tente novamente.'
@@ -44,93 +50,157 @@ export default function NovoEspacoScreen() {
   }
 
   return (
-    <KeyboardAwareScrollView
-      style={styles.container}
-      contentContainerStyle={styles.content}
-      enableOnAndroid
-      keyboardShouldPersistTaps="handled"
-    >
-      {!isDesktop && (
-      <Pressable style={styles.backButton} onPress={() => router.push(`/espacos`)}>
-        <Text style={styles.backButtonText}>Voltar</Text>
-      </Pressable>
-      )}
-
-      <View style={styles.card}>
-        <Text style={styles.title}>Criar novo espaço</Text>
-        <Text style={styles.subtitle}>
-          Um espaço pessoal é para controlar sua própria despensa. Um
-          espaço de organização permite adicionar outras pessoas
-          trabalhando junto com você.
+  <KeyboardAwareScrollView
+    style={styles.container}
+    contentContainerStyle={styles.content}
+    enableOnAndroid
+    keyboardShouldPersistTaps="handled"
+  >
+    {!isDesktop && (
+      <Pressable
+        style={styles.backButton}
+        onPress={() => router.push('/espacos')}
+        accessibilityRole="button"
+        accessibilityLabel="Voltar para a lista de espaços"
+        hitSlop={8}
+      >
+        <Text style={styles.backButtonText} maxFontSizeMultiplier={1.4}>
+          Voltar
         </Text>
+      </Pressable>
+    )}
 
-        {erro ? <Text style={styles.errorBanner}>{erro}</Text> : null}
+    <View style={styles.card}>
+      <Text
+        style={styles.title}
+        accessibilityRole="header"
+        maxFontSizeMultiplier={1.5}
+      >
+        Criar novo espaço
+      </Text>
+      <Text style={styles.subtitle} maxFontSizeMultiplier={1.5}>
+        Um espaço pessoal é para controlar sua própria despensa. Um
+        espaço de organização permite adicionar outras pessoas
+        trabalhando junto com você.
+      </Text>
 
-        <AuthInput
-          label="Nome do espaço"
-          placeholder="Ex: Minha casa, Padaria do João..."
-          value={nome}
-          onChangeText={setNome}
-        />
+      {erro ? (
+        <Text
+          style={styles.errorBanner}
+          accessibilityRole="alert"
+          accessibilityLiveRegion="assertive"
+          maxFontSizeMultiplier={1.5}
+        >
+          {erro}
+        </Text>
+      ) : null}
 
-        <Text style={styles.fieldLabel}>Tipo de espaço</Text>
+      <AuthInput
+        label="Nome do espaço"
+        placeholder="Ex: Minha casa, Padaria do João..."
+        value={nome}
+        onChangeText={setNome}
+        aria-required
+        error={erroNome}
+      />
 
-        <View style={styles.tipoRow}>
-          <Pressable
-            style={[
-              styles.tipoCard,
-              tipo === 'PESSOAL' && styles.tipoCardActive,
-            ]}
-            onPress={() => setTipo('PESSOAL')}
-          >
-            <Text style={styles.tipoIcon}>P</Text>
+      <Text
+        style={styles.fieldLabel}
+        nativeID="tipo-espaco-label"
+        maxFontSizeMultiplier={1.5}
+      >
+        Tipo de espaço
+      </Text>
+
+      <View
+        style={styles.tipoRow}
+        accessibilityRole="radiogroup"
+        accessibilityLabel="Tipo de espaço"
+        aria-labelledby="tipo-espaco-label"
+      >
+        <Pressable
+          style={[
+            styles.tipoCard,
+            tipo === 'PESSOAL' && styles.tipoCardActive,
+          ]}
+          onPress={() => setTipo('PESSOAL')}
+          accessibilityRole="radio"
+          accessibilityState={{ checked: tipo === 'PESSOAL' }}
+          accessibilityLabel="Pessoal. Só você usa. Ideal para sua casa."
+        >
+          <View style={styles.tipoContent}>
+            <Text
+              style={styles.tipoIcon}
+              accessibilityElementsHidden
+              importantForAccessibility="no-hide-descendants"
+            >
+              P
+            </Text>
             <Text
               style={[
                 styles.tipoTitle,
                 tipo === 'PESSOAL' && styles.tipoTitleActive,
               ]}
+              maxFontSizeMultiplier={1.4}
             >
               Pessoal
             </Text>
-            <Text style={styles.tipoDescricao}>
+            <Text style={styles.tipoDescricao} maxFontSizeMultiplier={1.4}>
               Só você usa. Ideal para sua casa.
             </Text>
-          </Pressable>
+          </View>
+        </Pressable>
 
-          <Pressable
-            style={[
-              styles.tipoCard,
-              tipo === 'ORGANIZACAO' && styles.tipoCardActive,
-            ]}
-            onPress={() => setTipo('ORGANIZACAO')}
-          >
-            <Text style={styles.tipoIcon}>O</Text>
+        <Pressable
+          style={[
+            styles.tipoCard,
+            tipo === 'ORGANIZACAO' && styles.tipoCardActive,
+          ]}
+          onPress={() => setTipo('ORGANIZACAO')}
+          accessibilityRole="radio"
+          accessibilityState={{ checked: tipo === 'ORGANIZACAO' }}
+          accessibilityLabel="Organização. Convide colaboradores. Ideal para negócios."
+        >
+          <View style={styles.tipoContent}>
+            <Text
+              style={styles.tipoIcon}
+              accessibilityElementsHidden
+              importantForAccessibility="no-hide-descendants"
+            >
+              O
+            </Text>
             <Text
               style={[
                 styles.tipoTitle,
                 tipo === 'ORGANIZACAO' && styles.tipoTitleActive,
               ]}
+              maxFontSizeMultiplier={1.4}
             >
               Organização
             </Text>
-            <Text style={styles.tipoDescricao}>
+            <Text style={styles.tipoDescricao} maxFontSizeMultiplier={1.4}>
               Convide colaboradores. Ideal para negócios.
             </Text>
-          </Pressable>
-        </View>
-
-        <Pressable
-          style={[styles.submitButton, saving && styles.submitButtonDisabled]}
-          onPress={handleCriar}
-          disabled={saving}
-        >
-          <Text style={styles.submitButtonText}>
-            {saving ? 'Criando...' : 'Criar espaço'}
-          </Text>
+          </View>
         </Pressable>
       </View>
-    </KeyboardAwareScrollView>
-  )
+
+      <Pressable
+        style={[styles.submitButton, saving && styles.submitButtonDisabled]}
+        onPress={handleCriar}
+        disabled={saving}
+        accessibilityRole="button"
+        accessibilityLabel={saving ? 'Criando espaço, aguarde' : 'Criar espaço'}
+        accessibilityState={{ disabled: saving, busy: saving }}
+        hitSlop={8}
+      >
+        <Text style={styles.submitButtonText} maxFontSizeMultiplier={1.4}>
+          {saving ? 'Criando...' : 'Criar espaço'}
+        </Text>
+      </Pressable>
+    </View>
+  </KeyboardAwareScrollView>
+)
 }
 
 const styles = StyleSheet.create({
@@ -144,15 +214,6 @@ const styles = StyleSheet.create({
     padding: 20,
     paddingBottom: 40,
     alignItems: 'center',
-  },
-
-  backButton: {
-    alignSelf: 'flex-start',
-    backgroundColor: colors.text,
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    borderRadius: 12,
-    marginBottom: 20,
   },
 
   backButtonText: {
@@ -204,15 +265,6 @@ const styles = StyleSheet.create({
     marginBottom: 28,
   },
 
-  tipoCard: {
-    flex: 1,
-    borderWidth: 1.5,
-    borderColor: colors.border,
-    borderRadius: 14,
-    padding: 16,
-    alignItems: 'center',
-  },
-
   tipoCardActive: {
     borderColor: colors.primary,
     backgroundColor: colors.accentSoft,
@@ -234,20 +286,6 @@ const styles = StyleSheet.create({
     color: colors.primary,
   },
 
-  tipoDescricao: {
-    fontSize: 11,
-    color: colors.textMuted,
-    textAlign: 'center',
-    lineHeight: 15,
-  },
-
-  submitButton: {
-    backgroundColor: colors.primary,
-    paddingVertical: 15,
-    borderRadius: 12,
-    alignItems: 'center',
-  },
-
   submitButtonDisabled: {
     opacity: 0.6,
   },
@@ -257,4 +295,46 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '700',
   },
+  backButton: {
+    alignSelf: 'flex-start',
+    backgroundColor: colors.text,
+    minHeight: 44,
+    justifyContent: 'center', // novo
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderRadius: 12,
+    marginBottom: 20,
+  },
+
+  tipoCard: {
+    flex: 1,
+    minHeight: 44, // novo
+    borderWidth: 1.5,
+    borderColor: colors.border,
+    borderRadius: 14,
+    padding: 16,
+  },
+
+  // novo: o alignItems saiu do tipoCard e veio para cá
+  tipoContent: {
+    alignItems: 'center',
+    pointerEvents: 'none',
+  },
+
+  tipoDescricao: {
+    fontSize: 12, // era 11
+    color: colors.textMuted,
+    textAlign: 'center',
+    lineHeight: 16,
+  },
+
+  submitButton: {
+    backgroundColor: colors.primary,
+    minHeight: 48, // novo
+    justifyContent: 'center', // novo
+    paddingVertical: 15,
+    borderRadius: 12,
+    alignItems: 'center',
+  },
+
 })
