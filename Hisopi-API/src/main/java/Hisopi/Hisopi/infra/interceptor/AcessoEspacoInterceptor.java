@@ -1,6 +1,5 @@
 package Hisopi.Hisopi.infra.interceptor;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -14,7 +13,6 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.ModelAndView;
 
-import Hisopi.Hisopi.Enum.PapelMembro;
 import Hisopi.Hisopi.infra.exception.AcessoNegadoException;
 import Hisopi.Hisopi.infra.exception.ErrorResponseWriter;
 import Hisopi.Hisopi.model.MembroEspaco;

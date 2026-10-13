@@ -1,6 +1,7 @@
-import { router } from 'expo-router'
-import { useCallback, useEffect, useState } from 'react'
+import { router, useFocusEffect } from 'expo-router'
+import { useCallback, useState } from 'react'
 import {
+  AccessibilityInfo,
   ActivityIndicator,
   FlatList,
   Pressable,
@@ -8,7 +9,6 @@ import {
   Text,
   View,
 } from 'react-native'
-import { useFocusEffect } from 'expo-router'
 
 import { useAuth } from '@/src/context/AuthContext'
 import { useResponsive } from '@/src/hooks/useResponsive'
@@ -31,31 +31,49 @@ export default function EspacosScreen() {
 
   const [espacos, setEspacos] = useState<EspacoComPapel[]>([])
   const [loading, setLoading] = useState(true)
+  const [refreshing, setRefreshing] = useState(false)
+  const [erro, setErro] = useState<string | null>(null)
 
   const load = useCallback(async () => {
     if (!usuario) return
 
     try {
+      setErro(null)
       const data = await listarEspacosDoUsuario()
       setEspacos(data)
     } catch (error) {
       console.log('Erro ao carregar espaços:', error)
+      const mensagem = 'Não foi possível carregar seus espaços. Tente novamente.'
+      setErro(mensagem)
+      AccessibilityInfo.announceForAccessibility(mensagem)
     } finally {
       setLoading(false)
+      setRefreshing(false)
     }
   }, [usuario])
 
-  // Recarrega sempre que a tela ganha foco — importante para refletir
-  // um espaço recém-criado ao voltar de /espacos/novo.
   useFocusEffect(
     useCallback(() => {
       load()
     }, [load])
   )
 
+  const onRefresh = useCallback(() => {
+    setRefreshing(true)
+    load()
+  }, [load])
+
+  const abrirNovoEspaco = () => router.push('/espacos/novo')
+
   if (loading) {
     return (
-      <View style={styles.center}>
+      <View
+        style={styles.center}
+        accessible
+        accessibilityRole="progressbar"
+        accessibilityLabel="Carregando espaços"
+        accessibilityLiveRegion="polite"
+      >
         <ActivityIndicator size="large" color={colors.primary} />
       </View>
     )
@@ -65,35 +83,95 @@ export default function EspacosScreen() {
     <View style={styles.screen}>
       <View style={[styles.header, isDesktop && styles.headerDesktop]}>
         <View>
-          <Text style={styles.title}>Seus espaços</Text>
-          <Text style={styles.subtitle}>
+          <Text
+            style={styles.title}
+            accessibilityRole="header"
+            maxFontSizeMultiplier={1.5}
+          >
+            Seus espaços
+          </Text>
+          <Text style={styles.subtitle} maxFontSizeMultiplier={1.5}>
             Escolha um espaço para gerenciar, ou crie um novo.
           </Text>
         </View>
 
         <Pressable
-          style={styles.newButton}
-          onPress={() => router.push('/espacos/novo')}
+          style={({ pressed }) => [
+            styles.newButton,
+            pressed && styles.pressed,
+          ]}
+          onPress={abrirNovoEspaco}
+          accessibilityRole="button"
+          accessibilityLabel="Criar novo espaço"
+          accessibilityHint="Abre a tela de criação de espaço"
+          hitSlop={8}
         >
-          <Text style={styles.newButtonText}>+ Novo espaço</Text>
+          <Text style={styles.newButtonText} maxFontSizeMultiplier={1.4}>
+            + Novo espaço
+          </Text>
         </Pressable>
       </View>
 
-      {espacos.length === 0 ? (
+      {erro && (
+        <View
+          style={[styles.erroBox, isDesktop && styles.erroBoxDesktop]}
+          accessibilityRole="alert"
+          accessibilityLiveRegion="assertive"
+        >
+          <Text style={styles.erroText} maxFontSizeMultiplier={1.5}>
+            {erro}
+          </Text>
+          <Pressable
+            onPress={onRefresh}
+            style={({ pressed }) => [
+              styles.erroButton,
+              pressed && styles.pressed,
+            ]}
+            accessibilityRole="button"
+            accessibilityLabel="Tentar carregar os espaços novamente"
+            hitSlop={8}
+          >
+            <Text style={styles.erroButtonText} maxFontSizeMultiplier={1.4}>
+              Tentar novamente
+            </Text>
+          </Pressable>
+        </View>
+      )}
+
+      {espacos.length === 0 && !erro ? (
         <View style={styles.empty}>
-          <View style={styles.emptyIcon}>
+          <View
+            style={styles.emptyIcon}
+            accessibilityElementsHidden
+            importantForAccessibility="no-hide-descendants"
+          >
             <Text style={styles.emptyIconText}>+</Text>
           </View>
-          <Text style={styles.emptyTitle}>Nenhum espaço ainda</Text>
-          <Text style={styles.emptyText}>
+          <Text
+            style={styles.emptyTitle}
+            accessibilityRole="header"
+            maxFontSizeMultiplier={1.5}
+          >
+            Nenhum espaço ainda
+          </Text>
+          <Text style={styles.emptyText} maxFontSizeMultiplier={1.5}>
             Crie um espaço pessoal para controlar sua despensa, ou um
             espaço de organização para o seu negócio.
           </Text>
           <Pressable
-            style={styles.emptyButton}
-            onPress={() => router.push('/espacos/novo')}
+            style={({ pressed }) => [
+              styles.emptyButton,
+              pressed && styles.pressed,
+            ]}
+            onPress={abrirNovoEspaco}
+            accessibilityRole="button"
+            accessibilityLabel="Criar meu primeiro espaço"
+            accessibilityHint="Abre a tela de criação de espaço"
+            hitSlop={8}
           >
-            <Text style={styles.emptyButtonText}>Criar meu primeiro espaço</Text>
+            <Text style={styles.emptyButtonText} maxFontSizeMultiplier={1.4}>
+              Criar meu primeiro espaço
+            </Text>
           </Pressable>
         </View>
       ) : (
@@ -107,42 +185,66 @@ export default function EspacosScreen() {
             styles.list,
             isDesktop && styles.listDesktop,
           ]}
-          renderItem={({ item }) => (
-            <Pressable
-              style={[styles.card, isDesktop && styles.cardDesktop]}
-              onPress={() => router.push(`/espacos/${item.id}`)}
-            >
-              <View
-                style={[
-                  styles.cardIcon,
-                  item.tipo === 'ORGANIZACAO' && styles.cardIconOrg,
+          refreshing={refreshing}
+          onRefresh={onRefresh}
+          accessibilityLabel={`Lista de espaços, ${espacos.length} ${
+            espacos.length === 1 ? 'item' : 'itens'
+          }`}
+          renderItem={({ item }) => {
+            const ehOrg = item.tipo === 'ORGANIZACAO'
+            const tipoLabel = ehOrg ? 'Organização' : 'Pessoal'
+            const papelLabel = PAPEL_LABEL[item.papel] ?? item.papel
+
+            return (
+              <Pressable
+                style={({ pressed }) => [
+                  styles.card,
+                  isDesktop && styles.cardDesktop,
+                  pressed && styles.pressed,
                 ]}
+                onPress={() => router.push(`/espacos/${item.id}`)}
+                accessibilityRole="button"
+                accessibilityLabel={`${item.nome}, espaço ${tipoLabel}, seu papel: ${papelLabel}`}
+                accessibilityHint="Abre o espaço"
               >
-                <Text style={styles.cardIconText}>
-                  {item.tipo === 'ORGANIZACAO' ? 'O' : 'P'}
+                <View
+                  style={[styles.cardIcon, ehOrg && styles.cardIconOrg]}
+                  accessibilityElementsHidden
+                  importantForAccessibility="no-hide-descendants"
+                >
+                  <Text style={styles.cardIconText}>{ehOrg ? 'O' : 'P'}</Text>
+                </View>
+
+                <Text
+                  style={styles.cardNome}
+                  numberOfLines={1}
+                  maxFontSizeMultiplier={1.4}
+                >
+                  {item.nome}
                 </Text>
-              </View>
 
-              <Text style={styles.cardNome} numberOfLines={1}>
-                {item.nome}
-              </Text>
-
-              <Text style={styles.cardTipo}>
-                {item.tipo === 'ORGANIZACAO' ? 'Organização' : 'Pessoal'}
-              </Text>
-
-              <View style={styles.papelBadge}>
-                <Text style={styles.papelBadgeText}>
-                  {PAPEL_LABEL[item.papel] ?? item.papel}
+                <Text style={styles.cardTipo} maxFontSizeMultiplier={1.4}>
+                  {tipoLabel}
                 </Text>
-              </View>
-            </Pressable>
-          )}
+
+                <View style={styles.papelBadge}>
+                  <Text
+                    style={styles.papelBadgeText}
+                    maxFontSizeMultiplier={1.3}
+                  >
+                    {papelLabel}
+                  </Text>
+                </View>
+              </Pressable>
+            )
+          }}
         />
       )}
     </View>
   )
 }
+
+const MIN_TOUCH = 44
 
 const styles = StyleSheet.create({
   screen: {
@@ -156,6 +258,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: colors.background,
+  },
+
+  pressed: {
+    opacity: 0.85,
   },
 
   header: {
@@ -185,6 +291,8 @@ const styles = StyleSheet.create({
 
   newButton: {
     backgroundColor: colors.primary,
+    minHeight: MIN_TOUCH,
+    justifyContent: 'center',
     paddingVertical: 12,
     paddingHorizontal: 18,
     borderRadius: 12,
@@ -196,6 +304,41 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontWeight: '700',
     fontSize: 14,
+  },
+
+  erroBox: {
+    backgroundColor: '#FDECEA',
+    borderWidth: 1,
+    borderColor: '#B3261E',
+    borderRadius: 12,
+    padding: 14,
+    marginBottom: 16,
+  },
+
+  erroBoxDesktop: {
+    maxWidth: 1000,
+    width: '100%',
+    alignSelf: 'center',
+  },
+
+  erroText: {
+    color: '#8C1D18',
+    fontSize: 14,
+    fontWeight: '600',
+  },
+
+  erroButton: {
+    minHeight: MIN_TOUCH,
+    justifyContent: 'center',
+    alignSelf: 'flex-start',
+    marginTop: 8,
+  },
+
+  erroButtonText: {
+    color: '#8C1D18',
+    fontSize: 14,
+    fontWeight: '800',
+    textDecorationLine: 'underline',
   },
 
   list: {
@@ -220,6 +363,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.border,
     marginBottom: 16,
+    minHeight: MIN_TOUCH,
   },
 
   cardDesktop: {
@@ -269,7 +413,7 @@ const styles = StyleSheet.create({
   },
 
   papelBadgeText: {
-    fontSize: 11,
+    fontSize: 12, // era 11: legibilidade
     fontWeight: '700',
     color: colors.secondary,
   },
@@ -314,6 +458,8 @@ const styles = StyleSheet.create({
 
   emptyButton: {
     backgroundColor: colors.primary,
+    minHeight: MIN_TOUCH,
+    justifyContent: 'center',
     paddingVertical: 14,
     paddingHorizontal: 24,
     borderRadius: 12,

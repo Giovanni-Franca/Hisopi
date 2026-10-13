@@ -9,15 +9,17 @@ import org.springframework.stereotype.Service;
 import Hisopi.Hisopi.repository.UsuarioRepository;
 
 @Service
-public class AuthorizationService implements UserDetailsService{
+public class AuthorizationService implements UserDetailsService {
 
 	@Autowired
 	UsuarioRepository repU;
-	
+
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		return repU.findByEmail(username);
-		
+		UserDetails user = repU.findByEmail(username);
+		if (user == null) {
+			throw new UsernameNotFoundException("Usuário não encontrado");
+		}
+		return user;
 	}
-	
 }
