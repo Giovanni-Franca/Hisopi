@@ -22,6 +22,9 @@ public class Insumo {
     @JoinColumn(name = "espaco_id", nullable = false)
     private Espaco espaco;
 
+    @Column(nullable = false, unique = true, updatable = false, length = 12)
+    private String serial;
+
     @Column(nullable = false)
     private String nome;
 

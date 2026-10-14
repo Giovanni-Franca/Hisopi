@@ -35,6 +35,7 @@ import Hisopi.Hisopi.repository.EspacoRepository;
 import Hisopi.Hisopi.repository.InsumoRepository;
 import Hisopi.Hisopi.repository.LoteInsumoRepository;
 import Hisopi.Hisopi.repository.MovimentacaoEstoqueRepository;
+import Hisopi.Hisopi.services.SerialInsumoService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
@@ -52,6 +53,8 @@ public class InsumoController {
     private MovimentacaoEstoqueRepository repM;
     @Autowired
     private EspacoRepository repE;
+    @Autowired
+    private SerialInsumoService serialInsumoService;
 
     // =====================================================
     // insumos
@@ -64,6 +67,8 @@ public class InsumoController {
             .orElseThrow(() -> new NaoEncontradoException("Espaço não encontrado"));
 
         Insumo insumo = new Insumo();
+
+        insumo.setSerial(serialInsumoService.gerarSerial());
         insumo.setEspaco(espaco);
         insumo.setNome(dto.nome());
         insumo.setCategoria(dto.categoria());

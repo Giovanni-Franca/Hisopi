@@ -13,4 +13,6 @@ public interface InsumoRepository extends JpaRepository<Insumo, Long> {
     List<Insumo> findByEspacoIdAndAtivoTrue(Long idEspaco);
 
 	Optional<Insumo> findByIdAndEspacoId(Long id, Long idEspaco);
+
+    boolean existsBySerial(String serial);
 }
