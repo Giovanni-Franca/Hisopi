@@ -45,6 +45,7 @@ public class NotificacaoController {
     }
 
 
+/*Endpoint de teste de notificação
     @PostMapping("/verificar")
     public ResponseEntity<String> verificarAgora(
             @PathVariable Long idEspaco) {
@@ -55,6 +56,5 @@ public class NotificacaoController {
         return ResponseEntity.ok(
                 "Verificação concluída. Notificações criadas: " + criadas
         );
-    }
-
+    }*/
 }
