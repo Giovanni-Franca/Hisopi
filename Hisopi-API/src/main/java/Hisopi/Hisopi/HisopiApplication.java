@@ -10,6 +10,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
 @EnableJpaRepositories
+@EnableScheduling
 @ComponentScan
 @EntityScan
 public class HisopiApplication {
