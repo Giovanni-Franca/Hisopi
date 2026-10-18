@@ -1,0 +1,10 @@
+uploads/
+.idea/
+target/
+target/
+*.class
+src/target
+.env
+logs/
+*.postman
+postman/
