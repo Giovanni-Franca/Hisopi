@@ -22,6 +22,7 @@ import Hisopi.Hisopi.model.Espaco;
 import Hisopi.Hisopi.model.Insumo;
 import Hisopi.Hisopi.model.Receita;
 import Hisopi.Hisopi.model.ReceitaInsumo;
+import Hisopi.Hisopi.services.SerialInsumoService;
 import jakarta.persistence.EntityManager;
 
 @DataJpaTest
@@ -46,7 +47,9 @@ class ReceitaInsumoRepositoryTest {
 
     @Autowired
     private EntityManager entityManager;
-
+    @Autowired
+    private SerialInsumoService serialInsumoService;
+    
     private Espaco espaco;
     private Receita bolo;
     private Receita pao;
@@ -85,6 +88,7 @@ class ReceitaInsumoRepositoryTest {
         i.setNome(nome);
         i.setUnidadeMedida("kg");
         i.setEstoqueMinimo(5.0);
+        i.setSerial(serialInsumoService.gerarSerial());
         return insumoRepository.save(i);
     }
 

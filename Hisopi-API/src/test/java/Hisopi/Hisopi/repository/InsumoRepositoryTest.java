@@ -19,6 +19,7 @@ import Hisopi.Hisopi.Enum.TipoEspaco;
 import Hisopi.Hisopi.infra.exception.ErrorResponseWriter;
 import Hisopi.Hisopi.model.Espaco;
 import Hisopi.Hisopi.model.Insumo;
+import Hisopi.Hisopi.services.SerialInsumoService;
 import jakarta.persistence.EntityManager;
 
 @DataJpaTest
@@ -37,7 +38,9 @@ class InsumoRepositoryTest {
 
     @Autowired
     private EntityManager entityManager;
-
+    @Autowired
+    private SerialInsumoService serialInsumoService;
+    
     private Espaco espaco;
     private Espaco outroEspaco;
 
@@ -61,6 +64,7 @@ class InsumoRepositoryTest {
         i.setUnidadeMedida("kg");
         i.setEstoqueMinimo(5.0);
         i.setAtivo(ativo);
+        i.setSerial(serialInsumoService.gerarSerial());
         return i;
     }
 

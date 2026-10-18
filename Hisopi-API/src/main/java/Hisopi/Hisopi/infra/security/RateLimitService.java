@@ -54,5 +54,8 @@ public class RateLimitService {
             return requestInfo.requests <= config.getMaxRequests();
         }
     }
-
+    
+    public void reset() {
+        requests.clear();
+    }
 }

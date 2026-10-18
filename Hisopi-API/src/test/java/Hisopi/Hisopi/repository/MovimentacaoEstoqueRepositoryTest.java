@@ -26,6 +26,7 @@ import Hisopi.Hisopi.model.Insumo;
 import Hisopi.Hisopi.model.LoteInsumo;
 import Hisopi.Hisopi.model.MovimentacaoEstoque;
 import Hisopi.Hisopi.model.Usuario;
+import Hisopi.Hisopi.services.SerialInsumoService;
 import jakarta.persistence.EntityManager;
 
 @DataJpaTest
@@ -53,7 +54,9 @@ class MovimentacaoEstoqueRepositoryTest {
 
     @Autowired
     private EntityManager entityManager;
-
+    @Autowired
+    private SerialInsumoService serialInsumoService;
+    
     private Espaco espaco;
     private Espaco outroEspaco;
     private Insumo farinha;
@@ -90,6 +93,7 @@ class MovimentacaoEstoqueRepositoryTest {
         i.setNome(nome);
         i.setUnidadeMedida("kg");
         i.setEstoqueMinimo(5.0);
+        i.setSerial(serialInsumoService.gerarSerial());
         return insumoRepository.save(i);
     }
 

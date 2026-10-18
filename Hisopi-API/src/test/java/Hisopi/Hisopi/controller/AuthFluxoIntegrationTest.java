@@ -6,6 +6,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -16,6 +17,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 import Hisopi.Hisopi.Enum.UserRole;
+import Hisopi.Hisopi.infra.security.RateLimitService;
 import Hisopi.Hisopi.model.Usuario;
 import Hisopi.Hisopi.repository.UsuarioRepository;
 import tools.jackson.databind.JsonNode;
@@ -39,6 +41,14 @@ class AuthFluxoIntegrationTest {
 	@Autowired
 	private UsuarioRepository usuarioRepository;
 
+	@Autowired
+	private RateLimitService rateLimitService;
+
+	@BeforeEach
+	void limparRateLimit() {
+	    rateLimitService.reset();
+	}
+	
 	private void cadastrar(String nome, String email, String senha) throws Exception {
 		mockMvc.perform(post("/auth/register")
 				.contentType(MediaType.APPLICATION_JSON)
