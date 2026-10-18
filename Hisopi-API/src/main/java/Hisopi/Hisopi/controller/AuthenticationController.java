@@ -17,6 +17,7 @@ import Hisopi.Hisopi.DTO.RefreshTokenDTO;
 import Hisopi.Hisopi.DTO.RegisterDTO;
 import Hisopi.Hisopi.DTO.UsuarioResponseDTO;
 import Hisopi.Hisopi.DTO.authenticationDTO;
+import Hisopi.Hisopi.Enum.UserRole;
 import Hisopi.Hisopi.infra.exception.RegraNegocioException;
 import Hisopi.Hisopi.infra.exception.TokenInvalidoException;
 import Hisopi.Hisopi.infra.security.TokenService;
@@ -53,7 +54,7 @@ public class AuthenticationController {
 		}
 		
 		String encryptedPassword = new BCryptPasswordEncoder().encode(data.senha());
-		Usuario newUser = new Usuario(data.nome(), data.login(), encryptedPassword, data.role());
+		Usuario newUser = new Usuario(data.nome(), data.login(), encryptedPassword, UserRole.USER);
 		
 		this.repU.save(newUser);
 		

@@ -12,12 +12,10 @@ export type Receita = {
 
 export type ReceitaInsumo = {
   id: number
+  idInsumo: number
+  nomeInsumo: string
+  unidadeMedida: string
   quantidadePorUnidade: number
-  insumo: {
-    id: number
-    nome: string
-    unidadeMedida: string
-  }
 }
 
 export type ReceitaPayload = {

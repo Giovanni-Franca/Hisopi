@@ -1,7 +1,18 @@
  package Hisopi.Hisopi.DTO;
 
-import Hisopi.Hisopi.Enum.UserRole;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
-public record RegisterDTO(String nome, String login, String senha, UserRole role) {
+public record RegisterDTO(
+		@NotBlank
+		String nome,
+		@NotBlank
+		@Email
+		String login, 
+		@NotBlank
+		@Size (min = 6)
+		String senha
+		) {
 
 }
