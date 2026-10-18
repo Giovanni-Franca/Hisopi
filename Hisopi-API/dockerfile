@@ -13,3 +13,4 @@ ENTRYPOINT ["java", \
   "-XX:+UseSerialGC", \
   "-Xss512k", \
   "-jar", "app.jar"]
+  
