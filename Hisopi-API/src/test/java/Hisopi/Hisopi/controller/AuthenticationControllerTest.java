@@ -80,7 +80,6 @@ public class AuthenticationControllerTest {
  
 		verify(repU).findByEmail("teste2@gmail.com");
  
-		// confere o que foi persistido: senha nunca em texto puro
 		ArgumentCaptor<Usuario> captor = ArgumentCaptor.forClass(Usuario.class);
 		verify(repU).save(captor.capture());
  
@@ -92,7 +91,6 @@ public class AuthenticationControllerTest {
  
 	@Test
 	void cadastroComDadosInvalidosRetorna400() throws Exception {
-		// ajuste conforme as validações do seu RegisterDTO
 		mockMvc.perform(
 				post("/auth/register")
 				.contentType(MediaType.APPLICATION_JSON)

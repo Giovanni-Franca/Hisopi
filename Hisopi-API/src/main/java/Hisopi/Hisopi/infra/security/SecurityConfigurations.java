@@ -73,6 +73,7 @@ public class SecurityConfigurations {
 				"http://localhost:8081",
 				"http://localhost:5173",
 				"http://localhost:3000",
+				"http://localhost:8090",
 				"https://hisopi-app.vercel.app"
 		));
 

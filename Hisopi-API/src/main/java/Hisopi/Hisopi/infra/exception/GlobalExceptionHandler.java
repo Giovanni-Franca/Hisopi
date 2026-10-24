@@ -8,11 +8,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import Hisopi.Hisopi.DTO.ErrorResponseDTO;
 
@@ -110,5 +112,14 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(DataIntegrityViolationException.class)
 	public ResponseEntity<ErrorResponseDTO> dataIntegrityViolation(DataIntegrityViolationException ex){
 		return montar(HttpStatus.CONFLICT, "complicado");
+	}
+	
+	@ExceptionHandler(NoResourceFoundException.class)
+	public ResponseEntity<ErrorResponseDTO> handleNotFound(NoResourceFoundException ex) {
+		return montar(HttpStatus.NOT_FOUND, "Rercurso não encontrado");
+	}
+	@ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+	public ResponseEntity<ErrorResponseDTO> handleMetodo(HttpRequestMethodNotSupportedException ex) {
+		return montar(HttpStatus.METHOD_NOT_ALLOWED, "Método não permitido");
 	}
 }

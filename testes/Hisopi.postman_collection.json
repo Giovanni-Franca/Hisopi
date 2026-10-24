@@ -1,0 +1,2423 @@
+{
+  "info": {
+    "_postman_id": "fc5f0c43-c62d-48da-9e42-ce54a855fc4a",
+    "name": "Hisopi",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "58901914",
+    "_collection_link": "https://go.postman.co/collection/58901914-fc5f0c43-c62d-48da-9e42-ce54a855fc4a?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "auth",
+      "item": [
+        {
+          "name": "register",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "*/*"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"login\": \"marlene@gmail.com\",\n  \"nome\": \"marlene\",\n  \"senha\": \"12345678\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8080/auth/register",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8080",
+              "path": [
+                "auth",
+                "register"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "OK",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "*/*"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"login\": \"8u38@xCAulWwLjytMvjeTf.bufg\",\n  \"nome\": \"string\",\n  \"senha\": \"string\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/auth/register",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "register"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "text",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "*/*"
+                }
+              ],
+              "cookie": [],
+              "body": "string"
+            }
+          ]
+        },
+        {
+          "name": "register2",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "*/*"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"login\": \"giovannifranca@gmail.com\",\n  \"nome\": \"giovanni\",\n  \"senha\": \"12345678\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/register",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "register"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "OK",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "*/*"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"login\": \"8u38@xCAulWwLjytMvjeTf.bufg\",\n  \"nome\": \"string\",\n  \"senha\": \"string\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/auth/register",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "register"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "text",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "*/*"
+                }
+              ],
+              "cookie": [],
+              "body": "string"
+            }
+          ]
+        },
+        {
+          "name": "login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const res = pm.response.json();\r\npm.collectionVariables.set(\"token\", res.accessToken);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "*/*"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"login\": \"marlene@gmail.com\",\n  \"senha\": \"12345678\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8080/auth/login",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8080",
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "OK",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "*/*"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"login\": \"string\",\n  \"senha\": \"stringstring\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/auth/login",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "login"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "text",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "*/*"
+                }
+              ],
+              "cookie": [],
+              "body": "string"
+            }
+          ]
+        },
+        {
+          "name": "me",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "*/*"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "text"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/me",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "me"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "OK",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "*/*"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "",
+                  "options": {
+                    "raw": {
+                      "language": "text"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/auth/me",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "me"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "text",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "*/*"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"id\": 4446,\n  \"nome\": \"string\",\n  \"email\": \"string\",\n  \"role\": \"ADMIN\"\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "espacos",
+      "item": [
+        {
+          "name": "criar Espaco",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "*/*"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Teste\",\n  \"tipo\": \"PESSOAL\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/espacos",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "espacos"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "OK",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "*/*"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nome\": \"string\",\n  \"tipo\": \"PESSOAL\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/espacos",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "espacos"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "text",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "*/*"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"id\": 4921,\n  \"nome\": \"string\",\n  \"tipo\": \"ORGANIZACAO\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "listar Meus Espacos",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "*/*"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "text"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/espacos/minhas",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "espacos",
+                "minhas"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "OK",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "*/*"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "",
+                  "options": {
+                    "raw": {
+                      "language": "text"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/espacos/minhas",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "espacos",
+                    "minhas"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "text",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "*/*"
+                }
+              ],
+              "cookie": [],
+              "body": "[\n  {\n    \"idEspaco\": 91,\n    \"nome\": \"string\",\n    \"tipo\": \"PESSOAL\",\n    \"meuPapel\": \"DONO\"\n  },\n  {\n    \"idEspaco\": 5469,\n    \"nome\": \"string\",\n    \"tipo\": \"PESSOAL\",\n    \"meuPapel\": \"DONO\"\n  }\n]"
+            }
+          ]
+        },
+        {
+          "name": "buscar Espaco",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "*/*"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "text"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/espacos/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "espacos",
+                "1"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "OK",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "*/*"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "",
+                  "options": {
+                    "raw": {
+                      "language": "text"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/espacos/:idEspaco",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "espacos",
+                    ":idEspaco"
+                  ],
+                  "variable": [
+                    {
+                      "key": "idEspaco",
+                      "value": "920"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "text",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "*/*"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"id\": 4921,\n  \"nome\": \"string\",\n  \"tipo\": \"ORGANIZACAO\"\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "{idEspaco}",
+      "item": [
+        {
+          "name": "insumos",
+          "item": [
+            {
+              "name": "lotes",
+              "item": [
+                {
+                  "name": "registrar Perda",
+                  "request": {
+                    "method": "PUT",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Accept",
+                        "value": "*/*"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"tipo\": \"PERDA_OUTRO\",\n  \"quantidade\": 10.5,\n  \"motivo\": \"string\"\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/espacos/:idEspaco/insumos/lotes/:idLote/perda",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "espacos",
+                        ":idEspaco",
+                        "insumos",
+                        "lotes",
+                        ":idLote",
+                        "perda"
+                      ],
+                      "variable": [
+                        {
+                          "key": "idEspaco",
+                          "value": "1"
+                        },
+                        {
+                          "key": "idLote",
+                          "value": "1"
+                        }
+                      ]
+                    }
+                  },
+                  "response": [
+                    {
+                      "name": "OK",
+                      "originalRequest": {
+                        "method": "PUT",
+                        "header": [
+                          {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                          },
+                          {
+                            "key": "Accept",
+                            "value": "*/*"
+                          }
+                        ],
+                        "body": {
+                          "mode": "raw",
+                          "raw": "{\n  \"tipo\": \"PERDA_OUTRO\",\n  \"quantidade\": 9623.038492909938,\n  \"motivo\": \"string\"\n}",
+                          "options": {
+                            "raw": {
+                              "language": "json"
+                            }
+                          }
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/espacos/:idEspaco/insumos/lotes/:idLote/perda",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "espacos",
+                            ":idEspaco",
+                            "insumos",
+                            "lotes",
+                            ":idLote",
+                            "perda"
+                          ],
+                          "variable": [
+                            {
+                              "key": "idEspaco",
+                              "value": "920"
+                            },
+                            {
+                              "key": "idLote",
+                              "value": "920"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "OK",
+                      "code": 200,
+                      "_postman_previewlanguage": "text",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "*/*"
+                        }
+                      ],
+                      "cookie": [],
+                      "body": "string"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "criar Insumo",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "*/*"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"categoria\": \"string\",\n  \"nome\": \"string\",\n  \"unidadeMedida\": \"string\",\n  \"estoqueMinimo\": 848.657267455566,\n  \"custoUnitario\": 3426.2103758269645\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/espacos/:idEspaco/insumos",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "espacos",
+                    ":idEspaco",
+                    "insumos"
+                  ],
+                  "variable": [
+                    {
+                      "key": "idEspaco",
+                      "value": "1"
+                    }
+                  ]
+                }
+              },
+              "response": [
+                {
+                  "name": "OK",
+                  "originalRequest": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Accept",
+                        "value": "*/*"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"categoria\": \"string\",\n  \"nome\": \"string\",\n  \"unidadeMedida\": \"string\",\n  \"estoqueMinimo\": 848.657267455566,\n  \"custoUnitario\": 3426.2103758269645\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/espacos/:idEspaco/insumos",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "espacos",
+                        ":idEspaco",
+                        "insumos"
+                      ],
+                      "variable": [
+                        {
+                          "key": "idEspaco",
+                          "value": "920"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": "text",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "*/*"
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{\n  \"id\": 9549,\n  \"espaco\": {\n    \"id\": 4466,\n    \"nome\": \"string\",\n    \"tipo\": \"PESSOAL\",\n    \"criadoEm\": \"1972-03-10T01:10:14.145Z\"\n  },\n  \"serial\": \"string\",\n  \"nome\": \"string\",\n  \"categoria\": \"string\",\n  \"unidadeMedida\": \"string\",\n  \"estoqueAtual\": 6996.879991030327,\n  \"estoqueMinimo\": 9591.930382750932,\n  \"custoUnitario\": 4485.269919523157,\n  \"ativo\": true,\n  \"criadoEm\": \"2000-06-09T10:51:01.651Z\"\n}"
+                }
+              ]
+            },
+            {
+              "name": "listar Insumos",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "*/*"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "",
+                  "options": {
+                    "raw": {
+                      "language": "text"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/espacos/:idEspaco/insumos",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "espacos",
+                    ":idEspaco",
+                    "insumos"
+                  ],
+                  "variable": [
+                    {
+                      "key": "idEspaco",
+                      "value": "1"
+                    }
+                  ]
+                }
+              },
+              "response": [
+                {
+                  "name": "OK",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "*/*"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "",
+                      "options": {
+                        "raw": {
+                          "language": "text"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/espacos/:idEspaco/insumos",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "espacos",
+                        ":idEspaco",
+                        "insumos"
+                      ],
+                      "variable": [
+                        {
+                          "key": "idEspaco",
+                          "value": "920"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": "text",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "*/*"
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{}"
+                }
+              ]
+            },
+            {
+              "name": "buscar insumo",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "*/*"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/espacos/:idEspaco/insumos/:id",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "espacos",
+                    ":idEspaco",
+                    "insumos",
+                    ":id"
+                  ],
+                  "variable": [
+                    {
+                      "key": "idEspaco",
+                      "value": "1"
+                    },
+                    {
+                      "key": "id",
+                      "value": "1"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "registrar Entrada",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"dataValidade\": \"2026-12-14\",\r\n  \"quantidade\": 3586.3119372668275,\r\n  \"fornecedor\": \"string\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/espacos/:idEspaco/insumos/:id/lotes",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "espacos",
+                    ":idEspaco",
+                    "insumos",
+                    ":id",
+                    "lotes"
+                  ],
+                  "variable": [
+                    {
+                      "key": "idEspaco",
+                      "value": "1"
+                    },
+                    {
+                      "key": "id",
+                      "value": "1"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "listar Baixo Estoque",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "*/*"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "",
+                  "options": {
+                    "raw": {
+                      "language": "text"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/espacos/:idEspaco/insumos/baixoEstoque",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "espacos",
+                    ":idEspaco",
+                    "insumos",
+                    "baixoEstoque"
+                  ],
+                  "variable": [
+                    {
+                      "key": "idEspaco",
+                      "value": "1"
+                    }
+                  ]
+                }
+              },
+              "response": [
+                {
+                  "name": "OK",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "*/*"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "",
+                      "options": {
+                        "raw": {
+                          "language": "text"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/espacos/:idEspaco/insumos/baixoEstoque",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "espacos",
+                        ":idEspaco",
+                        "insumos",
+                        "baixoEstoque"
+                      ],
+                      "variable": [
+                        {
+                          "key": "idEspaco",
+                          "value": "920"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": "text",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "*/*"
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{}"
+                }
+              ]
+            },
+            {
+              "name": "listar Vencendo",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "*/*"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "",
+                  "options": {
+                    "raw": {
+                      "language": "text"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/espacos/:idEspaco/insumos/vencendo?dias=7",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "espacos",
+                    ":idEspaco",
+                    "insumos",
+                    "vencendo"
+                  ],
+                  "query": [
+                    {
+                      "key": "dias",
+                      "value": "7"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "key": "idEspaco",
+                      "value": "1"
+                    }
+                  ]
+                }
+              },
+              "response": [
+                {
+                  "name": "OK",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "*/*"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "",
+                      "options": {
+                        "raw": {
+                          "language": "text"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/espacos/:idEspaco/insumos/vencendo?dias=7",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "espacos",
+                        ":idEspaco",
+                        "insumos",
+                        "vencendo"
+                      ],
+                      "query": [
+                        {
+                          "key": "dias",
+                          "value": "7"
+                        }
+                      ],
+                      "variable": [
+                        {
+                          "key": "idEspaco",
+                          "value": "920"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": "text",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "*/*"
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{}"
+                }
+              ]
+            },
+            {
+              "name": "registrar Perda",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "*/*"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"quantidade\": 10.5,\r\n  \"tipo\": \"perda_outro\",\r\n  \"motivo\": \"nao\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/espacos/:idEspaco/insumos/lotes/:idLote/perda",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "espacos",
+                    ":idEspaco",
+                    "insumos",
+                    "lotes",
+                    ":idLote",
+                    "perda"
+                  ],
+                  "variable": [
+                    {
+                      "key": "idEspaco",
+                      "value": "1"
+                    },
+                    {
+                      "key": "idLote",
+                      "value": "1"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "listar Movimentacoes Do Insumo",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "*/*"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "",
+                  "options": {
+                    "raw": {
+                      "language": "text"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/espacos/:idEspaco/insumos/:idInsumo/movimentacoes",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "espacos",
+                    ":idEspaco",
+                    "insumos",
+                    ":idInsumo",
+                    "movimentacoes"
+                  ],
+                  "variable": [
+                    {
+                      "key": "idEspaco",
+                      "value": "1"
+                    },
+                    {
+                      "key": "idInsumo",
+                      "value": "1"
+                    }
+                  ]
+                }
+              },
+              "response": [
+                {
+                  "name": "OK",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "*/*"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "",
+                      "options": {
+                        "raw": {
+                          "language": "text"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/espacos/:idEspaco/insumos/:idInsumo/movimentacoes",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "espacos",
+                        ":idEspaco",
+                        "insumos",
+                        ":idInsumo",
+                        "movimentacoes"
+                      ],
+                      "variable": [
+                        {
+                          "key": "idEspaco",
+                          "value": "920"
+                        },
+                        {
+                          "key": "idInsumo",
+                          "value": "920"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": "text",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "*/*"
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "[\n  {\n    \"id\": 2088,\n    \"tipo\": \"ENTRADA\",\n    \"quantidade\": 3151.114836621042,\n    \"motivo\": \"string\",\n    \"dataMovimentacao\": \"2018-07-28T06:29:42.146Z\",\n    \"idInsumo\": 8596,\n    \"nomeInsumo\": \"string\",\n    \"unidadeMedida\": \"string\"\n  },\n  {\n    \"id\": 175,\n    \"tipo\": \"AJUSTE\",\n    \"quantidade\": 4764.030277501392,\n    \"motivo\": \"string\",\n    \"dataMovimentacao\": \"1989-07-10T18:27:35.628Z\",\n    \"idInsumo\": 7893,\n    \"nomeInsumo\": \"string\",\n    \"unidadeMedida\": \"string\"\n  }\n]"
+                }
+              ]
+            },
+            {
+              "name": "desativar Insumo",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "*/*"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/espacos/:idEspaco/insumos/:id",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "espacos",
+                    ":idEspaco",
+                    "insumos",
+                    ":id"
+                  ],
+                  "variable": [
+                    {
+                      "key": "idEspaco",
+                      "value": "1"
+                    },
+                    {
+                      "key": "id",
+                      "value": "1"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "receitas",
+          "item": [
+            {
+              "name": "{id}",
+              "item": [
+                {
+                  "name": "insumos",
+                  "item": [
+                    {
+                      "name": "{idReceitaInsumo}",
+                      "item": [
+                        {
+                          "name": "remover Vinculo",
+                          "request": {
+                            "method": "DELETE",
+                            "header": [],
+                            "body": {
+                              "mode": "raw",
+                              "raw": "",
+                              "options": {
+                                "raw": {
+                                  "language": "text"
+                                }
+                              }
+                            },
+                            "url": {
+                              "raw": "{{baseUrl}}/espacos/:idEspaco/receitas/:id/insumos/:idReceitaInsumo",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "espacos",
+                                ":idEspaco",
+                                "receitas",
+                                ":id",
+                                "insumos",
+                                ":idReceitaInsumo"
+                              ],
+                              "variable": [
+                                {
+                                  "key": "idEspaco",
+                                  "value": "1"
+                                },
+                                {
+                                  "key": "id",
+                                  "value": "1"
+                                },
+                                {
+                                  "key": "idReceitaInsumo",
+                                  "value": "1"
+                                }
+                              ]
+                            }
+                          },
+                          "response": [
+                            {
+                              "name": "OK",
+                              "originalRequest": {
+                                "method": "DELETE",
+                                "header": [],
+                                "body": {
+                                  "mode": "raw",
+                                  "raw": "",
+                                  "options": {
+                                    "raw": {
+                                      "language": "text"
+                                    }
+                                  }
+                                },
+                                "url": {
+                                  "raw": "{{baseUrl}}/espacos/:idEspaco/receitas/:id/insumos/:idReceitaInsumo",
+                                  "host": [
+                                    "{{baseUrl}}"
+                                  ],
+                                  "path": [
+                                    "espacos",
+                                    ":idEspaco",
+                                    "receitas",
+                                    ":id",
+                                    "insumos",
+                                    ":idReceitaInsumo"
+                                  ],
+                                  "variable": [
+                                    {
+                                      "key": "idEspaco",
+                                      "value": "920"
+                                    },
+                                    {
+                                      "key": "id",
+                                      "value": "920"
+                                    },
+                                    {
+                                      "key": "idReceitaInsumo",
+                                      "value": "920"
+                                    }
+                                  ]
+                                }
+                              },
+                              "status": "OK",
+                              "code": 200,
+                              "_postman_previewlanguage": "text",
+                              "header": null,
+                              "cookie": [],
+                              "body": ""
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "name": "listar Ficha Tecnica",
+                      "request": {
+                        "method": "GET",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "*/*"
+                          }
+                        ],
+                        "body": {
+                          "mode": "raw",
+                          "raw": "",
+                          "options": {
+                            "raw": {
+                              "language": "text"
+                            }
+                          }
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/espacos/:idEspaco/receitas/:id/insumos",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "espacos",
+                            ":idEspaco",
+                            "receitas",
+                            ":id",
+                            "insumos"
+                          ],
+                          "variable": [
+                            {
+                              "key": "idEspaco",
+                              "value": "1"
+                            },
+                            {
+                              "key": "id",
+                              "value": "1"
+                            }
+                          ]
+                        }
+                      },
+                      "response": [
+                        {
+                          "name": "OK",
+                          "originalRequest": {
+                            "method": "GET",
+                            "header": [
+                              {
+                                "key": "Accept",
+                                "value": "*/*"
+                              }
+                            ],
+                            "body": {
+                              "mode": "raw",
+                              "raw": "",
+                              "options": {
+                                "raw": {
+                                  "language": "text"
+                                }
+                              }
+                            },
+                            "url": {
+                              "raw": "{{baseUrl}}/espacos/:idEspaco/receitas/:id/insumos",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "espacos",
+                                ":idEspaco",
+                                "receitas",
+                                ":id",
+                                "insumos"
+                              ],
+                              "variable": [
+                                {
+                                  "key": "idEspaco",
+                                  "value": "920"
+                                },
+                                {
+                                  "key": "id",
+                                  "value": "920"
+                                }
+                              ]
+                            }
+                          },
+                          "status": "OK",
+                          "code": 200,
+                          "_postman_previewlanguage": "text",
+                          "header": [
+                            {
+                              "key": "Content-Type",
+                              "value": "*/*"
+                            }
+                          ],
+                          "cookie": [],
+                          "body": "[\n  {\n    \"id\": 8051,\n    \"idInsumo\": 4218,\n    \"nomeInsumo\": \"string\",\n    \"unidadeMedida\": \"string\",\n    \"quantidadePorUnidade\": 6804.912752488211\n  },\n  {\n    \"id\": 7687,\n    \"idInsumo\": 4604,\n    \"nomeInsumo\": \"string\",\n    \"unidadeMedida\": \"string\",\n    \"quantidadePorUnidade\": 2185.0467550546928\n  }\n]"
+                        }
+                      ]
+                    },
+                    {
+                      "name": "vincular Insumo",
+                      "request": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                          },
+                          {
+                            "key": "Accept",
+                            "value": "*/*"
+                          }
+                        ],
+                        "body": {
+                          "mode": "raw",
+                          "raw": "{\n  \"idInsumo\": 1,\n  \"quantidadePorUnidade\": 2090.945414003992\n}",
+                          "options": {
+                            "raw": {
+                              "language": "json"
+                            }
+                          }
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/espacos/:idEspaco/receitas/:id/insumos",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "espacos",
+                            ":idEspaco",
+                            "receitas",
+                            ":id",
+                            "insumos"
+                          ],
+                          "variable": [
+                            {
+                              "key": "idEspaco",
+                              "value": "1"
+                            },
+                            {
+                              "key": "id",
+                              "value": "1"
+                            }
+                          ]
+                        }
+                      },
+                      "response": [
+                        {
+                          "name": "OK",
+                          "originalRequest": {
+                            "method": "POST",
+                            "header": [
+                              {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                              },
+                              {
+                                "key": "Accept",
+                                "value": "*/*"
+                              }
+                            ],
+                            "body": {
+                              "mode": "raw",
+                              "raw": "{\n  \"idInsumo\": 4005,\n  \"quantidadePorUnidade\": 2090.945414003992\n}",
+                              "options": {
+                                "raw": {
+                                  "language": "json"
+                                }
+                              }
+                            },
+                            "url": {
+                              "raw": "{{baseUrl}}/espacos/:idEspaco/receitas/:id/insumos",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "espacos",
+                                ":idEspaco",
+                                "receitas",
+                                ":id",
+                                "insumos"
+                              ],
+                              "variable": [
+                                {
+                                  "key": "idEspaco",
+                                  "value": "920"
+                                },
+                                {
+                                  "key": "id",
+                                  "value": "920"
+                                }
+                              ]
+                            }
+                          },
+                          "status": "OK",
+                          "code": 200,
+                          "_postman_previewlanguage": "text",
+                          "header": [
+                            {
+                              "key": "Content-Type",
+                              "value": "*/*"
+                            }
+                          ],
+                          "cookie": [],
+                          "body": "{\n  \"id\": 8584,\n  \"idInsumo\": 7751,\n  \"nomeInsumo\": \"string\",\n  \"unidadeMedida\": \"string\",\n  \"quantidadePorUnidade\": 3218.8177380858774\n}"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "sugestoes",
+              "item": [
+                {
+                  "name": "sugerir Receitas",
+                  "request": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "*/*"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "",
+                      "options": {
+                        "raw": {
+                          "language": "text"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/espacos/:idEspaco/receitas/sugestoes",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "espacos",
+                        ":idEspaco",
+                        "receitas",
+                        "sugestoes"
+                      ],
+                      "variable": [
+                        {
+                          "key": "idEspaco",
+                          "value": "1"
+                        }
+                      ]
+                    }
+                  },
+                  "response": [
+                    {
+                      "name": "OK",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "*/*"
+                          }
+                        ],
+                        "body": {
+                          "mode": "raw",
+                          "raw": "",
+                          "options": {
+                            "raw": {
+                              "language": "text"
+                            }
+                          }
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/espacos/:idEspaco/receitas/sugestoes",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "espacos",
+                            ":idEspaco",
+                            "receitas",
+                            "sugestoes"
+                          ],
+                          "variable": [
+                            {
+                              "key": "idEspaco",
+                              "value": "920"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "OK",
+                      "code": 200,
+                      "_postman_previewlanguage": "text",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "*/*"
+                        }
+                      ],
+                      "cookie": [],
+                      "body": "[\n  {\n    \"id\": 4059,\n    \"nome\": \"string\",\n    \"tipo\": \"PRODUTO_VENDA\",\n    \"modoPreparo\": \"string\"\n  },\n  {\n    \"id\": 7462,\n    \"nome\": \"string\",\n    \"tipo\": \"SUGESTAO_CONSUMO\",\n    \"modoPreparo\": \"string\"\n  }\n]"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "listar Receitas",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "*/*"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "",
+                  "options": {
+                    "raw": {
+                      "language": "text"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/espacos/:idEspaco/receitas",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "espacos",
+                    ":idEspaco",
+                    "receitas"
+                  ],
+                  "variable": [
+                    {
+                      "key": "idEspaco",
+                      "value": "1"
+                    }
+                  ]
+                }
+              },
+              "response": [
+                {
+                  "name": "OK",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "*/*"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "",
+                      "options": {
+                        "raw": {
+                          "language": "text"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/espacos/:idEspaco/receitas",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "espacos",
+                        ":idEspaco",
+                        "receitas"
+                      ],
+                      "variable": [
+                        {
+                          "key": "idEspaco",
+                          "value": "920"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": "text",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "*/*"
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "[\n  {\n    \"id\": 4059,\n    \"nome\": \"string\",\n    \"tipo\": \"PRODUTO_VENDA\",\n    \"modoPreparo\": \"string\"\n  },\n  {\n    \"id\": 7462,\n    \"nome\": \"string\",\n    \"tipo\": \"SUGESTAO_CONSUMO\",\n    \"modoPreparo\": \"string\"\n  }\n]"
+                }
+              ]
+            },
+            {
+              "name": "criar Receita",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "*/*"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nome\": \"string\",\n  \"tipo\": \"PRODUTO_VENDA\",\n  \"modoPreparo\": \"string\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/espacos/:idEspaco/receitas",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "espacos",
+                    ":idEspaco",
+                    "receitas"
+                  ],
+                  "variable": [
+                    {
+                      "key": "idEspaco",
+                      "value": "1"
+                    }
+                  ]
+                }
+              },
+              "response": [
+                {
+                  "name": "OK",
+                  "originalRequest": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Accept",
+                        "value": "*/*"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"nome\": \"string\",\n  \"tipo\": \"PRODUTO_VENDA\",\n  \"modoPreparo\": \"string\"\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/espacos/:idEspaco/receitas",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "espacos",
+                        ":idEspaco",
+                        "receitas"
+                      ],
+                      "variable": [
+                        {
+                          "key": "idEspaco",
+                          "value": "920"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": "text",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "*/*"
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{\n  \"id\": 2502,\n  \"nome\": \"string\",\n  \"tipo\": \"PRODUTO_VENDA\",\n  \"modoPreparo\": \"string\"\n}"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "membros",
+          "item": [
+            {
+              "name": "listar Membros",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "*/*"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "",
+                  "options": {
+                    "raw": {
+                      "language": "text"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/espacos/:idEspaco/membros",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "espacos",
+                    ":idEspaco",
+                    "membros"
+                  ],
+                  "variable": [
+                    {
+                      "key": "idEspaco",
+                      "value": "1"
+                    }
+                  ]
+                }
+              },
+              "response": [
+                {
+                  "name": "OK",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "*/*"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "",
+                      "options": {
+                        "raw": {
+                          "language": "text"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/espacos/:idEspaco/membros",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "espacos",
+                        ":idEspaco",
+                        "membros"
+                      ],
+                      "variable": [
+                        {
+                          "key": "idEspaco",
+                          "value": "920"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": "text",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "*/*"
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{}"
+                }
+              ]
+            },
+            {
+              "name": "adicionar Membro",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "*/*"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"giovannifranca@gmail.com\",\n  \"papel\": \"OPERADOR\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/espacos/:idEspaco/membros",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "espacos",
+                    ":idEspaco",
+                    "membros"
+                  ],
+                  "variable": [
+                    {
+                      "key": "idEspaco",
+                      "value": "1"
+                    }
+                  ]
+                }
+              },
+              "response": [
+                {
+                  "name": "OK",
+                  "originalRequest": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Accept",
+                        "value": "*/*"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"email\": \"XAyXbtn3@SXUYeAFqQwgpJylOSNSQqsAtfKqpFLKpq.tn\",\n  \"papel\": \"DONO\"\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/espacos/:idEspaco/membros",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "espacos",
+                        ":idEspaco",
+                        "membros"
+                      ],
+                      "variable": [
+                        {
+                          "key": "idEspaco",
+                          "value": "920"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": "text",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "*/*"
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{}"
+                }
+              ]
+            },
+            {
+              "name": "remover Membro",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "*/*"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "",
+                  "options": {
+                    "raw": {
+                      "language": "text"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/espacos/:idEspaco/membros/:idMembro",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "espacos",
+                    ":idEspaco",
+                    "membros",
+                    ":idMembro"
+                  ],
+                  "variable": [
+                    {
+                      "key": "idEspaco",
+                      "value": "1"
+                    },
+                    {
+                      "key": "idMembro",
+                      "value": "2"
+                    }
+                  ]
+                }
+              },
+              "response": [
+                {
+                  "name": "OK",
+                  "originalRequest": {
+                    "method": "DELETE",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "*/*"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "",
+                      "options": {
+                        "raw": {
+                          "language": "text"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/espacos/:idEspaco/membros/:idMembro",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "espacos",
+                        ":idEspaco",
+                        "membros",
+                        ":idMembro"
+                      ],
+                      "variable": [
+                        {
+                          "key": "idEspaco",
+                          "value": "920"
+                        },
+                        {
+                          "key": "idMembro",
+                          "value": "920"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": "text",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "*/*"
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{\n  \"key_0\": \"string\",\n  \"key_1\": \"string\"\n}"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "relatorios",
+          "item": [
+            {
+              "name": "relatorio De Perdas",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "*/*"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "",
+                  "options": {
+                    "raw": {
+                      "language": "text"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/espacos/:idEspaco/relatorios/perdas?inicio=1957-04-01&fim=1957-04-01",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "espacos",
+                    ":idEspaco",
+                    "relatorios",
+                    "perdas"
+                  ],
+                  "query": [
+                    {
+                      "key": "inicio",
+                      "value": "1957-04-01"
+                    },
+                    {
+                      "key": "fim",
+                      "value": "1957-04-01"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "key": "idEspaco",
+                      "value": "1"
+                    }
+                  ]
+                }
+              },
+              "response": [
+                {
+                  "name": "OK",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "*/*"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "",
+                      "options": {
+                        "raw": {
+                          "language": "text"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/espacos/:idEspaco/relatorios/perdas?inicio=1957-04-01&fim=1957-04-01",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "espacos",
+                        ":idEspaco",
+                        "relatorios",
+                        "perdas"
+                      ],
+                      "query": [
+                        {
+                          "key": "inicio",
+                          "value": "1957-04-01"
+                        },
+                        {
+                          "key": "fim",
+                          "value": "1957-04-01"
+                        }
+                      ],
+                      "variable": [
+                        {
+                          "key": "idEspaco",
+                          "value": "920"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": "text",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "*/*"
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{\n  \"perdasPorValidade\": [\n    {\n      \"id\": 1102,\n      \"tipo\": \"ENTRADA\",\n      \"quantidade\": 3320.0498039127415,\n      \"motivo\": \"string\",\n      \"dataMovimentacao\": \"1979-08-23T08:36:12.171Z\",\n      \"idInsumo\": 6063,\n      \"nomeInsumo\": \"string\",\n      \"unidadeMedida\": \"string\"\n    },\n    {\n      \"id\": 196,\n      \"tipo\": \"SAIDA_USO\",\n      \"quantidade\": 6461.782611997964,\n      \"motivo\": \"string\",\n      \"dataMovimentacao\": \"2013-07-24T04:11:10.735Z\",\n      \"idInsumo\": 321,\n      \"nomeInsumo\": \"string\",\n      \"unidadeMedida\": \"string\"\n    }\n  ],\n  \"perdasPorOutroMotivo\": [\n    {\n      \"id\": 7775,\n      \"tipo\": \"AJUSTE\",\n      \"quantidade\": 2373.1381517692275,\n      \"motivo\": \"string\",\n      \"dataMovimentacao\": \"2019-05-25T02:41:39.873Z\",\n      \"idInsumo\": 7964,\n      \"nomeInsumo\": \"string\",\n      \"unidadeMedida\": \"string\"\n    },\n    {\n      \"id\": 871,\n      \"tipo\": \"PERDA_VALIDADE\",\n      \"quantidade\": 2843.4476283317344,\n      \"motivo\": \"string\",\n      \"dataMovimentacao\": \"1975-09-21T18:01:21.790Z\",\n      \"idInsumo\": 5981,\n      \"nomeInsumo\": \"string\",\n      \"unidadeMedida\": \"string\"\n    }\n  ],\n  \"quantidadeTotalPerdida\": 9733.842737317354\n}"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "token",
+      "value": ""
+    },
+    {
+      "key": "idEspaco",
+      "value": ""
+    }
+  ]
+}
