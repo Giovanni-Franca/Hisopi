@@ -1,9 +1,10 @@
+
 import { router, Slot, usePathname, useLocalSearchParams } from 'expo-router'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native'
 
 import { useResponsive } from '@/src/hooks/useResponsive'
-import { colors } from '@/src/theme/colors'
+import { useAccessibility } from '@/src/context/AccessibilityContext'
 import { buscarEspaco, type Espaco } from '@/src/services/espacoService'
 
 type NavItem = {
@@ -18,13 +19,105 @@ const NAV_ITEMS: NavItem[] = [
   { key: 'insumos', label: 'Insumos', getHref: (id) => `/espacos/${id}/insumos` },
   { key: 'receitas', label: 'Receitas', getHref: (id) => `/espacos/${id}/receitas` },
   { key: 'membros', label: 'Membros', getHref: (id) => `/espacos/${id}/membros`, onlyOrg: true },
-  { key: 'relatorios', label: 'Relatórios', getHref: (id) => `/espacos/${id}/relatorios`}
+  { key: 'relatorios', label: 'Relatórios', getHref: (id) => `/espacos/${id}/relatorios` },
 ]
 
 export default function EspacoLayout() {
   const { espacoID } = useLocalSearchParams<{ espacoID: string }>()
   const pathname = usePathname()
   const { isDesktop } = useResponsive()
+  const { colors, fontScale } = useAccessibility()
+
+  const styles = useMemo(
+    () =>
+      StyleSheet.create({
+        loadingContainer: {
+          flex: 1,
+          alignItems: 'center',
+          justifyContent: 'center',
+          backgroundColor: colors.background,
+        },
+        screen: {
+          flex: 1,
+          backgroundColor: colors.background,
+        },
+        screenDesktop: {
+          flexDirection: 'row',
+        },
+        nav: {
+          backgroundColor: colors.surface,
+          borderBottomWidth: 1,
+          borderBottomColor: colors.border,
+          paddingTop: 16,
+          paddingHorizontal: 16,
+          paddingBottom: 8,
+        },
+        navDesktop: {
+          width: 240,
+          borderBottomWidth: 0,
+          borderRightWidth: 1,
+          borderRightColor: colors.border,
+          paddingTop: 24,
+          paddingHorizontal: 20,
+        },
+        exitButton: {
+          marginBottom: 16,
+        },
+        exitButtonText: {
+          fontSize: 13 * fontScale,
+          color: colors.textMuted,
+          fontWeight: '600',
+        },
+        espacoInfo: {
+          marginBottom: 20,
+        },
+        espacoNome: {
+          fontSize: 18 * fontScale,
+          fontWeight: '800',
+          color: colors.text,
+        },
+        espacoTipo: {
+          fontSize: 12 * fontScale,
+          color: colors.primary,
+          fontWeight: '700',
+          marginTop: 2,
+        },
+        navItems: {
+          flexDirection: 'row',
+          gap: 8,
+        },
+        navItemsDesktop: {
+          flexDirection: 'column',
+        },
+        navItem: {
+          paddingVertical: 10,
+          paddingHorizontal: 14,
+          borderRadius: 10,
+        },
+        navItemActive: {
+          backgroundColor: colors.accentSoft,
+        },
+        navItemText: {
+          fontSize: 14 * fontScale,
+          fontWeight: '600',
+          color: colors.textMuted,
+        },
+        navItemTextActive: {
+          color: colors.primary,
+          fontWeight: '700',
+        },
+        content: {
+          flex: 1,
+        },
+        errorText: {
+          color: colors.danger,
+          textAlign: 'center',
+          paddingHorizontal: 24,
+          fontSize: 14 * fontScale,
+        },
+      }),
+    [colors, fontScale],
+  )
 
   const [espaco, setEspaco] = useState<Espaco | null>(null)
   const [loading, setLoading] = useState(true)
@@ -63,23 +156,18 @@ export default function EspacoLayout() {
   if (erro) {
     return (
       <View style={styles.loadingContainer}>
-        <Text style={{ color: colors.danger, textAlign: 'center', paddingHorizontal: 24 }}>
-          {erro}
-        </Text>
+        <Text style={styles.errorText}>{erro}</Text>
       </View>
     )
   }
 
   return (
     <View style={[styles.screen, isDesktop && styles.screenDesktop]}>
-      {/* =====================================================
-          NAVEGAÇÃO DO ESPAÇO (sidebar no desktop, barra no mobile)
-      ===================================================== */}
-
       <View style={[styles.nav, isDesktop && styles.navDesktop]}>
         <Pressable
           style={styles.exitButton}
           onPress={() => router.push('/espacos')}
+          accessibilityRole="button"
         >
           <Text style={styles.exitButtonText}>← Trocar de espaço</Text>
         </Pressable>
@@ -95,7 +183,7 @@ export default function EspacoLayout() {
 
         <View style={[styles.navItems, isDesktop && styles.navItemsDesktop]}>
           {NAV_ITEMS.filter(
-            (item) => !item.onlyOrg || espaco?.tipo === 'ORGANIZACAO'
+            (item) => !item.onlyOrg || espaco?.tipo === 'ORGANIZACAO',
           ).map((item) => {
             const href = item.getHref(espacoID)
             const active = pathname === href
@@ -105,9 +193,14 @@ export default function EspacoLayout() {
                 key={item.key}
                 style={[styles.navItem, active && styles.navItemActive]}
                 onPress={() => router.push(href as any)}
+                accessibilityRole="button"
+                accessibilityState={{ selected: active }}
               >
                 <Text
-                  style={[styles.navItemText, active && styles.navItemTextActive]}
+                  style={[
+                    styles.navItemText,
+                    active && styles.navItemTextActive,
+                  ]}
                 >
                   {item.label}
                 </Text>
@@ -117,110 +210,9 @@ export default function EspacoLayout() {
         </View>
       </View>
 
-      {/* =====================================================
-          CONTEÚDO DA SEÇÃO ATIVA
-      ===================================================== */}
-
       <View style={styles.content}>
         <Slot />
       </View>
     </View>
   )
 }
-
-const styles = StyleSheet.create({
-  loadingContainer: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: colors.background,
-  },
-
-  screen: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
-
-  screenDesktop: {
-    flexDirection: 'row',
-  },
-
-  nav: {
-    backgroundColor: colors.surface,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
-    paddingTop: 16,
-    paddingHorizontal: 16,
-    paddingBottom: 8,
-  },
-
-  navDesktop: {
-    width: 240,
-    borderBottomWidth: 0,
-    borderRightWidth: 1,
-    borderRightColor: colors.border,
-    paddingTop: 24,
-    paddingHorizontal: 20,
-  },
-
-  exitButton: {
-    marginBottom: 16,
-  },
-
-  exitButtonText: {
-    fontSize: 13,
-    color: colors.textMuted,
-    fontWeight: '600',
-  },
-
-  espacoInfo: {
-    marginBottom: 20,
-  },
-
-  espacoNome: {
-    fontSize: 18,
-    fontWeight: '800',
-    color: colors.text,
-  },
-
-  espacoTipo: {
-    fontSize: 12,
-    color: colors.primary,
-    fontWeight: '700',
-    marginTop: 2,
-  },
-
-  navItems: {
-    flexDirection: 'row',
-    gap: 8,
-  },
-
-  navItemsDesktop: {
-    flexDirection: 'column',
-  },
-
-  navItem: {
-    paddingVertical: 10,
-    paddingHorizontal: 14,
-    borderRadius: 10,
-  },
-
-  navItemActive: {
-    backgroundColor: colors.accentSoft,
-  },
-
-  navItemText: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: colors.textMuted,
-  },
-
-  navItemTextActive: {
-    color: colors.primary,
-    fontWeight: '700',
-  },
-
-  content: {
-    flex: 1,
-  },
-})

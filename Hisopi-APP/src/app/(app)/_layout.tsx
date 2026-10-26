@@ -1,11 +1,22 @@
+
 import { Redirect, Slot } from 'expo-router'
 import { ActivityIndicator, StyleSheet, View } from 'react-native'
 
 import { useAuth } from '@/src/context/AuthContext'
-import { colors } from '@/src/theme/colors'
+import { useAccessibility } from '@/src/context/AccessibilityContext'
 
 export default function AppGroupLayout() {
   const { authenticated, loading } = useAuth()
+  const { colors } = useAccessibility()
+
+  const styles = StyleSheet.create({
+    loadingContainer: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: colors.background,
+    },
+  })
 
   if (loading) {
     return (
@@ -21,12 +32,3 @@ export default function AppGroupLayout() {
 
   return <Slot />
 }
-
-const styles = StyleSheet.create({
-  loadingContainer: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: colors.background,
-  },
-})
