@@ -1,7 +1,13 @@
 
 import { router, Slot, usePathname, useLocalSearchParams } from 'expo-router'
 import { useEffect, useMemo, useState } from 'react'
-import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native'
+import {
+  ActivityIndicator,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native'
 
 import { useResponsive } from '@/src/hooks/useResponsive'
 import { useAccessibility } from '@/src/context/AccessibilityContext'
@@ -27,6 +33,10 @@ export default function EspacoLayout() {
   const pathname = usePathname()
   const { isDesktop } = useResponsive()
   const { colors, fontScale } = useAccessibility()
+
+  const [espaco, setEspaco] = useState<Espaco | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [erro, setErro] = useState('')
 
   const styles = useMemo(
     () =>
@@ -61,7 +71,9 @@ export default function EspacoLayout() {
           paddingHorizontal: 20,
         },
         exitButton: {
-          marginBottom: 16,
+          minHeight: 44,
+          justifyContent: 'center',
+          marginBottom: 12,
         },
         exitButtonText: {
           fontSize: 13 * fontScale,
@@ -69,7 +81,7 @@ export default function EspacoLayout() {
           fontWeight: '600',
         },
         espacoInfo: {
-          marginBottom: 20,
+          marginBottom: 16,
         },
         espacoNome: {
           fontSize: 18 * fontScale,
@@ -82,6 +94,23 @@ export default function EspacoLayout() {
           fontWeight: '700',
           marginTop: 2,
         },
+        profileButton: {
+          minHeight: 44,
+          justifyContent: 'center',
+          alignSelf: 'flex-start',
+          backgroundColor: colors.accentSoft,
+          borderWidth: 1,
+          borderColor: colors.border,
+          borderRadius: 10,
+          paddingHorizontal: 14,
+          paddingVertical: 10,
+          marginBottom: 16,
+        },
+        profileButtonText: {
+          color: colors.text,
+          fontSize: 14 * fontScale,
+          fontWeight: '700',
+        },
         navItems: {
           flexDirection: 'row',
           gap: 8,
@@ -93,6 +122,8 @@ export default function EspacoLayout() {
           paddingVertical: 10,
           paddingHorizontal: 14,
           borderRadius: 10,
+          minHeight: 44,
+          justifyContent: 'center',
         },
         navItemActive: {
           backgroundColor: colors.accentSoft,
@@ -119,11 +150,9 @@ export default function EspacoLayout() {
     [colors, fontScale],
   )
 
-  const [espaco, setEspaco] = useState<Espaco | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [erro, setErro] = useState('')
-
   useEffect(() => {
+    let active = true
+
     async function load() {
       if (!espacoID) {
         setErro('Não foi possível identificar o espaço na URL.')
@@ -131,24 +160,43 @@ export default function EspacoLayout() {
         return
       }
 
+      setLoading(true)
+      setErro('')
+
       try {
         const data = await buscarEspaco(espacoID)
-        setEspaco(data)
+
+        if (active) {
+          setEspaco(data)
+        }
       } catch (error) {
         console.log('Erro ao carregar espaço:', error)
-        setErro('Não foi possível carregar este espaço.')
+
+        if (active) {
+          setErro('Não foi possível carregar este espaço.')
+        }
       } finally {
-        setLoading(false)
+        if (active) {
+          setLoading(false)
+        }
       }
     }
 
     load()
+
+    return () => {
+      active = false
+    }
   }, [espacoID])
 
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color={colors.primary} />
+        <ActivityIndicator
+          size="large"
+          color={colors.primary}
+          accessibilityLabel="Carregando espaço"
+        />
       </View>
     )
   }
@@ -156,7 +204,21 @@ export default function EspacoLayout() {
   if (erro) {
     return (
       <View style={styles.loadingContainer}>
-        <Text style={styles.errorText}>{erro}</Text>
+        <Text
+          style={styles.errorText}
+          accessibilityRole="alert"
+          accessibilityLiveRegion="assertive"
+        >
+          {erro}
+        </Text>
+        <Pressable
+          style={styles.profileButton}
+          onPress={() => router.push('/perfil')}
+          accessibilityRole="button"
+          accessibilityLabel="Abrir meu perfil"
+        >
+          <Text style={styles.profileButtonText}>Meu perfil</Text>
+        </Pressable>
       </View>
     )
   }
@@ -168,6 +230,7 @@ export default function EspacoLayout() {
           style={styles.exitButton}
           onPress={() => router.push('/espacos')}
           accessibilityRole="button"
+          accessibilityLabel="Trocar de espaço"
         >
           <Text style={styles.exitButtonText}>← Trocar de espaço</Text>
         </Pressable>
@@ -180,6 +243,16 @@ export default function EspacoLayout() {
             {espaco?.tipo === 'ORGANIZACAO' ? 'Organização' : 'Pessoal'}
           </Text>
         </View>
+
+        <Pressable
+          style={styles.profileButton}
+          onPress={() => router.push('/perfil')}
+          accessibilityRole="button"
+          accessibilityLabel="Abrir meu perfil"
+          accessibilityHint="Abre suas configurações de perfil e acessibilidade"
+        >
+          <Text style={styles.profileButtonText}>Meu perfil</Text>
+        </Pressable>
 
         <View style={[styles.navItems, isDesktop && styles.navItemsDesktop]}>
           {NAV_ITEMS.filter(
@@ -195,6 +268,7 @@ export default function EspacoLayout() {
                 onPress={() => router.push(href as any)}
                 accessibilityRole="button"
                 accessibilityState={{ selected: active }}
+                accessibilityLabel={item.label}
               >
                 <Text
                   style={[

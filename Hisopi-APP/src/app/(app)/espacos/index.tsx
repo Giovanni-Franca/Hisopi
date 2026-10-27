@@ -1,5 +1,6 @@
 import { router, useFocusEffect } from 'expo-router'
-import { useCallback, useState } from 'react'
+import { useMemo, useState, useCallback } from 'react'
+import { useAccessibility } from '@/src/context/AccessibilityContext'
 import {
   AccessibilityInfo,
   ActivityIndicator,
@@ -12,7 +13,6 @@ import {
 
 import { useAuth } from '@/src/context/AuthContext'
 import { useResponsive } from '@/src/hooks/useResponsive'
-import { colors } from '@/src/theme/colors'
 import {
   listarEspacosDoUsuario,
   type EspacoComPapel,
@@ -24,6 +24,10 @@ const PAPEL_LABEL: Record<string, string> = {
   GERENTE: 'Gerente',
   OPERADOR: 'Operador',
 }
+
+const { colors, fontScale } = useAccessibility()
+
+const styles = useMemo(() => createStyles(colors, fontScale), [colors, fontScale])
 
 export default function EspacosScreen() {
   const { usuario } = useAuth()
