@@ -1,5 +1,5 @@
 import { router, useLocalSearchParams, useFocusEffect } from 'expo-router'
-import { useCallback, useState } from 'react'
+import { useCallback, useState, useMemo  } from 'react'
 import {
   ActivityIndicator,
   FlatList,
@@ -11,8 +11,9 @@ import {
   View,
 } from 'react-native'
 
+import { useAccessibility } from '@/src/context/AccessibilityContext'
+
 import { AuthInput } from '@/src/components/auth/AuthInput'
-import { colors } from '@/src/theme/colors'
 import { useResponsive } from '@/src/hooks/useResponsive'
 import {
   listarInsumos,
@@ -36,6 +37,13 @@ export default function InsumoDetalheScreen() {
   const { espacoID, id } = useLocalSearchParams<{ espacoID: string; id: string }>()
 
   const { isDesktop } = useResponsive()
+
+  const { colors, fontScale } = useAccessibility()
+
+  const styles = useMemo(
+    () => createStyles(colors, fontScale),
+    [colors, fontScale],
+  )
 
   const [insumo, setInsumo] = useState<Insumo | null>(null)
   const [lotes, setLotes] = useState<LoteInsumo[]>([])
@@ -158,11 +166,6 @@ export default function InsumoDetalheScreen() {
   return (
     <View style={styles.screen}>
       <View style={styles.content}>
-        {!isDesktop && (
-        <Pressable style={styles.backButton} onPress={() => router.push(`/espacos/${espacoID}` as any)}>
-          <Text style={styles.backButtonText}>Voltar</Text>
-        </Pressable>
-        )}
 
         <Text style={styles.title}>{insumo?.nome ?? 'Insumo'}</Text>
 
@@ -359,207 +362,176 @@ export default function InsumoDetalheScreen() {
   )
 }
 
-const styles = StyleSheet.create({
-  screen: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
-
-  center: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: colors.background,
-  },
-
-  content: {
-    padding: 20,
-    maxWidth: 760,
-    width: '100%',
-    alignSelf: 'center',
-  },
-
-  backButton: {
-    alignSelf: 'flex-start',
-    backgroundColor: colors.text,
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    borderRadius: 12,
-    marginBottom: 20,
-  },
-
-  backButtonText: {
-    color: '#fff',
-    fontWeight: '700',
-  },
-
-  title: {
-    fontSize: 26,
-    fontWeight: '800',
-    color: colors.text,
-  },
-
-  subtitle: {
-    fontSize: 14,
-    color: colors.textMuted,
-    marginTop: 4,
-    marginBottom: 20,
-  },
-
-  addLoteButton: {
-    backgroundColor: colors.primary,
-    paddingVertical: 14,
-    borderRadius: 12,
-    alignItems: 'center',
-    marginBottom: 24,
-  },
-
-  addLoteButtonText: {
-    color: '#fff',
-    fontWeight: '700',
-    fontSize: 15,
-  },
-
-  sectionTitle: {
-    fontSize: 14,
-    fontWeight: '700',
-    color: colors.text,
-    marginBottom: 12,
-  },
-
-  empty: {
-    alignItems: 'center',
-    paddingVertical: 40,
-  },
-
-  emptyText: {
-    color: colors.textMuted,
-    textAlign: 'center',
-  },
-
-  loteCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-    backgroundColor: colors.surface,
-    borderRadius: 14,
-    padding: 16,
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-
-  loteCardVencendo: {
-    borderColor: colors.warning,
-    backgroundColor: colors.warningSoft,
-  },
-
-  loteQuantidade: {
-    fontSize: 16,
-    fontWeight: '800',
-    color: colors.text,
-  },
-
-  loteValidade: {
-    color: colors.textMuted,
-    marginTop: 4,
-    fontSize: 13,
-  },
-
-  loteValidadeAlerta: {
-    color: colors.warning,
-    fontWeight: '700',
-  },
-
-  loteFornecedor: {
-    color: colors.textMuted,
-    marginTop: 2,
-    fontSize: 12,
-  },
-
-  perdaButton: {
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 10,
-    backgroundColor: colors.dangerSoft,
-  },
-
-  perdaButtonText: {
-    color: colors.danger,
-    fontWeight: '700',
-    fontSize: 12,
-  },
-
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.45)',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 24,
-  },
-
-  modalBox: {
-    width: '100%',
-    maxWidth: 400,
-    backgroundColor: '#fff',
-    borderRadius: 18,
-    padding: 24,
-  },
-
-  modalTitle: {
-    fontSize: 20,
-    fontWeight: '800',
-    color: colors.text,
-    marginBottom: 14,
-  },
-
-  modalText: {
-    color: colors.textMuted,
-    lineHeight: 20,
-    marginBottom: 14,
-    fontSize: 14,
-  },
-
-  errorBanner: {
-    backgroundColor: colors.dangerSoft,
-    color: colors.danger,
-    padding: 12,
-    borderRadius: 10,
-    marginBottom: 14,
-    fontSize: 13,
-  },
-
-  modalActions: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    gap: 12,
-    marginTop: 8,
-  },
-
-  cancelButton: {
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderRadius: 12,
-    backgroundColor: colors.background,
-  },
-
-  cancelButtonText: {
-    color: colors.text,
-    fontWeight: '700',
-  },
-
-  confirmButton: {
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderRadius: 12,
-    backgroundColor: colors.primary,
-  },
-
-  confirmButtonText: {
-    color: '#fff',
-    fontWeight: '700',
-  },
-
-  disabledButton: {
-    opacity: 0.6,
-  },
-})
+function createStyles(
+  colors: typeof import('@/src/theme/colors').colors,
+  fontScale: number,
+) {
+  return StyleSheet.create({
+    screen: {
+      flex: 1,
+      backgroundColor: colors.background,
+    },
+    center: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: colors.background,
+    },
+    content: {
+      padding: 20,
+      maxWidth: 760,
+      width: '100%',
+      alignSelf: 'center',
+    },
+    title: {
+      fontSize: 26 * fontScale,
+      fontWeight: '800',
+      color: colors.text,
+    },
+    subtitle: {
+      fontSize: 14 * fontScale,
+      color: colors.textMuted,
+      marginTop: 4,
+      marginBottom: 20,
+    },
+    addLoteButton: {
+      backgroundColor: colors.primary,
+      paddingVertical: 14,
+      borderRadius: 12,
+      alignItems: 'center',
+      marginBottom: 24,
+    },
+    addLoteButtonText: {
+      color: '#fff',
+      fontWeight: '700',
+      fontSize: 15 * fontScale,
+    },
+    sectionTitle: {
+      fontSize: 14 * fontScale,
+      fontWeight: '700',
+      color: colors.text,
+      marginBottom: 12,
+    },
+    empty: {
+      alignItems: 'center',
+      paddingVertical: 40,
+    },
+    emptyText: {
+      color: colors.textMuted,
+      fontSize: 14 * fontScale,
+      textAlign: 'center',
+    },
+    loteCard: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 12,
+      backgroundColor: colors.surface,
+      borderRadius: 14,
+      padding: 16,
+      borderWidth: 1,
+      borderColor: colors.border,
+    },
+    loteCardVencendo: {
+      borderColor: colors.warning,
+      backgroundColor: colors.warningSoft,
+    },
+    loteQuantidade: {
+      fontSize: 16 * fontScale,
+      fontWeight: '800',
+      color: colors.text,
+    },
+    loteValidade: {
+      color: colors.textMuted,
+      marginTop: 4,
+      fontSize: 13 * fontScale,
+    },
+    loteValidadeAlerta: {
+      color: colors.warning,
+      fontWeight: '700',
+    },
+    loteFornecedor: {
+      color: colors.textMuted,
+      marginTop: 2,
+      fontSize: 12 * fontScale,
+    },
+    perdaButton: {
+      paddingHorizontal: 12,
+      paddingVertical: 8,
+      borderRadius: 10,
+      backgroundColor: colors.dangerSoft,
+    },
+    perdaButtonText: {
+      color: colors.danger,
+      fontWeight: '700',
+      fontSize: 12 * fontScale,
+    },
+    modalOverlay: {
+      flex: 1,
+      backgroundColor: 'rgba(0,0,0,0.65)',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: 24,
+    },
+    modalBox: {
+      width: '100%',
+      maxWidth: 400,
+      backgroundColor: colors.surface,
+      borderRadius: 18,
+      padding: 24,
+      borderWidth: 1,
+      borderColor: colors.border,
+    },
+    modalTitle: {
+      fontSize: 20 * fontScale,
+      fontWeight: '800',
+      color: colors.text,
+      marginBottom: 14,
+    },
+    modalText: {
+      color: colors.textMuted,
+      lineHeight: 20 * fontScale,
+      marginBottom: 14,
+      fontSize: 14 * fontScale,
+    },
+    errorBanner: {
+      backgroundColor: colors.dangerSoft,
+      color: colors.danger,
+      padding: 12,
+      borderRadius: 10,
+      marginBottom: 14,
+      fontSize: 13 * fontScale,
+    },
+    modalActions: {
+      flexDirection: 'row',
+      justifyContent: 'flex-end',
+      gap: 12,
+      marginTop: 8,
+      flexWrap: 'wrap',
+    },
+    cancelButton: {
+      paddingVertical: 12,
+      paddingHorizontal: 16,
+      borderRadius: 12,
+      backgroundColor: colors.background,
+    },
+    cancelButtonText: {
+      color: colors.text,
+      fontWeight: '700',
+      fontSize: 14 * fontScale,
+    },
+    confirmButton: {
+      paddingVertical: 12,
+      paddingHorizontal: 16,
+      borderRadius: 12,
+      backgroundColor: colors.primary,
+    },
+    confirmButtonText: {
+      color: '#fff',
+      fontWeight: '700',
+      fontSize: 14 * fontScale,
+    },
+    disabledButton: {
+      opacity: 0.6,
+    },
+  })
+}

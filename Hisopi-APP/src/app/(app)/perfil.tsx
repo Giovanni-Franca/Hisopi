@@ -1,4 +1,4 @@
-import { router } from 'expo-router'
+import { router, useNavigation } from 'expo-router'
 import {
   Pressable,
   ScrollView,
@@ -23,6 +23,7 @@ export default function PerfilScreen() {
     fontScale,
     colors,
   } = useAccessibility()
+  const navigation = useNavigation()
 
   const styles = useMemo(
     () => createStyles(colors, fontScale),
@@ -43,6 +44,22 @@ export default function PerfilScreen() {
       style={styles.screen}
       contentContainerStyle={styles.content}
     >
+      <Pressable
+        onPress={() => {
+          if (navigation.canGoBack()) {
+            router.back()
+          } else {
+            router.replace('/espacos')
+          }
+        }}
+        style={styles.backButton}
+        accessibilityRole="button"
+        accessibilityLabel="Voltar"
+        accessibilityHint="Retorna à tela anterior ou à lista de espaços"
+        hitSlop={8}
+      >
+        <Text style={styles.backButtonText}>← Voltar</Text>
+      </Pressable>
       <View style={[styles.card, isDesktop && styles.cardDesktop]}>
         <View style={styles.avatar}>
           <Text style={styles.avatarText}>{inicial}</Text>
@@ -261,6 +278,22 @@ function createStyles(
       width: '100%',
       marginTop: 28,
       gap: 14,
+    },
+    backButton: {
+      minHeight: 44,
+      alignSelf: 'flex-start',
+      justifyContent: 'center',
+      paddingHorizontal: 12,
+      paddingVertical: 8,
+      borderRadius: 10,
+      borderWidth: 1,
+      borderColor: colors.border,
+      marginBottom: 20,
+    },
+    backButtonText: {
+      color: colors.text,
+      fontSize: 14 * fontScale,
+      fontWeight: '700',
     },
     infoRow: {
       borderBottomWidth: 1,

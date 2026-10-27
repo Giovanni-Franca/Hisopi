@@ -1,5 +1,5 @@
 
-import { router, Slot, usePathname, useLocalSearchParams } from 'expo-router'
+import { router, Slot, usePathname, useLocalSearchParams, useNavigation } from 'expo-router'
 import { useEffect, useMemo, useState } from 'react'
 import {
   ActivityIndicator,
@@ -37,6 +37,8 @@ export default function EspacoLayout() {
   const [espaco, setEspaco] = useState<Espaco | null>(null)
   const [loading, setLoading] = useState(true)
   const [erro, setErro] = useState('')
+
+  const navigation = useNavigation()
 
   const styles = useMemo(
     () =>
@@ -227,12 +229,19 @@ export default function EspacoLayout() {
     <View style={[styles.screen, isDesktop && styles.screenDesktop]}>
       <View style={[styles.nav, isDesktop && styles.navDesktop]}>
         <Pressable
-          style={styles.exitButton}
-          onPress={() => router.push('/espacos')}
+          onPress={() => router.replace(`/espacos/${espacoID}`)}
+          accessibilityRole="button"
+          accessibilityLabel="Início"
+        >
+          <Text>⌂ Início</Text>
+        </Pressable>
+
+        <Pressable
+          onPress={() => router.replace('/espacos')}
           accessibilityRole="button"
           accessibilityLabel="Trocar de espaço"
         >
-          <Text style={styles.exitButtonText}>← Trocar de espaço</Text>
+          <Text>← Trocar de espaço</Text>
         </Pressable>
 
         <View style={styles.espacoInfo}>

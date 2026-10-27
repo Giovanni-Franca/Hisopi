@@ -9,8 +9,9 @@ import {
   View,
 } from 'react-native'
 
+import { useAccessibility } from '@/src/context/AccessibilityContext'
+
 import { useResponsive } from '@/src/hooks/useResponsive'
-import { colors } from '@/src/theme/colors'
 import { listarReceitas, type Receita, type TipoReceita } from '@/src/services/receitaService'
 
 const TIPO_LABEL: Record<TipoReceita, string> = {
@@ -21,6 +22,13 @@ const TIPO_LABEL: Record<TipoReceita, string> = {
 export default function ReceitasScreen() {
   const { espacoID } = useLocalSearchParams<{ espacoID: string }>()
   const { isDesktop } = useResponsive()
+
+  const { colors, fontScale } = useAccessibility()
+
+  const styles = useMemo(
+    () => createStyles(colors, fontScale),
+    [colors, fontScale]
+  )
 
   const [receitas, setReceitas] = useState<Receita[]>([])
   const [loading, setLoading] = useState(true)
@@ -172,175 +180,189 @@ export default function ReceitasScreen() {
   )
 }
 
-const styles = StyleSheet.create({
-  screen: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
+function createStyles(
+  colors: ReturnType<typeof useAccessibility>['colors'],
+  fontScale: number
+) {
+  return StyleSheet.create({
+    screen: {
+      flex: 1,
+      backgroundColor: colors.background,
+    },
 
-  center: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: colors.background,
-  },
+    center: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: colors.background,
+    },
 
-  content: {
-    padding: 20,
-  },
+    content: {
+      padding: 20,
+      paddingBottom: 32,
+    },
 
-  contentDesktop: {
-    maxWidth: 1000,
-    width: '100%',
-    alignSelf: 'center',
-    paddingTop: 32,
-  },
+    contentDesktop: {
+      maxWidth: 1000,
+      width: '100%',
+      alignSelf: 'center',
+      paddingTop: 32,
+    },
 
-  header: {
-    marginBottom: 16,
-  },
+    header: {
+      marginBottom: 16,
+      gap: 12,
+    },
 
-  headerDesktop: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-end',
-  },
+    headerDesktop: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'flex-end',
+      flexWrap: 'wrap',
+    },
 
-  title: {
-    fontSize: 26,
-    fontWeight: '800',
-    color: colors.text,
-  },
+    title: {
+      fontSize: 26 * fontScale,
+      fontWeight: '800',
+      color: colors.text,
+    },
 
-  subtitle: {
-    fontSize: 14,
-    color: colors.textMuted,
-    marginTop: 4,
-  },
+    subtitle: {
+      fontSize: 14 * fontScale,
+      color: colors.textMuted,
+      marginTop: 4,
+    },
 
-  newButton: {
-    backgroundColor: colors.primary,
-    paddingVertical: 12,
-    paddingHorizontal: 18,
-    borderRadius: 12,
-    marginTop: 16,
-    alignSelf: 'flex-start',
-  },
+    newButton: {
+      backgroundColor: colors.primary,
+      paddingVertical: 12,
+      paddingHorizontal: 18,
+      borderRadius: 12,
+      marginTop: 8,
+      alignSelf: 'flex-start',
+    },
 
-  newButtonText: {
-    color: '#fff',
-    fontWeight: '700',
-    fontSize: 14,
-  },
+    newButtonText: {
+      color: '#fff',
+      fontWeight: '700',
+      fontSize: 14 * fontScale,
+    },
 
-  chips: {
-    flexDirection: 'row',
-    gap: 8,
-    marginBottom: 20,
-  },
+    chips: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: 8,
+      marginBottom: 20,
+    },
 
-  chip: {
-    paddingHorizontal: 14,
-    paddingVertical: 8,
-    borderRadius: 999,
-    backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
+    chip: {
+      paddingHorizontal: 14,
+      paddingVertical: 8,
+      borderRadius: 999,
+      backgroundColor: colors.surface,
+      borderWidth: 1,
+      borderColor: colors.border,
+    },
 
-  chipActive: {
-    backgroundColor: colors.text,
-    borderColor: colors.text,
-  },
+    chipActive: {
+      backgroundColor: colors.text,
+      borderColor: colors.text,
+    },
 
-  chipText: {
-    color: colors.textMuted,
-    fontWeight: '600',
-    fontSize: 13,
-  },
+    chipText: {
+      color: colors.textMuted,
+      fontWeight: '600',
+      fontSize: 13 * fontScale,
+    },
 
-  chipTextActive: {
-    color: '#fff',
-  },
+    chipTextActive: {
+      color: '#fff',
+    },
 
-  row: {
-    gap: 16,
-    justifyContent: 'flex-start',
-  },
+    row: {
+      gap: 16,
+      justifyContent: 'flex-start',
+    },
 
-  card: {
-    backgroundColor: colors.surface,
-    borderRadius: 16,
-    padding: 16,
-    borderWidth: 1,
-    borderColor: colors.border,
-    marginBottom: 14,
-  },
+    card: {
+      flex: 1,
+      backgroundColor: colors.surface,
+      borderRadius: 16,
+      padding: 16,
+      borderWidth: 1,
+      borderColor: colors.border,
+      marginBottom: 14,
+      minWidth: 0,
+    },
 
-  cardDesktop: {
-    flex: 1,
-    maxWidth: '32%',
-  },
+    cardDesktop: {
+      maxWidth: '32%',
+    },
 
-  cardNome: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: colors.text,
-  },
+    cardNome: {
+      fontSize: 16 * fontScale,
+      fontWeight: '700',
+      color: colors.text,
+    },
 
-  cardPreparo: {
-    fontSize: 12,
-    color: colors.textMuted,
-    marginTop: 6,
-    marginBottom: 12,
-    lineHeight: 17,
-  },
+    cardPreparo: {
+      fontSize: 12 * fontScale,
+      color: colors.textMuted,
+      marginTop: 6,
+      marginBottom: 12,
+      lineHeight: 17 * fontScale,
+    },
 
-  badge: {
-    alignSelf: 'flex-start',
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 999,
-    marginTop: 8,
-  },
+    badge: {
+      alignSelf: 'flex-start',
+      paddingHorizontal: 10,
+      paddingVertical: 4,
+      borderRadius: 999,
+      marginTop: 8,
+      maxWidth: '100%',
+    },
 
-  badgeVenda: {
-    backgroundColor: colors.accentSoft,
-  },
+    badgeVenda: {
+      backgroundColor: colors.accentSoft,
+    },
 
-  badgeSugestao: {
-    backgroundColor: colors.successSoft,
-  },
+    badgeSugestao: {
+      backgroundColor: colors.successSoft,
+    },
 
-  badgeText: {
-    fontSize: 11,
-    fontWeight: '700',
-  },
+    badgeText: {
+      fontSize: 11 * fontScale,
+      fontWeight: '700',
+    },
 
-  badgeTextVenda: {
-    color: colors.primary,
-  },
+    badgeTextVenda: {
+      color: colors.primary,
+    },
 
-  badgeTextSugestao: {
-    color: colors.success,
-  },
+    badgeTextSugestao: {
+      color: colors.success,
+    },
 
-  empty: {
-    alignItems: 'center',
-    paddingVertical: 60,
-  },
+    empty: {
+      alignItems: 'center',
+      paddingVertical: 60,
+      paddingHorizontal: 16,
+    },
 
-  emptyTitle: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: colors.text,
-    marginBottom: 6,
-  },
+    emptyTitle: {
+      fontSize: 16 * fontScale,
+      fontWeight: '700',
+      color: colors.text,
+      marginBottom: 6,
+      textAlign: 'center',
+    },
 
-  emptyText: {
-    fontSize: 14,
-    color: colors.textMuted,
-    textAlign: 'center',
-    paddingHorizontal: 24,
-  },
-})
+    emptyText: {
+      fontSize: 14 * fontScale,
+      color: colors.textMuted,
+      textAlign: 'center',
+      paddingHorizontal: 8,
+      lineHeight: 20 * fontScale,
+    },
+  })
+}

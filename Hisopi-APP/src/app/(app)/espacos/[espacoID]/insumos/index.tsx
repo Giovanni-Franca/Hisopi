@@ -1,5 +1,6 @@
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router'
 import { useCallback, useMemo, useState } from 'react'
+import { useAccessibility } from '@/src/context/AccessibilityContext'
 import {
   ActivityIndicator,
   FlatList,
@@ -11,7 +12,6 @@ import {
 } from 'react-native'
 
 import { useResponsive } from '@/src/hooks/useResponsive'
-import { colors } from '@/src/theme/colors'
 import {
   listarInsumos,
   listarVencendo,
@@ -28,6 +28,13 @@ function getStockLevel(insumo: Insumo): StockLevel {
 export default function InsumosScreen() {
   const { espacoID } = useLocalSearchParams<{ espacoID: string }>()
   const { isDesktop } = useResponsive()
+
+  const { colors, fontScale } = useAccessibility()
+
+  const styles = useMemo(
+    () => createStyles(colors, fontScale),
+    [colors, fontScale],
+  )
 
   const [insumos, setInsumos] = useState<Insumo[]>([])
   const [lotesVencendo, setLotesVencendo] = useState<LoteInsumo[]>([])
@@ -80,11 +87,6 @@ export default function InsumosScreen() {
     <View style={styles.screen}>
       <View style={[styles.content, isDesktop && styles.contentDesktop]}>
 
-        {!isDesktop && (
-        <Pressable style={styles.backButton} onPress={() => router.push(`/espacos/${espacoID}` as any)}>
-          <Text style={styles.backButtonText}>Voltar</Text>
-        </Pressable>
-        )}
         <View style={[styles.header, isDesktop && styles.headerDesktop]}>
           <View>
             <Text style={styles.title}>Insumos</Text>
@@ -209,234 +211,192 @@ export default function InsumosScreen() {
   )
 }
 
-const styles = StyleSheet.create({
-  screen: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
-
-  center: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: colors.background,
-  },
-
-  content: {
-    padding: 20,
-  },
-
-  contentDesktop: {
-    maxWidth: 1000,
-    width: '100%',
-    alignSelf: 'center',
-    paddingTop: 32,
-  },
-
-  backButton: {
-    alignSelf: 'flex-start',
-    backgroundColor: colors.text,
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    borderRadius: 12,
-    marginBottom: 20,
-  },
-
-  backButtonText: {
-    color: '#fff',
-    fontWeight: '700',
-  },
-
-  header: {
-    marginBottom: 16,
-  },
-
-  headerDesktop: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-end',
-  },
-
-  title: {
-    fontSize: 26,
-    fontWeight: '800',
-    color: colors.text,
-  },
-
-  subtitle: {
-    fontSize: 14,
-    color: colors.textMuted,
-    marginTop: 4,
-  },
-
-  newButton: {
-    backgroundColor: colors.primary,
-    paddingVertical: 12,
-    paddingHorizontal: 18,
-    borderRadius: 12,
-    marginTop: 16,
-    alignSelf: 'flex-start',
-  },
-
-  newButtonText: {
-    color: '#fff',
-    fontWeight: '700',
-    fontSize: 14,
-  },
-
-  alertBanner: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    backgroundColor: colors.warningSoft,
-    padding: 12,
-    borderRadius: 12,
-    marginBottom: 16,
-  },
-
-  alertBannerIcon: {
-    fontSize: 16,
-  },
-
-  alertBannerText: {
-    color: colors.warning,
-    fontWeight: '700',
-    fontSize: 13,
-  },
-
-  toolbar: {
-    marginBottom: 20,
-    gap: 12,
-  },
-
-  toolbarDesktop: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-
-  search: {
-    backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.border,
-    borderRadius: 12,
-    paddingHorizontal: 14,
-    paddingVertical: 12,
-    fontSize: 14,
-    color: colors.text,
-  },
-
-  chips: {
-    flexDirection: 'row',
-    gap: 8,
-  },
-
-  chip: {
-    paddingHorizontal: 14,
-    paddingVertical: 8,
-    borderRadius: 999,
-    backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-
-  chipActive: {
-    backgroundColor: colors.text,
-    borderColor: colors.text,
-  },
-
-  chipText: {
-    color: colors.textMuted,
-    fontWeight: '600',
-    fontSize: 13,
-  },
-
-  chipTextActive: {
-    color: '#fff',
-  },
-
-  row: {
-    gap: 16,
-    justifyContent: 'flex-start',
-  },
-
-  card: {
-    backgroundColor: colors.surface,
-    borderRadius: 16,
-    padding: 16,
-    borderWidth: 1,
-    borderColor: colors.border,
-    marginBottom: 14,
-  },
-
-  cardDesktop: {
-    flex: 1,
-    maxWidth: '32%',
-  },
-
-  cardNome: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: colors.text,
-  },
-
-  cardCategoria: {
-    fontSize: 12,
-    color: colors.textMuted,
-    marginTop: 2,
-  },
-
-  cardQuantidade: {
-    fontSize: 14,
-    color: colors.text,
-    marginTop: 8,
-    marginBottom: 10,
-  },
-
-  badge: {
-    alignSelf: 'flex-start',
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 999,
-  },
-
-  badgeSuccess: {
-    backgroundColor: colors.successSoft,
-  },
-
-  badgeWarning: {
-    backgroundColor: colors.warningSoft,
-  },
-
-  badgeText: {
-    fontSize: 11,
-    fontWeight: '700',
-  },
-
-  badgeTextSuccess: {
-    color: colors.success,
-  },
-
-  badgeTextWarning: {
-    color: colors.warning,
-  },
-
-  empty: {
-    alignItems: 'center',
-    paddingVertical: 60,
-  },
-
-  emptyTitle: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: colors.text,
-    marginBottom: 6,
-  },
-
-  emptyText: {
-    fontSize: 14,
-    color: colors.textMuted,
-    textAlign: 'center',
-    paddingHorizontal: 24,
-  },
-})
+function createStyles(
+  colors: typeof import('@/src/theme/colors').colors,
+  fontScale: number,
+) {
+  return StyleSheet.create({
+    screen: {
+      flex: 1,
+      backgroundColor: colors.background,
+    },
+    center: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: colors.background,
+    },
+    content: {
+      padding: 20,
+    },
+    contentDesktop: {
+      maxWidth: 1000,
+      width: '100%',
+      alignSelf: 'center',
+      paddingTop: 32,
+    },
+    header: {
+      marginBottom: 16,
+      gap: 12,
+    },
+    headerDesktop: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'flex-end',
+    },
+    title: {
+      fontSize: 26 * fontScale,
+      fontWeight: '800',
+      color: colors.text,
+    },
+    subtitle: {
+      fontSize: 14 * fontScale,
+      color: colors.textMuted,
+      marginTop: 4,
+    },
+    newButton: {
+      backgroundColor: colors.primary,
+      paddingVertical: 12,
+      paddingHorizontal: 18,
+      borderRadius: 12,
+      marginTop: 16,
+      alignSelf: 'flex-start',
+    },
+    newButtonText: {
+      color: '#fff',
+      fontWeight: '700',
+      fontSize: 14 * fontScale,
+    },
+    alertBanner: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 8,
+      backgroundColor: colors.warningSoft,
+      padding: 12,
+      borderRadius: 12,
+      marginBottom: 16,
+    },
+    alertBannerIcon: {
+      fontSize: 16 * fontScale,
+    },
+    alertBannerText: {
+      color: colors.warning,
+      fontWeight: '700',
+      fontSize: 13 * fontScale,
+    },
+    toolbar: {
+      marginBottom: 20,
+      gap: 12,
+    },
+    toolbarDesktop: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+    },
+    search: {
+      backgroundColor: colors.surface,
+      borderWidth: 1,
+      borderColor: colors.border,
+      borderRadius: 12,
+      paddingHorizontal: 14,
+      paddingVertical: 12,
+      fontSize: 14 * fontScale,
+      color: colors.text,
+    },
+    chips: {
+      flexDirection: 'row',
+      gap: 8,
+      flexWrap: 'wrap',
+    },
+    chip: {
+      paddingHorizontal: 14,
+      paddingVertical: 8,
+      borderRadius: 999,
+      backgroundColor: colors.surface,
+      borderWidth: 1,
+      borderColor: colors.border,
+    },
+    chipActive: {
+      backgroundColor: colors.text,
+      borderColor: colors.text,
+    },
+    chipText: {
+      color: colors.textMuted,
+      fontWeight: '600',
+      fontSize: 13 * fontScale,
+    },
+    chipTextActive: {
+      color: colors.background,
+    },
+    row: {
+      gap: 16,
+      justifyContent: 'flex-start',
+    },
+    card: {
+      backgroundColor: colors.surface,
+      borderRadius: 16,
+      padding: 16,
+      borderWidth: 1,
+      borderColor: colors.border,
+      marginBottom: 14,
+    },
+    cardDesktop: {
+      flex: 1,
+      maxWidth: '32%',
+    },
+    cardNome: {
+      fontSize: 16 * fontScale,
+      fontWeight: '700',
+      color: colors.text,
+    },
+    cardCategoria: {
+      fontSize: 12 * fontScale,
+      color: colors.textMuted,
+      marginTop: 2,
+    },
+    cardQuantidade: {
+      fontSize: 14 * fontScale,
+      color: colors.text,
+      marginTop: 8,
+      marginBottom: 10,
+    },
+    badge: {
+      alignSelf: 'flex-start',
+      paddingHorizontal: 10,
+      paddingVertical: 4,
+      borderRadius: 999,
+    },
+    badgeSuccess: {
+      backgroundColor: colors.successSoft,
+    },
+    badgeWarning: {
+      backgroundColor: colors.warningSoft,
+    },
+    badgeText: {
+      fontSize: 11 * fontScale,
+      fontWeight: '700',
+    },
+    badgeTextSuccess: {
+      color: colors.success,
+    },
+    badgeTextWarning: {
+      color: colors.warning,
+    },
+    empty: {
+      alignItems: 'center',
+      paddingVertical: 60,
+    },
+    emptyTitle: {
+      fontSize: 16 * fontScale,
+      fontWeight: '700',
+      color: colors.text,
+      marginBottom: 6,
+    },
+    emptyText: {
+      fontSize: 14 * fontScale,
+      color: colors.textMuted,
+      textAlign: 'center',
+      paddingHorizontal: 24,
+    },
+  })
+}

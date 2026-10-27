@@ -25,12 +25,11 @@ const PAPEL_LABEL: Record<string, string> = {
   OPERADOR: 'Operador',
 }
 
-const { colors, fontScale } = useAccessibility()
-
-const styles = useMemo(() => createStyles(colors, fontScale), [colors, fontScale])
-
 export default function EspacosScreen() {
-  const { usuario } = useAuth()
+  const { colors, fontScale } = useAccessibility()
+  const styles = useMemo(() => createStyles(colors, fontScale), [colors, fontScale])
+  
+  const { usuario, logout } = useAuth()
   const { isDesktop } = useResponsive()
 
   const [espacos, setEspacos] = useState<EspacoComPapel[]>([])
@@ -55,6 +54,15 @@ export default function EspacosScreen() {
       setRefreshing(false)
     }
   }, [usuario])
+
+  const sair = useCallback(async () => {
+    try {
+      await logout()
+      router.replace('/login')
+    } catch (error) {
+      console.error('Erro ao sair da conta:', error)
+    }
+  }, [logout])
 
   useFocusEffect(
     useCallback(() => {
@@ -113,6 +121,36 @@ export default function EspacosScreen() {
           <Text style={styles.newButtonText} maxFontSizeMultiplier={1.4}>
             + Novo espaço
           </Text>
+        </Pressable>
+
+        <Pressable
+          style={({ pressed }) => [
+            styles.profileButton,
+            pressed && styles.pressed,
+          ]}
+          onPress={() => router.push('/perfil')}
+          accessibilityRole="button"
+          accessibilityLabel="Abrir meu perfil"
+          accessibilityHint="Abre suas configurações de perfil e acessibilidade"
+          hitSlop={8}
+        >
+          <Text style={styles.profileButtonText}>
+            Meu perfil
+          </Text>
+        </Pressable>
+
+        <Pressable
+          style={({ pressed }) => [
+            styles.profileButton,
+            pressed && styles.pressed,
+          ]}
+          onPress={sair}
+          accessibilityRole="button"
+          accessibilityLabel="Sair da conta"
+          accessibilityHint="Encerra sua sessão e retorna para o login"
+          hitSlop={8}
+        >
+          <Text style={styles.profileButtonText}>Sair</Text>
         </Pressable>
       </View>
 
@@ -250,228 +288,221 @@ export default function EspacosScreen() {
 
 const MIN_TOUCH = 44
 
-const styles = StyleSheet.create({
-  screen: {
-    flex: 1,
-    backgroundColor: colors.background,
-    padding: 20,
-  },
-
-  center: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: colors.background,
-  },
-
-  pressed: {
-    opacity: 0.85,
-  },
-
-  header: {
-    marginBottom: 24,
-  },
-
-  headerDesktop: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-end',
-    maxWidth: 1000,
-    width: '100%',
-    alignSelf: 'center',
-  },
-
-  title: {
-    fontSize: 26,
-    fontWeight: '800',
-    color: colors.text,
-  },
-
-  subtitle: {
-    fontSize: 14,
-    color: colors.textMuted,
-    marginTop: 4,
-  },
-
-  newButton: {
-    backgroundColor: colors.primary,
-    minHeight: MIN_TOUCH,
-    justifyContent: 'center',
-    paddingVertical: 12,
-    paddingHorizontal: 18,
-    borderRadius: 12,
-    marginTop: 16,
-    alignSelf: 'flex-start',
-  },
-
-  newButtonText: {
-    color: '#fff',
-    fontWeight: '700',
-    fontSize: 14,
-  },
-
-  erroBox: {
-    backgroundColor: '#FDECEA',
-    borderWidth: 1,
-    borderColor: '#B3261E',
-    borderRadius: 12,
-    padding: 14,
-    marginBottom: 16,
-  },
-
-  erroBoxDesktop: {
-    maxWidth: 1000,
-    width: '100%',
-    alignSelf: 'center',
-  },
-
-  erroText: {
-    color: '#8C1D18',
-    fontSize: 14,
-    fontWeight: '600',
-  },
-
-  erroButton: {
-    minHeight: MIN_TOUCH,
-    justifyContent: 'center',
-    alignSelf: 'flex-start',
-    marginTop: 8,
-  },
-
-  erroButtonText: {
-    color: '#8C1D18',
-    fontSize: 14,
-    fontWeight: '800',
-    textDecorationLine: 'underline',
-  },
-
-  list: {
-    paddingBottom: 24,
-  },
-
-  listDesktop: {
-    maxWidth: 1000,
-    width: '100%',
-    alignSelf: 'center',
-  },
-
-  row: {
-    gap: 16,
-    justifyContent: 'flex-start',
-  },
-
-  card: {
-    backgroundColor: colors.surface,
-    borderRadius: 18,
-    padding: 20,
-    borderWidth: 1,
-    borderColor: colors.border,
-    marginBottom: 16,
-    minHeight: MIN_TOUCH,
-  },
-
-  cardDesktop: {
-    flex: 1,
-    maxWidth: '32%',
-  },
-
-  cardIcon: {
-    width: 52,
-    height: 52,
-    borderRadius: 14,
-    backgroundColor: colors.accentSoft,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 14,
-  },
-
-  cardIconOrg: {
-    backgroundColor: '#EDE3EF',
-  },
-
-  cardIconText: {
-    fontSize: 24,
-  },
-
-  cardNome: {
-    fontSize: 17,
-    fontWeight: '700',
-    color: colors.text,
-  },
-
-  cardTipo: {
-    fontSize: 13,
-    color: colors.textMuted,
-    marginTop: 2,
-    marginBottom: 12,
-  },
-
-  papelBadge: {
-    alignSelf: 'flex-start',
-    backgroundColor: colors.background,
-    borderWidth: 1,
-    borderColor: colors.border,
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 999,
-  },
-
-  papelBadgeText: {
-    fontSize: 12, // era 11: legibilidade
-    fontWeight: '700',
-    color: colors.secondary,
-  },
-
-  empty: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 32,
-  },
-
-  emptyIcon: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
-    backgroundColor: colors.accentSoft,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 20,
-  },
-
-  emptyIconText: {
-    fontSize: 32,
-    color: colors.primary,
-    fontWeight: '800',
-  },
-
-  emptyTitle: {
-    fontSize: 18,
-    fontWeight: '800',
-    color: colors.text,
-    marginBottom: 8,
-  },
-
-  emptyText: {
-    fontSize: 14,
-    color: colors.textMuted,
-    textAlign: 'center',
-    lineHeight: 21,
-    marginBottom: 24,
-  },
-
-  emptyButton: {
-    backgroundColor: colors.primary,
-    minHeight: MIN_TOUCH,
-    justifyContent: 'center',
-    paddingVertical: 14,
-    paddingHorizontal: 24,
-    borderRadius: 12,
-  },
-
-  emptyButtonText: {
-    color: '#fff',
-    fontWeight: '700',
-    fontSize: 15,
-  },
-})
+function createStyles(
+  colors: typeof import('@/src/theme/colors').colors,
+  fontScale: number,
+) {
+  return StyleSheet.create({
+    screen: {
+      flex: 1,
+      backgroundColor: colors.background,
+      padding: 20,
+    },
+    center: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: colors.background,
+    },
+    pressed: {
+      opacity: 0.85,
+    },
+    header: {
+      marginBottom: 24,
+      gap: 12,
+    },
+    headerDesktop: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'flex-end',
+      maxWidth: 1000,
+      width: '100%',
+      alignSelf: 'center',
+    },
+    title: {
+      fontSize: 26 * fontScale,
+      fontWeight: '800',
+      color: colors.text,
+    },
+    subtitle: {
+      fontSize: 14 * fontScale,
+      color: colors.textMuted,
+      marginTop: 4,
+    },
+    profileButton: {
+      minHeight: 44,
+      justifyContent: 'center',
+      alignSelf: 'flex-start',
+      paddingVertical: 12,
+      paddingHorizontal: 18,
+      borderRadius: 12,
+      borderWidth: 1,
+      borderColor: colors.border,
+      backgroundColor: colors.accentSoft,
+    },
+    profileButtonText: {
+      color: colors.text,
+      fontWeight: '700',
+      fontSize: 14 * fontScale,
+    },
+    newButton: {
+      backgroundColor: colors.primary,
+      minHeight: 44,
+      justifyContent: 'center',
+      paddingVertical: 12,
+      paddingHorizontal: 18,
+      borderRadius: 12,
+      marginTop: 16,
+      alignSelf: 'flex-start',
+    },
+    newButtonText: {
+      color: '#FFFFFF',
+      fontWeight: '700',
+      fontSize: 14 * fontScale,
+    },
+    erroBox: {
+      backgroundColor: colors.dangerSoft,
+      borderWidth: 1,
+      borderColor: colors.danger,
+      borderRadius: 12,
+      padding: 14,
+      marginBottom: 16,
+    },
+    erroBoxDesktop: {
+      maxWidth: 1000,
+      width: '100%',
+      alignSelf: 'center',
+    },
+    erroText: {
+      color: colors.danger,
+      fontSize: 14 * fontScale,
+      fontWeight: '600',
+    },
+    erroButton: {
+      minHeight: 44,
+      justifyContent: 'center',
+      alignSelf: 'flex-start',
+      marginTop: 8,
+    },
+    erroButtonText: {
+      color: colors.danger,
+      fontSize: 14 * fontScale,
+      fontWeight: '800',
+      textDecorationLine: 'underline',
+    },
+    list: {
+      paddingBottom: 24,
+    },
+    listDesktop: {
+      maxWidth: 1000,
+      width: '100%',
+      alignSelf: 'center',
+    },
+    row: {
+      gap: 16,
+      justifyContent: 'flex-start',
+    },
+    card: {
+      backgroundColor: colors.surface,
+      borderRadius: 18,
+      padding: 20,
+      borderWidth: 1,
+      borderColor: colors.border,
+      marginBottom: 16,
+      minHeight: 44,
+    },
+    cardDesktop: {
+      flex: 1,
+      maxWidth: '32%',
+    },
+    cardIcon: {
+      width: 52,
+      height: 52,
+      borderRadius: 14,
+      backgroundColor: colors.accentSoft,
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginBottom: 14,
+    },
+    cardIconOrg: {
+      backgroundColor: colors.surface,
+      borderWidth: 1,
+      borderColor: colors.border,
+    },
+    cardIconText: {
+      fontSize: 24 * fontScale,
+      color: colors.text,
+    },
+    cardNome: {
+      fontSize: 17 * fontScale,
+      fontWeight: '700',
+      color: colors.text,
+    },
+    cardTipo: {
+      fontSize: 13 * fontScale,
+      color: colors.textMuted,
+      marginTop: 2,
+      marginBottom: 12,
+    },
+    papelBadge: {
+      alignSelf: 'flex-start',
+      backgroundColor: colors.background,
+      borderWidth: 1,
+      borderColor: colors.border,
+      paddingHorizontal: 10,
+      paddingVertical: 4,
+      borderRadius: 999,
+    },
+    papelBadgeText: {
+      fontSize: 12 * fontScale,
+      fontWeight: '700',
+      color: colors.text,
+    },
+    empty: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      paddingHorizontal: 32,
+    },
+    emptyIcon: {
+      width: 64,
+      height: 64,
+      borderRadius: 32,
+      backgroundColor: colors.accentSoft,
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginBottom: 20,
+    },
+    emptyIconText: {
+      fontSize: 32 * fontScale,
+      color: colors.text,
+      fontWeight: '800',
+    },
+    emptyTitle: {
+      fontSize: 18 * fontScale,
+      fontWeight: '800',
+      color: colors.text,
+      marginBottom: 8,
+    },
+    emptyText: {
+      fontSize: 14 * fontScale,
+      color: colors.textMuted,
+      textAlign: 'center',
+      lineHeight: 21 * fontScale,
+      marginBottom: 24,
+    },
+    emptyButton: {
+      backgroundColor: colors.primary,
+      minHeight: 44,
+      justifyContent: 'center',
+      paddingVertical: 14,
+      paddingHorizontal: 24,
+      borderRadius: 12,
+    },
+    emptyButtonText: {
+      color: '#FFFFFF',
+      fontWeight: '700',
+      fontSize: 15 * fontScale,
+    },
+  })
+}
