@@ -1,5 +1,6 @@
 import { useLocalSearchParams } from 'expo-router'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useAccessibility } from '@/src/context/AccessibilityContext'
 import {
   ActivityIndicator,
   Pressable,
@@ -10,7 +11,6 @@ import {
 } from 'react-native'
 
 import { AuthInput } from '@/src/components/auth/AuthInput'
-import { colors } from '@/src/theme/colors'
 import {
   listarInsumosResumo,
   listarMovimentacoes,
@@ -67,6 +67,12 @@ export default function MovimentacoesScreen() {
     espacoID: string
     insumoId?: string
   }>()
+  const { colors, fontScale } = useAccessibility()
+
+  const styles = useMemo(
+    () => createStyles(colors, fontScale),
+    [colors, fontScale]
+  )
 
   const [aba, setAba] = useState<Aba>(insumoId ? 'historico' : 'perdas')
 
@@ -242,12 +248,19 @@ export default function MovimentacoesScreen() {
                 itens={relatorio.perdasPorValidade}
                 vazio="Nenhuma perda por validade neste período."
                 mostrarInsumo
+                styles={styles}
+                colors={colors}
+                fontScale={fontScale}
               />
+
               <ListaMovimentacoes
                 titulo="Perdas por outros motivos"
                 itens={relatorio.perdasPorOutroMotivo}
                 vazio="Nenhuma outra perda neste período."
                 mostrarInsumo
+                styles={styles}
+                colors={colors}
+                fontScale={fontScale}
               />
             </>
           )}
@@ -293,6 +306,9 @@ export default function MovimentacoesScreen() {
               itens={movs}
               vazio="Este insumo ainda não tem movimentações."
               unidadePadrao={insumoAtual?.unidadeMedida}
+              styles={styles}
+              colors={colors}
+              fontScale={fontScale}
             />
           )}
 
@@ -315,12 +331,18 @@ function ListaMovimentacoes({
   vazio,
   mostrarInsumo,
   unidadePadrao,
+  styles,
+  colors,
+  fontScale,
 }: {
   titulo: string
   itens: Movimentacao[]
   vazio: string
   mostrarInsumo?: boolean
   unidadePadrao?: string
+  styles: ReturnType<typeof createStyles>
+  colors: typeof import('@/src/theme/colors').colors
+  fontScale: number
 }) {
   return (
     <View style={{ marginTop: 20 }}>
@@ -357,222 +379,200 @@ function ListaMovimentacoes({
   )
 }
 
-const styles = StyleSheet.create({
-  screen: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
-
-  content: {
-    padding: 20,
-    maxWidth: 720,
-    width: '100%',
-    alignSelf: 'center',
-  },
-
-  title: {
-    fontSize: 26,
-    fontWeight: '800',
-    color: colors.text,
-  },
-
-  subtitle: {
-    fontSize: 14,
-    color: colors.textMuted,
-    marginTop: 4,
-    marginBottom: 20,
-  },
-
-  tabs: {
-    flexDirection: 'row',
-    gap: 8,
-    marginBottom: 16,
-  },
-
-  tab: {
-    flex: 1,
-    paddingVertical: 11,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: colors.border,
-    alignItems: 'center',
-  },
-
-  tabActive: {
-    borderColor: colors.primary,
-    backgroundColor: colors.accentSoft,
-  },
-
-  tabText: {
-    fontSize: 13,
-    fontWeight: '700',
-    color: colors.textMuted,
-  },
-
-  tabTextActive: {
-    color: colors.primary,
-  },
-
-  card: {
-    backgroundColor: colors.surface,
-    borderRadius: 14,
-    padding: 16,
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-
-  dateRow: {
-    flexDirection: 'row',
-    gap: 12,
-  },
-
-  fieldLabel: {
-    fontSize: 13,
-    fontWeight: '700',
-    color: colors.text,
-    marginBottom: 10,
-  },
-
-  chipRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8,
-    marginBottom: 12,
-  },
-
-  chip: {
-    paddingVertical: 8,
-    paddingHorizontal: 14,
-    borderRadius: 999,
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-
-  chipActive: {
-    borderColor: colors.primary,
-    backgroundColor: colors.accentSoft,
-  },
-
-  chipText: {
-    fontSize: 12,
-    fontWeight: '700',
-    color: colors.textMuted,
-  },
-
-  chipTextActive: {
-    color: colors.primary,
-  },
-
-  primaryButton: {
-    backgroundColor: colors.primary,
-    paddingVertical: 13,
-    borderRadius: 12,
-    alignItems: 'center',
-  },
-
-  primaryButtonText: {
-    color: '#fff',
-    fontWeight: '700',
-    fontSize: 14,
-  },
-
-  disabledButton: {
-    opacity: 0.6,
-  },
-
-  errorBanner: {
-    backgroundColor: colors.dangerSoft,
-    color: colors.danger,
-    padding: 12,
-    borderRadius: 10,
-    marginVertical: 12,
-    fontSize: 13,
-  },
-
-  totalCard: {
-    marginTop: 16,
-    backgroundColor: colors.dangerSoft,
-    borderRadius: 14,
-    padding: 18,
-  },
-
-  totalLabel: {
-    fontSize: 13,
-    fontWeight: '700',
-    color: colors.danger,
-  },
-
-  totalValue: {
-    fontSize: 32,
-    fontWeight: '800',
-    color: colors.danger,
-    marginTop: 4,
-  },
-
-  totalHint: {
-    fontSize: 12,
-    color: colors.textMuted,
-    marginTop: 4,
-  },
-
-  sectionTitle: {
-    fontSize: 16,
-    fontWeight: '800',
-    color: colors.text,
-    marginBottom: 10,
-  },
-
-  emptyText: {
-    fontSize: 13,
-    color: colors.textMuted,
-    marginTop: 8,
-  },
-
-  movCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-    backgroundColor: colors.surface,
-    borderRadius: 12,
-    padding: 14,
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-
-  movNome: {
-    fontSize: 14,
-    fontWeight: '700',
-    color: colors.text,
-  },
-
-  movTipo: {
-    fontSize: 13,
-    color: colors.text,
-    marginTop: 2,
-  },
-
-  movMotivo: {
-    fontSize: 12,
-    color: colors.textMuted,
-    marginTop: 2,
-  },
-
-  movData: {
-    fontSize: 11,
-    color: colors.textMuted,
-    marginTop: 4,
-  },
-
-  movQtd: {
-    fontSize: 15,
-    fontWeight: '800',
-  },
-
-  qtdEntrada: {
-    color: colors.primary,
-  },
-
-  qtdPerda: {
-    color: colors.danger,
-  },
-})
+function createStyles(
+  colors: typeof import('@/src/theme/colors').colors,
+  fontScale: number
+) {
+  return StyleSheet.create({
+    screen: {
+      flex: 1,
+      backgroundColor: colors.background,
+    },
+    content: {
+      padding: 20,
+      maxWidth: 720,
+      width: '100%',
+      alignSelf: 'center',
+    },
+    title: {
+      fontSize: 26 * fontScale,
+      fontWeight: '800',
+      color: colors.text,
+    },
+    subtitle: {
+      fontSize: 14 * fontScale,
+      color: colors.textMuted,
+      marginTop: 4,
+      marginBottom: 20,
+    },
+    tabs: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: 8,
+      marginBottom: 16,
+    },
+    tab: {
+      flex: 1,
+      minWidth: 140,
+      paddingVertical: 11,
+      borderRadius: 10,
+      borderWidth: 1,
+      borderColor: colors.border,
+      alignItems: 'center',
+    },
+    tabActive: {
+      borderColor: colors.primary,
+      backgroundColor: colors.accentSoft,
+    },
+    tabText: {
+      fontSize: 13 * fontScale,
+      fontWeight: '700',
+      color: colors.textMuted,
+      textAlign: 'center',
+    },
+    tabTextActive: {
+      color: colors.primary,
+    },
+    card: {
+      backgroundColor: colors.surface,
+      borderRadius: 14,
+      padding: 16,
+      borderWidth: 1,
+      borderColor: colors.border,
+    },
+    dateRow: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: 12,
+    },
+    fieldLabel: {
+      fontSize: 13 * fontScale,
+      fontWeight: '700',
+      color: colors.text,
+      marginBottom: 10,
+    },
+    chipRow: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: 8,
+      marginBottom: 12,
+    },
+    chip: {
+      paddingVertical: 8,
+      paddingHorizontal: 14,
+      borderRadius: 999,
+      borderWidth: 1,
+      borderColor: colors.border,
+      backgroundColor: colors.surface,
+    },
+    chipActive: {
+      borderColor: colors.primary,
+      backgroundColor: colors.accentSoft,
+    },
+    chipText: {
+      fontSize: 12 * fontScale,
+      fontWeight: '700',
+      color: colors.textMuted,
+    },
+    chipTextActive: {
+      color: colors.primary,
+    },
+    primaryButton: {
+      backgroundColor: colors.primary,
+      paddingVertical: 13,
+      borderRadius: 12,
+      alignItems: 'center',
+    },
+    primaryButtonText: {
+      color: '#fff',
+      fontWeight: '700',
+      fontSize: 14 * fontScale,
+    },
+    disabledButton: {
+      opacity: 0.6,
+    },
+    errorBanner: {
+      backgroundColor: colors.dangerSoft,
+      color: colors.danger,
+      padding: 12,
+      borderRadius: 10,
+      marginVertical: 12,
+      fontSize: 13 * fontScale,
+    },
+    totalCard: {
+      marginTop: 16,
+      backgroundColor: colors.dangerSoft,
+      borderRadius: 14,
+      padding: 18,
+      borderWidth: 1,
+      borderColor: colors.danger,
+    },
+    totalLabel: {
+      fontSize: 13 * fontScale,
+      fontWeight: '700',
+      color: colors.danger,
+    },
+    totalValue: {
+      fontSize: 32 * fontScale,
+      fontWeight: '800',
+      color: colors.danger,
+      marginTop: 4,
+    },
+    totalHint: {
+      fontSize: 12 * fontScale,
+      color: colors.textMuted,
+      marginTop: 4,
+    },
+    sectionTitle: {
+      fontSize: 16 * fontScale,
+      fontWeight: '800',
+      color: colors.text,
+      marginBottom: 10,
+    },
+    emptyText: {
+      fontSize: 13 * fontScale,
+      color: colors.textMuted,
+      marginTop: 8,
+    },
+    movCard: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 12,
+      backgroundColor: colors.surface,
+      borderRadius: 12,
+      padding: 14,
+      borderWidth: 1,
+      borderColor: colors.border,
+    },
+    movNome: {
+      fontSize: 14 * fontScale,
+      fontWeight: '700',
+      color: colors.text,
+    },
+    movTipo: {
+      fontSize: 13 * fontScale,
+      color: colors.text,
+      marginTop: 2,
+    },
+    movMotivo: {
+      fontSize: 12 * fontScale,
+      color: colors.textMuted,
+      marginTop: 2,
+    },
+    movData: {
+      fontSize: 11 * fontScale,
+      color: colors.textMuted,
+      marginTop: 4,
+    },
+    movQtd: {
+      fontSize: 15 * fontScale,
+      fontWeight: '800',
+    },
+    qtdEntrada: {
+      color: colors.success,
+    },
+    qtdPerda: {
+      color: colors.danger,
+    },
+  })
+}

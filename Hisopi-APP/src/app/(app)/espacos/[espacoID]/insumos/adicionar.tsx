@@ -1,16 +1,23 @@
 import { router, useLocalSearchParams } from 'expo-router'
-import { useState } from 'react'
+import { useState, useMemo  } from 'react'
 import { Pressable, StyleSheet, Text, View } from 'react-native'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
+import { useAccessibility } from '@/src/context/AccessibilityContext'
+
 import { AuthInput } from '@/src/components/auth/AuthInput'
 import { criarInsumo } from '@/src/services/insumoService'
-import { colors } from '@/src/theme/colors'
 import { useResponsive } from '@/src/hooks/useResponsive'
 
 export default function AdicionarInsumoScreen() {
   const { espacoID } = useLocalSearchParams<{ espacoID: string }>()
   const { isDesktop } = useResponsive()
+  const { colors, fontScale } = useAccessibility()
+
+  const styles = useMemo(
+    () => createStyles(colors, fontScale),
+    [colors, fontScale],
+  )
   const [nome, setNome] = useState('')
   const [categoria, setCategoria] = useState('')
   const [unidadeMedida, setUnidadeMedida] = useState('')
@@ -66,14 +73,6 @@ export default function AdicionarInsumoScreen() {
       enableOnAndroid
       keyboardShouldPersistTaps="handled"
     >
-      {!isDesktop && (
-      <Pressable
-        style={styles.backButton}
-        onPress={() => router.push(`/espacos/${espacoID}/insumos` as any)}
-      >
-        <Text style={styles.backButtonText}>Voltar</Text>
-      </Pressable>
-       )}
       <View style={styles.card}>
         <Text style={styles.title}>Cadastrar insumo</Text>
         <Text style={styles.subtitle}>
@@ -135,79 +134,64 @@ export default function AdicionarInsumoScreen() {
   )
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
-
-  content: {
-    flexGrow: 1,
-    padding: 20,
-    paddingBottom: 40,
-    alignItems: 'center',
-  },
-
-  backButton: {
-    alignSelf: 'flex-start',
-    backgroundColor: colors.text,
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    borderRadius: 12,
-    marginBottom: 20,
-  },
-
-  backButtonText: {
-    color: '#fff',
-    fontWeight: '700',
-  },
-
-  card: {
-    width: '100%',
-    maxWidth: 480,
-    backgroundColor: colors.surface,
-    borderRadius: 20,
-    padding: 28,
-  },
-
-  title: {
-    fontSize: 24,
-    fontWeight: '800',
-    color: colors.text,
-    marginBottom: 8,
-  },
-
-  subtitle: {
-    fontSize: 14,
-    color: colors.textMuted,
-    lineHeight: 20,
-    marginBottom: 24,
-  },
-
-  errorBanner: {
-    backgroundColor: colors.dangerSoft,
-    color: colors.danger,
-    padding: 12,
-    borderRadius: 10,
-    marginBottom: 18,
-    fontSize: 14,
-  },
-
-  submitButton: {
-    backgroundColor: colors.primary,
-    paddingVertical: 15,
-    borderRadius: 12,
-    alignItems: 'center',
-    marginTop: 8,
-  },
-
-  submitButtonDisabled: {
-    opacity: 0.6,
-  },
-
-  submitButtonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '700',
-  },
-})
+function createStyles(
+  colors: typeof import('@/src/theme/colors').colors,
+  fontScale: number,
+) {
+  return StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: colors.background,
+    },
+    content: {
+      flexGrow: 1,
+      padding: 20,
+      paddingBottom: 40,
+      alignItems: 'center',
+    },
+    card: {
+      width: '100%',
+      maxWidth: 480,
+      backgroundColor: colors.surface,
+      borderRadius: 20,
+      padding: 28,
+      borderWidth: 1,
+      borderColor: colors.border,
+    },
+    title: {
+      fontSize: 24 * fontScale,
+      fontWeight: '800',
+      color: colors.text,
+      marginBottom: 8,
+    },
+    subtitle: {
+      fontSize: 14 * fontScale,
+      color: colors.textMuted,
+      lineHeight: 20 * fontScale,
+      marginBottom: 24,
+    },
+    errorBanner: {
+      backgroundColor: colors.dangerSoft,
+      color: colors.danger,
+      padding: 12,
+      borderRadius: 10,
+      marginBottom: 18,
+      fontSize: 14 * fontScale,
+    },
+    submitButton: {
+      backgroundColor: colors.primary,
+      paddingVertical: 15,
+      borderRadius: 12,
+      alignItems: 'center',
+      marginTop: 8,
+    },
+    submitButtonDisabled: {
+      opacity: 0.6,
+    },
+    submitButtonText: {
+      color: '#fff',
+      fontSize: 16 * fontScale,
+      fontWeight: '700',
+    },
+  })
+}

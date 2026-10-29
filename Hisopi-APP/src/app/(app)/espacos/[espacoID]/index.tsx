@@ -1,5 +1,6 @@
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router'
-import { useCallback, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
+import { useAccessibility } from '@/src/context/AccessibilityContext'
 import {
   ActivityIndicator,
   Pressable,
@@ -9,7 +10,6 @@ import {
 } from 'react-native'
 
 import { useResponsive } from '@/src/hooks/useResponsive'
-import { colors } from '@/src/theme/colors'
 import {
   listarInsumos,
   listarBaixoEstoque,
@@ -28,6 +28,13 @@ function diasAteVencimento(dataValidade: string) {
 export default function EspacoDashboardScreen() {
   const { espacoID } = useLocalSearchParams<{ espacoID: string }>()
   const { isDesktop } = useResponsive()
+
+  const { colors, fontScale } = useAccessibility()
+
+  const styles = useMemo(
+    () => createStyles(colors, fontScale),
+    [colors, fontScale],
+  )
 
   const [totalInsumos, setTotalInsumos] = useState(0)
   const [baixoEstoque, setBaixoEstoque] = useState<Insumo[]>([])
@@ -184,138 +191,121 @@ export default function EspacoDashboardScreen() {
   )
 }
 
-const styles = StyleSheet.create({
-  screen: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
-
-  center: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: colors.background,
-  },
-
-  content: {
-    padding: 20,
-  },
-
-  contentDesktop: {
-    maxWidth: 900,
-    width: '100%',
-    alignSelf: 'center',
-    paddingTop: 32,
-  },
-
-  title: {
-    fontSize: 26,
-    fontWeight: '800',
-    color: colors.text,
-  },
-
-  subtitle: {
-    fontSize: 14,
-    color: colors.textMuted,
-    marginTop: 4,
-    marginBottom: 24,
-  },
-
-  statsRow: {
-    gap: 12,
-    marginBottom: 24,
-  },
-
-  statsRowDesktop: {
-    flexDirection: 'row',
-  },
-
-  statCard: {
-    backgroundColor: colors.surface,
-    borderRadius: 16,
-    padding: 20,
-    borderWidth: 1,
-    borderColor: colors.border,
-    marginBottom: 12,
-  },
-
-  statCardDesktop: {
-    flex: 1,
-    marginBottom: 0,
-  },
-
-  statCardWarning: {
-    borderColor: colors.warning,
-    backgroundColor: colors.warningSoft,
-  },
-
-  statValue: {
-    fontSize: 32,
-    fontWeight: '800',
-    color: colors.text,
-  },
-
-  statValueWarning: {
-    color: colors.warning,
-  },
-
-  statLabel: {
-    fontSize: 13,
-    color: colors.textMuted,
-    marginTop: 4,
-  },
-
-  panels: {
-    gap: 16,
-  },
-
-  panelsDesktop: {
-    flexDirection: 'row',
-  },
-
-  panel: {
-    backgroundColor: colors.surface,
-    borderRadius: 16,
-    padding: 20,
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-
-  panelDesktop: {
-    flex: 1,
-  },
-
-  panelTitle: {
-    fontSize: 15,
-    fontWeight: '700',
-    color: colors.text,
-    marginBottom: 14,
-  },
-
-  panelEmpty: {
-    fontSize: 13,
-    color: colors.textMuted,
-  },
-
-  panelRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.background,
-  },
-
-  panelRowNome: {
-    fontSize: 14,
-    color: colors.text,
-    flex: 1,
-    marginRight: 8,
-  },
-
-  panelRowInfo: {
-    fontSize: 12,
-    fontWeight: '700',
-    color: colors.secondary,
-  },
-})
+function createStyles(
+  colors: typeof import('@/src/theme/colors').colors,
+  fontScale: number,
+) {
+  return StyleSheet.create({
+    screen: {
+      flex: 1,
+      backgroundColor: colors.background,
+    },
+    center: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: colors.background,
+    },
+    content: {
+      padding: 20,
+    },
+    contentDesktop: {
+      maxWidth: 900,
+      width: '100%',
+      alignSelf: 'center',
+      paddingTop: 32,
+    },
+    title: {
+      fontSize: 26 * fontScale,
+      fontWeight: '800',
+      color: colors.text,
+    },
+    subtitle: {
+      fontSize: 14 * fontScale,
+      color: colors.textMuted,
+      marginTop: 4,
+      marginBottom: 24,
+    },
+    statsRow: {
+      gap: 12,
+      marginBottom: 24,
+    },
+    statsRowDesktop: {
+      flexDirection: 'row',
+    },
+    statCard: {
+      backgroundColor: colors.surface,
+      borderRadius: 16,
+      padding: 20,
+      borderWidth: 1,
+      borderColor: colors.border,
+      marginBottom: 12,
+    },
+    statCardDesktop: {
+      flex: 1,
+      marginBottom: 0,
+    },
+    statCardWarning: {
+      borderColor: colors.warning,
+      backgroundColor: colors.warningSoft,
+    },
+    statValue: {
+      fontSize: 32 * fontScale,
+      fontWeight: '800',
+      color: colors.text,
+    },
+    statValueWarning: {
+      color: colors.warning,
+    },
+    statLabel: {
+      fontSize: 13 * fontScale,
+      color: colors.textMuted,
+      marginTop: 4,
+    },
+    panels: {
+      gap: 16,
+    },
+    panelsDesktop: {
+      flexDirection: 'row',
+    },
+    panel: {
+      backgroundColor: colors.surface,
+      borderRadius: 16,
+      padding: 20,
+      borderWidth: 1,
+      borderColor: colors.border,
+    },
+    panelDesktop: {
+      flex: 1,
+    },
+    panelTitle: {
+      fontSize: 15 * fontScale,
+      fontWeight: '700',
+      color: colors.text,
+      marginBottom: 14,
+    },
+    panelEmpty: {
+      fontSize: 13 * fontScale,
+      color: colors.textMuted,
+    },
+    panelRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      paddingVertical: 10,
+      borderBottomWidth: 1,
+      borderBottomColor: colors.background,
+    },
+    panelRowNome: {
+      fontSize: 14 * fontScale,
+      color: colors.text,
+      flex: 1,
+      marginRight: 8,
+    },
+    panelRowInfo: {
+      fontSize: 12 * fontScale,
+      fontWeight: '700',
+      color: colors.secondary,
+    },
+  })
+}

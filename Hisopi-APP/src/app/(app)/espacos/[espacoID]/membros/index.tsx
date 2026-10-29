@@ -1,5 +1,6 @@
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router'
-import { useCallback, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
+import { useAccessibility } from '@/src/context/AccessibilityContext'
 import {
   ActivityIndicator,
   FlatList,
@@ -12,7 +13,6 @@ import {
 
 import { useAuth } from '@/src/context/AuthContext'
 import { AuthInput } from '@/src/components/auth/AuthInput'
-import { colors } from '@/src/theme/colors'
 import { buscarEspaco, type PapelMembro } from '@/src/services/espacoService'
 import {
   listarMembros,
@@ -34,6 +34,13 @@ const PAPEIS_CONVITE: PapelMembro[] = ['ADMIN', 'GERENTE', 'OPERADOR']
 export default function MembrosScreen() {
   const { espacoID } = useLocalSearchParams<{ espacoID: string }>()
   const { usuario } = useAuth()
+
+  const { colors, fontScale } = useAccessibility()
+
+  const styles = useMemo(
+    () => createStyles(colors, fontScale),
+    [colors, fontScale]
+  )
 
   const [tipoEspaco, setTipoEspaco] = useState<'PESSOAL' | 'ORGANIZACAO' | null>(null)
   const [membros, setMembros] = useState<MembroEspaco[]>([])
@@ -287,255 +294,270 @@ export default function MembrosScreen() {
   )
 }
 
-const styles = StyleSheet.create({
-  screen: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
+function createStyles(
+  colors: typeof import('@/src/theme/colors').colors,
+  fontScale: number
+) {
+  return StyleSheet.create({
+    screen: {
+      flex: 1,
+      backgroundColor: colors.background,
+    },
 
-  center: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: colors.background,
-    padding: 24,
-  },
+    center: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: colors.background,
+      padding: 24,
+    },
 
-  content: {
-    padding: 20,
-    maxWidth: 720,
-    width: '100%',
-    alignSelf: 'center',
-  },
+    content: {
+      padding: 20,
+      maxWidth: 720,
+      width: '100%',
+      alignSelf: 'center',
+    },
 
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-end',
-    marginBottom: 20,
-  },
+    header: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'flex-end',
+      marginBottom: 20,
+      gap: 12,
+    },
 
-  title: {
-    fontSize: 26,
-    fontWeight: '800',
-    color: colors.text,
-  },
+    title: {
+      fontSize: 26 * fontScale,
+      fontWeight: '800',
+      color: colors.text,
+    },
 
-  subtitle: {
-    fontSize: 14,
-    color: colors.textMuted,
-    marginTop: 4,
-  },
+    subtitle: {
+      fontSize: 14 * fontScale,
+      color: colors.textMuted,
+      marginTop: 4,
+    },
 
-  newButton: {
-    backgroundColor: colors.primary,
-    paddingVertical: 12,
-    paddingHorizontal: 18,
-    borderRadius: 12,
-  },
+    newButton: {
+      backgroundColor: colors.primary,
+      paddingVertical: 12,
+      paddingHorizontal: 18,
+      borderRadius: 12,
+    },
 
-  newButtonText: {
-    color: '#fff',
-    fontWeight: '700',
-    fontSize: 14,
-  },
+    newButtonText: {
+      color: '#fff',
+      fontWeight: '700',
+      fontSize: 14 * fontScale,
+    },
 
-  membroCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-    backgroundColor: colors.surface,
-    borderRadius: 14,
-    padding: 14,
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
+    membroCard: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      flexWrap: 'wrap',
+      gap: 12,
+      backgroundColor: colors.surface,
+      borderRadius: 14,
+      padding: 14,
+      borderWidth: 1,
+      borderColor: colors.border,
+    },
 
-  avatar: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: colors.primary,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
+    avatar: {
+      width: 44,
+      height: 44,
+      borderRadius: 22,
+      backgroundColor: colors.primary,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
 
-  avatarText: {
-    color: '#fff',
-    fontSize: 17,
-    fontWeight: '800',
-  },
+    avatarText: {
+      color: '#fff',
+      fontSize: 17 * fontScale,
+      fontWeight: '800',
+    },
 
-  membroNome: {
-    fontSize: 14,
-    fontWeight: '700',
-    color: colors.text,
-  },
+    membroNome: {
+      fontSize: 14 * fontScale,
+      fontWeight: '700',
+      color: colors.text,
+    },
 
-  membroEmail: {
-    fontSize: 12,
-    color: colors.textMuted,
-    marginTop: 2,
-  },
+    membroEmail: {
+      fontSize: 12 * fontScale,
+      color: colors.textMuted,
+      marginTop: 2,
+    },
 
-  papelBadge: {
-    backgroundColor: colors.accentSoft,
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: 999,
-  },
+    papelBadge: {
+      backgroundColor: colors.accentSoft,
+      paddingHorizontal: 10,
+      paddingVertical: 5,
+      borderRadius: 999,
+    },
 
-  papelBadgeText: {
-    fontSize: 11,
-    fontWeight: '700',
-    color: colors.primary,
-  },
+    papelBadgeText: {
+      fontSize: 11 * fontScale,
+      fontWeight: '700',
+      color: colors.primary,
+    },
 
-  removeButton: {
-    paddingHorizontal: 12,
-    paddingVertical: 7,
-    borderRadius: 9,
-    backgroundColor: colors.dangerSoft,
-  },
+    removeButton: {
+      paddingHorizontal: 12,
+      paddingVertical: 7,
+      borderRadius: 9,
+      backgroundColor: colors.dangerSoft,
+    },
 
-  removeButtonText: {
-    color: colors.danger,
-    fontWeight: '700',
-    fontSize: 12,
-  },
+    removeButtonText: {
+      color: colors.danger,
+      fontWeight: '700',
+      fontSize: 12 * fontScale,
+    },
 
-  blockedTitle: {
-    fontSize: 18,
-    fontWeight: '800',
-    color: colors.text,
-    marginBottom: 8,
-  },
+    blockedTitle: {
+      fontSize: 18 * fontScale,
+      fontWeight: '800',
+      color: colors.text,
+      marginBottom: 8,
+    },
 
-  blockedText: {
-    fontSize: 14,
-    color: colors.textMuted,
-    textAlign: 'center',
-    marginBottom: 24,
-  },
+    blockedText: {
+      fontSize: 14 * fontScale,
+      color: colors.textMuted,
+      textAlign: 'center',
+      marginBottom: 24,
+    },
 
-  blockedButton: {
-    backgroundColor: colors.primary,
-    paddingVertical: 14,
-    paddingHorizontal: 24,
-    borderRadius: 12,
-  },
+    blockedButton: {
+      backgroundColor: colors.primary,
+      paddingVertical: 14,
+      paddingHorizontal: 24,
+      borderRadius: 12,
+    },
 
-  blockedButtonText: {
-    color: '#fff',
-    fontWeight: '700',
-  },
+    blockedButtonText: {
+      color: '#fff',
+      fontWeight: '700',
+      fontSize: 14 * fontScale,
+    },
 
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.45)',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 24,
-  },
+    modalOverlay: {
+      flex: 1,
+      backgroundColor: 'rgba(0,0,0,0.65)',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: 24,
+    },
 
-  modalBox: {
-    width: '100%',
-    maxWidth: 420,
-    backgroundColor: '#fff',
-    borderRadius: 18,
-    padding: 24,
-  },
+    modalBox: {
+      width: '100%',
+      maxWidth: 420,
+      backgroundColor: colors.surface,
+      borderRadius: 18,
+      padding: 24,
+      borderWidth: 1,
+      borderColor: colors.border,
+    },
 
-  modalTitle: {
-    fontSize: 20,
-    fontWeight: '800',
-    color: colors.text,
-    marginBottom: 4,
-  },
+    modalTitle: {
+      fontSize: 20 * fontScale,
+      fontWeight: '800',
+      color: colors.text,
+      marginBottom: 4,
+    },
 
-  modalSubtitle: {
-    fontSize: 13,
-    color: colors.textMuted,
-    marginBottom: 18,
-  },
+    modalSubtitle: {
+      fontSize: 13 * fontScale,
+      color: colors.textMuted,
+      marginBottom: 18,
+    },
 
-  errorBanner: {
-    backgroundColor: colors.dangerSoft,
-    color: colors.danger,
-    padding: 12,
-    borderRadius: 10,
-    marginBottom: 14,
-    fontSize: 13,
-  },
+    errorBanner: {
+      backgroundColor: colors.dangerSoft,
+      color: colors.danger,
+      padding: 12,
+      borderRadius: 10,
+      marginBottom: 14,
+      fontSize: 13 * fontScale,
+    },
 
-  fieldLabel: {
-    fontSize: 13,
-    fontWeight: '700',
-    color: colors.text,
-    marginBottom: 10,
-  },
+    fieldLabel: {
+      fontSize: 13 * fontScale,
+      fontWeight: '700',
+      color: colors.text,
+      marginBottom: 10,
+    },
 
-  papelRow: {
-    flexDirection: 'row',
-    gap: 8,
-    marginBottom: 20,
-  },
+    papelRow: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: 8,
+      marginBottom: 20,
+    },
 
-  papelOption: {
-    flex: 1,
-    paddingVertical: 10,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: colors.border,
-    alignItems: 'center',
-  },
+    papelOption: {
+      flex: 1,
+      minWidth: 75,
+      paddingVertical: 10,
+      borderRadius: 10,
+      borderWidth: 1,
+      borderColor: colors.border,
+      alignItems: 'center',
+    },
 
-  papelOptionActive: {
-    borderColor: colors.primary,
-    backgroundColor: colors.accentSoft,
-  },
+    papelOptionActive: {
+      borderColor: colors.primary,
+      backgroundColor: colors.accentSoft,
+    },
 
-  papelOptionText: {
-    fontSize: 12,
-    fontWeight: '700',
-    color: colors.textMuted,
-  },
+    papelOptionText: {
+      fontSize: 12 * fontScale,
+      fontWeight: '700',
+      color: colors.textMuted,
+    },
 
-  papelOptionTextActive: {
-    color: colors.primary,
-  },
+    papelOptionTextActive: {
+      color: colors.primary,
+    },
 
-  modalActions: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    gap: 12,
-  },
+    modalActions: {
+      flexDirection: 'row',
+      justifyContent: 'flex-end',
+      flexWrap: 'wrap',
+      gap: 12,
+    },
 
-  cancelButton: {
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderRadius: 12,
-    backgroundColor: colors.background,
-  },
+    cancelButton: {
+      paddingVertical: 12,
+      paddingHorizontal: 16,
+      borderRadius: 12,
+      backgroundColor: colors.background,
+    },
 
-  cancelButtonText: {
-    color: colors.text,
-    fontWeight: '700',
-  },
+    cancelButtonText: {
+      color: colors.text,
+      fontWeight: '700',
+      fontSize: 14 * fontScale,
+    },
 
-  confirmButton: {
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderRadius: 12,
-    backgroundColor: colors.primary,
-  },
+    confirmButton: {
+      paddingVertical: 12,
+      paddingHorizontal: 16,
+      borderRadius: 12,
+      backgroundColor: colors.primary,
+    },
 
-  confirmButtonText: {
-    color: '#fff',
-    fontWeight: '700',
-  },
+    confirmButtonText: {
+      color: '#fff',
+      fontWeight: '700',
+      fontSize: 14 * fontScale,
+    },
 
-  disabledButton: {
-    opacity: 0.6,
-  },
-})
+    disabledButton: {
+      opacity: 0.6,
+    },
+  })
+}
