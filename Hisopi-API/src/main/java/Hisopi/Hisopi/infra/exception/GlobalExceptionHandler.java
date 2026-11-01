@@ -17,10 +17,11 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import Hisopi.Hisopi.DTO.ErrorResponseDTO;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-
 	private ResponseEntity<ErrorResponseDTO> montar(HttpStatus status, String mensagem){
 		return ResponseEntity.status(status).body(new ErrorResponseDTO(
 				status.value(), 
@@ -28,6 +29,7 @@ public class GlobalExceptionHandler {
 				mensagem
 				));
 	}
+	
 	
 	@ExceptionHandler (RegraNegocioException.class)
 	public ResponseEntity<ErrorResponseDTO> tratarRegraNegocio(RegraNegocioException ex){
@@ -111,6 +113,7 @@ public class GlobalExceptionHandler {
 	
 	@ExceptionHandler(DataIntegrityViolationException.class)
 	public ResponseEntity<ErrorResponseDTO> dataIntegrityViolation(DataIntegrityViolationException ex){
+	    log.error("Violação de integridade: {}", ex.getMostSpecificCause().getMessage(), ex);
 		return montar(HttpStatus.CONFLICT, "complicado");
 	}
 	
