@@ -59,8 +59,8 @@ public class ApiKeyController {
     @AcessoEspaco(papelMinimo = PapelMembro.DONO)
     public List<Map<String, Object>> listar(@PathVariable Long idEspaco) {
         return repK.findByEspacoId(idEspaco).stream().map(k -> Map.<String, Object>of(
-            "id", k.getId(), "nome", k.getNome(), "prefixo", k.getPrefixo(),
-            "papel", k.getPapel(), "ativa", k.isAtiva(),
+            "id", k.getId(), "nome", k.getNome(),
+            "ativa", k.isAtiva(),
             "ultimoUso", String.valueOf(k.getUltimoUso()))).toList();
     }
 
