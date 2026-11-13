@@ -37,6 +37,7 @@ import Hisopi.Hisopi.repository.LoteInsumoRepository;
 import Hisopi.Hisopi.repository.MovimentacaoEstoqueRepository;
 import Hisopi.Hisopi.services.SerialInsumoService;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 
 
@@ -127,7 +128,7 @@ public class InsumoController {
 
     @DeleteMapping("/{id}")
     @AcessoEspaco(papelMinimo = PapelMembro.GERENTE)
-    public ResponseEntity<String> desativarInsumo(
+    public ResponseEntity<Void> desativarInsumo(
             @PathVariable Long idEspaco, @PathVariable Long id) {
 
         Optional<Insumo> insumoOpt = repI.findByIdAndEspacoId(id, idEspaco);
@@ -155,6 +156,7 @@ public class InsumoController {
     // lotes
     // =====================================================
 
+    @Transactional
     @PostMapping("/{id}/lotes")
     @AcessoEspaco(papelMinimo = PapelMembro.GERENTE)
     public ResponseEntity<LoteInsumo> registrarEntrada(
@@ -201,9 +203,10 @@ public class InsumoController {
         return ResponseEntity.ok(repL.buscarVencidosOuVencendo(idEspaco, limite));
     }
 
+    @Transactional
     @PutMapping("/lotes/{idLote}/perda")
     @AcessoEspaco(papelMinimo = PapelMembro.GERENTE)
-    public ResponseEntity<String> registrarPerda(
+    public ResponseEntity<Void> registrarPerda(
             @PathVariable Long idEspaco, @PathVariable Long idLote,
             @RequestBody @Valid PerdaDTO dto) {
 

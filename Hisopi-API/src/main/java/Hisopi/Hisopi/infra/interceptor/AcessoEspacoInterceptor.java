@@ -13,6 +13,8 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.ModelAndView;
 
+import Hisopi.Hisopi.infra.ApiKey.ApiKeyAuthenticationToken;
+import Hisopi.Hisopi.infra.ApiKey.ApiKeyPrincipal;
 import Hisopi.Hisopi.infra.exception.AcessoNegadoException;
 import Hisopi.Hisopi.infra.exception.ErrorResponseWriter;
 import Hisopi.Hisopi.model.MembroEspaco;
@@ -52,10 +54,10 @@ public class AcessoEspacoInterceptor implements HandlerInterceptor{
 		}
 		
 		var auth = SecurityContextHolder.getContext().getAuthentication();
-		if (auth == null || !(auth.getPrincipal() instanceof Usuario usuarioLogado)) {
-			errorResponseWriter.write(response,HttpStatus.UNAUTHORIZED,"UNAUTHORIZED","Usuário não autenticado");
-            return false;
-        }
+		if (auth == null) {
+			errorResponseWriter.write(response, HttpStatus.UNAUTHORIZED, "UNAUTHORIZED", "Usuário não autenticado");
+	        return false;
+	    }
 		
 		@SuppressWarnings("unchecked")
 		Map<String, String> pathVars = (Map<String, String>) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
@@ -74,6 +76,22 @@ public class AcessoEspacoInterceptor implements HandlerInterceptor{
 					HttpStatus.BAD_REQUEST, 
 					"BAD_REQUEST", 
 					"Identificador inválido");
+			return false;
+		}
+		
+		if (auth instanceof ApiKeyAuthenticationToken apiKeyAuth) {
+			ApiKeyPrincipal p = apiKeyAuth.getPrincipal();
+
+			if (!p.espacoId().equals(idEspaco) || !p.papel().temPermissao(anotacao.papelMinimo())) {
+				throw new AcessoNegadoException("Acesso negado");
+			}
+
+			request.setAttribute("apiKeyLogada", p);
+			return true;
+		}
+		
+		if (!(auth.getPrincipal() instanceof Usuario usuarioLogado)) {
+			errorResponseWriter.write(response, HttpStatus.UNAUTHORIZED, "UNAUTHORIZED", "Usuário não autenticado");
 			return false;
 		}
 		

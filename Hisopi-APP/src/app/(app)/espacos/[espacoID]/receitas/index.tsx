@@ -210,6 +210,8 @@ function createStyles(
     },
 
     header: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
       marginBottom: 16,
       gap: 12,
     },

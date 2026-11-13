@@ -9,6 +9,7 @@ import {
   Text,
   TextInput,
   View,
+  ScrollView
 } from 'react-native'
 
 import { useResponsive } from '@/src/hooks/useResponsive'
@@ -84,7 +85,7 @@ export default function InsumosScreen() {
   }
 
   return (
-    <View style={styles.screen}>
+    <ScrollView style={styles.screen} keyboardShouldPersistTaps="handled">
       <View style={[styles.content, isDesktop && styles.contentDesktop]}>
 
         <View style={[styles.header, isDesktop && styles.headerDesktop]}>
@@ -157,13 +158,14 @@ export default function InsumosScreen() {
             </Text>
           </View>
         ) : (
+          
           <FlatList
             data={filtrados}
             key={isDesktop ? 'desktop' : 'mobile'}
             keyExtractor={(item) => String(item.id)}
             numColumns={isDesktop ? 3 : 1}
             columnWrapperStyle={isDesktop ? styles.row : undefined}
-            scrollEnabled={false}
+            scrollEnabled={true}
             renderItem={({ item }) => {
               const nivel = getStockLevel(item)
 
@@ -207,7 +209,7 @@ export default function InsumosScreen() {
           />
         )}
       </View>
-    </View>
+    </ScrollView>
   )
 }
 
@@ -236,6 +238,8 @@ function createStyles(
       paddingTop: 32,
     },
     header: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
       marginBottom: 16,
       gap: 12,
     },

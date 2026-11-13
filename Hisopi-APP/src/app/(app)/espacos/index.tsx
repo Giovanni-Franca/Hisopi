@@ -107,6 +107,7 @@ export default function EspacosScreen() {
           </Text>
         </View>
 
+        <View style={styles.viewBotoesDesktop}>
         <Pressable
           style={({ pressed }) => [
             styles.newButton,
@@ -152,6 +153,7 @@ export default function EspacosScreen() {
         >
           <Text style={styles.profileButtonText}>Sair</Text>
         </Pressable>
+        </View>
       </View>
 
       {erro && (
@@ -319,6 +321,12 @@ function createStyles(
       width: '100%',
       alignSelf: 'center',
     },
+    viewBotoesDesktop: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      gap: 12,
+    },
     title: {
       fontSize: 26 * fontScale,
       fontWeight: '800',
@@ -352,7 +360,6 @@ function createStyles(
       paddingVertical: 12,
       paddingHorizontal: 18,
       borderRadius: 12,
-      marginTop: 16,
       alignSelf: 'flex-start',
     },
     newButtonText: {

@@ -3,12 +3,15 @@ package Hisopi.Hisopi.infra.security;
 import java.io.IOException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import Hisopi.Hisopi.infra.ApiKey.ApiKeyFilter;
 import Hisopi.Hisopi.repository.UsuarioRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -27,6 +30,11 @@ public class SecurityFilter extends OncePerRequestFilter{
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 	        throws ServletException, IOException {
 
+		if (SecurityContextHolder.getContext().getAuthentication() != null) {
+	        filterChain.doFilter(request, response);
+	        return;
+	    }
+		
 	    var token = this.recoverToken(request);
 
 	    if (token != null) {

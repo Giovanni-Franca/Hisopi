@@ -1,9 +1,9 @@
-
 import { router, Slot, usePathname, useLocalSearchParams, useNavigation } from 'expo-router'
 import { useEffect, useMemo, useState } from 'react'
 import {
   ActivityIndicator,
   Pressable,
+  ScrollView,
   StyleSheet,
   Text,
   View,
@@ -26,6 +26,7 @@ const NAV_ITEMS: NavItem[] = [
   { key: 'receitas', label: 'Receitas', getHref: (id) => `/espacos/${id}/receitas` },
   { key: 'membros', label: 'Membros', getHref: (id) => `/espacos/${id}/membros`, onlyOrg: true },
   { key: 'relatorios', label: 'Relatórios', getHref: (id) => `/espacos/${id}/relatorios` },
+  { key: 'perfil', label: 'Meu Perfil', getHref: () => `/perfil` },
 ]
 
 export default function EspacoLayout() {
@@ -112,6 +113,9 @@ export default function EspacoLayout() {
           color: colors.text,
           fontSize: 14 * fontScale,
           fontWeight: '700',
+        },
+        navScroll: {
+          flexGrow: 0, // evita o ScrollView ocupar altura extra dentro do nav
         },
         navItems: {
           flexDirection: 'row',
@@ -225,16 +229,35 @@ export default function EspacoLayout() {
     )
   }
 
+  // Itens montados uma vez e reaproveitados nos dois layouts (coluna no desktop, rolagem horizontal no mobile)
+  const itensNav = NAV_ITEMS.filter(
+    (item) => !item.onlyOrg || espaco?.tipo === 'ORGANIZACAO',
+  ).map((item) => {
+    const href = item.getHref(espacoID)
+    const active = pathname === href
+
+    return (
+      <Pressable
+        key={item.key}
+        style={[styles.navItem, active && styles.navItemActive]}
+        onPress={() => router.push(href as any)}
+        accessibilityRole="button"
+        accessibilityState={{ selected: active }}
+        accessibilityLabel={item.label}
+      >
+        <Text
+          numberOfLines={1}
+          style={[styles.navItemText, active && styles.navItemTextActive]}
+        >
+          {item.label}
+        </Text>
+      </Pressable>
+    )
+  })
+
   return (
     <View style={[styles.screen, isDesktop && styles.screenDesktop]}>
       <View style={[styles.nav, isDesktop && styles.navDesktop]}>
-        <Pressable
-          onPress={() => router.replace(`/espacos/${espacoID}`)}
-          accessibilityRole="button"
-          accessibilityLabel="Início"
-        >
-          <Text>⌂ Início</Text>
-        </Pressable>
 
         <Pressable
           onPress={() => router.replace('/espacos')}
@@ -253,44 +276,19 @@ export default function EspacoLayout() {
           </Text>
         </View>
 
-        <Pressable
-          style={styles.profileButton}
-          onPress={() => router.push('/perfil')}
-          accessibilityRole="button"
-          accessibilityLabel="Abrir meu perfil"
-          accessibilityHint="Abre suas configurações de perfil e acessibilidade"
-        >
-          <Text style={styles.profileButtonText}>Meu perfil</Text>
-        </Pressable>
-
-        <View style={[styles.navItems, isDesktop && styles.navItemsDesktop]}>
-          {NAV_ITEMS.filter(
-            (item) => !item.onlyOrg || espaco?.tipo === 'ORGANIZACAO',
-          ).map((item) => {
-            const href = item.getHref(espacoID)
-            const active = pathname === href
-
-            return (
-              <Pressable
-                key={item.key}
-                style={[styles.navItem, active && styles.navItemActive]}
-                onPress={() => router.push(href as any)}
-                accessibilityRole="button"
-                accessibilityState={{ selected: active }}
-                accessibilityLabel={item.label}
-              >
-                <Text
-                  style={[
-                    styles.navItemText,
-                    active && styles.navItemTextActive,
-                  ]}
-                >
-                  {item.label}
-                </Text>
-              </Pressable>
-            )
-          })}
-        </View>
+        {isDesktop ? (
+          <View style={[styles.navItems, styles.navItemsDesktop]}>{itensNav}</View>
+        ) : (
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            style={styles.navScroll}
+            contentContainerStyle={styles.navItems}
+            keyboardShouldPersistTaps="handled"
+          >
+            {itensNav}
+          </ScrollView>
+        )}
       </View>
 
       <View style={styles.content}>

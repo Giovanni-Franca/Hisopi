@@ -44,23 +44,28 @@ export default function PerfilScreen() {
       style={styles.screen}
       contentContainerStyle={styles.content}
     >
-      <Pressable
-        onPress={() => {
-          if (navigation.canGoBack()) {
-            router.back()
-          } else {
-            router.replace('/espacos')
-          }
-        }}
-        style={styles.backButton}
-        accessibilityRole="button"
-        accessibilityLabel="Voltar"
-        accessibilityHint="Retorna à tela anterior ou à lista de espaços"
-        hitSlop={8}
-      >
-        <Text style={styles.backButtonText}>← Voltar</Text>
-      </Pressable>
+      
       <View style={[styles.card, isDesktop && styles.cardDesktop]}>
+       
+        {!isDesktop &&(
+          <Pressable
+            onPress={() => {
+              if (navigation.canGoBack()) {
+                router.back()
+              } else {
+                router.replace('/espacos')
+              }
+            }}
+            style={styles.backButton}
+            accessibilityRole="button"
+            accessibilityLabel="Voltar"
+            accessibilityHint="Retorna à tela anterior ou à lista de espaços"
+            hitSlop={8}
+          >
+            <Text style={styles.backButtonText}>← Voltar</Text>
+          </Pressable>
+          )}
+
         <View style={styles.avatar}>
           <Text style={styles.avatarText}>{inicial}</Text>
         </View>
@@ -79,7 +84,6 @@ export default function PerfilScreen() {
         <View style={styles.infoSection}>
           <InfoRow label="Nome" value={usuario?.nome ?? '—'} styles={styles} />
           <InfoRow label="E-mail" value={usuario?.email ?? '—'} styles={styles} />
-          <InfoRow label="Tipo de conta" value={roleLabel} styles={styles} />
         </View>
 
         <View
@@ -161,6 +165,37 @@ export default function PerfilScreen() {
           </Text>
         </View>
 
+        <View
+          style={styles.apiKeySection}
+          accessibilityLabel="Configurações de API key"
+        >
+          <Text style={styles.sectionTitle}>API Key</Text>
+          <Text style={styles.description}>
+            Gerencie as chaves de acesso para integrar o Hisopi com outros
+            sistemas.
+          </Text>
+
+          <View style={styles.settingRow}>
+            <View style={styles.settingTextContainer}>
+              <Text style={styles.settingTitle}>Gerenciar API key</Text>
+              <Text style={styles.description}>
+                Visualize, gere ou revogue sua chave.
+              </Text>
+            </View>
+
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Gerenciar API key"
+              accessibilityHint="Abre a página de gerenciamento de chaves de API"
+              onPress={() => router.push('/api-key')}
+              style={styles.apiKeyButton}
+              hitSlop={8}
+            >
+              <Text style={styles.apiKeyButtonText}>Abrir</Text>
+            </Pressable>
+          </View>
+        </View>
+
         <Pressable
           accessibilityRole="button"
           accessibilityLabel="Sair da conta"
@@ -213,22 +248,20 @@ function createStyles(
     },
     content: {
       alignItems: 'center',
-      padding: 24,
     },
     card: {
       width: '100%',
-      maxWidth: 480,
       backgroundColor: colors.surface,
+      padding: 24,
+      alignItems: 'center',
+    },
+    cardDesktop: {
+      elevation: 3,
+      maxWidth: 720,
+      margin: 24,
       borderColor: colors.border,
       borderWidth: 1,
       borderRadius: 20,
-      padding: 24,
-      alignItems: 'center',
-      marginTop: 24,
-    },
-    cardDesktop: {
-      marginTop: 40,
-      elevation: 3,
       shadowColor: '#000',
       shadowOpacity: 0.12,
       shadowRadius: 16,
@@ -287,7 +320,7 @@ function createStyles(
       paddingVertical: 8,
       borderRadius: 10,
       borderWidth: 1,
-      borderColor: colors.border,
+      borderColor: 'transparent',
       marginBottom: 20,
     },
     backButtonText: {
@@ -314,10 +347,10 @@ function createStyles(
     },
     accessibilitySection: {
       width: '100%',
-      marginTop: 28,
-      paddingTop: 20,
-      borderTopWidth: 1,
-      borderTopColor: colors.border,
+      marginTop: 16,
+      paddingBottom: 20,
+      borderBottomWidth: 1,
+      borderBottomColor: colors.border,
       gap: 12,
     },
     sectionTitle: {
@@ -344,6 +377,28 @@ function createStyles(
     },
     settingTitle: {
       fontSize: 15 * fontScale,
+      fontWeight: '700',
+      color: colors.text,
+    },
+    apiKeySection: {
+      width: '100%',
+      marginTop: 16,
+      paddingBottom: 20,
+      borderBottomWidth: 1,
+      borderBottomColor: colors.border,
+      gap: 12,
+    },
+    apiKeyButton: {
+      borderWidth: 2,
+      borderColor: colors.border,
+      borderRadius: 10,
+      paddingHorizontal: 12,
+      paddingVertical: 10,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    apiKeyButtonText: {
+      fontSize: 13 * fontScale,
       fontWeight: '700',
       color: colors.text,
     },
