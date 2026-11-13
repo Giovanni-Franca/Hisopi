@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,6 +18,8 @@ import org.springframework.web.bind.annotation.RestController;
 import Hisopi.Hisopi.DTO.NovaChaveDTO;
 import Hisopi.Hisopi.DTO.NovoEspacoComChaveDTO;
 import Hisopi.Hisopi.Enum.PapelMembro;
+import Hisopi.Hisopi.infra.ApiKey.ApiKeyAuthenticationToken;
+import Hisopi.Hisopi.infra.exception.AcessoNegadoException;
 import Hisopi.Hisopi.infra.exception.NaoEncontradoException;
 import Hisopi.Hisopi.infra.interceptor.AcessoEspaco;
 import Hisopi.Hisopi.model.Espaco;
@@ -70,5 +73,12 @@ public class ApiKeyController {
         apiKeyService.revogar(idEspaco, idKey);
         return ResponseEntity.noContent().build();
     }
-
+    
+    @GetMapping("/api-keys/me")
+    public ResponseEntity<Map<String, Object>> me(Authentication auth) {
+        if (!(auth instanceof ApiKeyAuthenticationToken t)) throw new AcessoNegadoException("Requer API Key");
+        var p = t.getPrincipal();
+        return ResponseEntity.ok(Map.of("espacoId", p.espacoId(), "papel", p.papel().name()));
+    }
+    
 }
