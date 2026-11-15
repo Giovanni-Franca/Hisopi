@@ -19,6 +19,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import Hisopi.Hisopi.Enum.TipoEspaco;
+import Hisopi.Hisopi.Enum.UnidadeMedida;
 import Hisopi.Hisopi.infra.exception.ErrorResponseWriter;
 import Hisopi.Hisopi.model.Espaco;
 import Hisopi.Hisopi.model.Insumo;
@@ -77,7 +78,7 @@ class LoteInsumoRepositoryTest {
         Insumo i = new Insumo();
         i.setEspaco(espaco);
         i.setNome(nome);
-        i.setUnidadeMedida("kg");
+        i.setUnidadeMedida(UnidadeMedida.KG);
         i.setEstoqueMinimo(5.0);
         i.setSerial(serialInsumoService.gerarSerial());
         return insumoRepository.save(i);

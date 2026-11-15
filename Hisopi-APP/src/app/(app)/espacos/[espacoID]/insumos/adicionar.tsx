@@ -6,8 +6,9 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import { useAccessibility } from '@/src/context/AccessibilityContext'
 
 import { AuthInput } from '@/src/components/auth/AuthInput'
-import { criarInsumo } from '@/src/services/insumoService'
+import { criarInsumo, CATEGORIAS, Categoria, UNIDADES_MEDIDA, UnidadeMedida } from '@/src/services/insumoService'
 import { useResponsive } from '@/src/hooks/useResponsive'
+import { SelectInput } from '@/src/components/ui/SelectInput'
 
 export default function AdicionarInsumoScreen() {
   const { espacoID } = useLocalSearchParams<{ espacoID: string }>()
@@ -19,8 +20,8 @@ export default function AdicionarInsumoScreen() {
     [colors, fontScale],
   )
   const [nome, setNome] = useState('')
-  const [categoria, setCategoria] = useState('')
-  const [unidadeMedida, setUnidadeMedida] = useState('')
+  const [categoria, setCategoria] = useState<Categoria | null>(null)
+  const [unidadeMedida, setUnidadeMedida] = useState<UnidadeMedida | null>(null)
   const [estoqueMinimo, setEstoqueMinimo] = useState('')
   const [custoUnitario, setCustoUnitario] = useState('')
   const [erro, setErro] = useState('')
@@ -29,7 +30,7 @@ export default function AdicionarInsumoScreen() {
   async function handleSalvar() {
     setErro('')
 
-    if (!nome.trim() || !unidadeMedida.trim() || !estoqueMinimo.trim()) {
+    if (!nome.trim() || !unidadeMedida || !estoqueMinimo.trim()) {
       setErro('Preencha nome, unidade de medida e estoque mínimo.')
       return
     }
@@ -46,7 +47,7 @@ export default function AdicionarInsumoScreen() {
 
       await criarInsumo(espacoID, {
         nome: nome.trim(),
-        categoria: categoria.trim() || null,
+        categoria: categoria || null,
         unidadeMedida: unidadeMedida.trim(),
         estoqueMinimo: estoqueMinimoNum,
         custoUnitario: custoUnitario
@@ -89,19 +90,21 @@ export default function AdicionarInsumoScreen() {
           onChangeText={setNome}
         />
 
-        <AuthInput
+        <SelectInput
           label="Categoria (opcional)"
-          placeholder="Ex: Grãos, Laticínios..."
+          placeholder="Selecione uma categoria"
+          options={CATEGORIAS}
           value={categoria}
-          onChangeText={setCategoria}
+          onChange={setCategoria}
         />
 
-        <AuthInput
+        <SelectInput
           label="Unidade de medida"
-          placeholder="Ex: kg, g, ml, l, un"
+          placeholder="Selecione a unidade"
+          options={UNIDADES_MEDIDA}
           value={unidadeMedida}
-          onChangeText={setUnidadeMedida}
-          autoCapitalize="none"
+          onChange={setUnidadeMedida}
+          allowClear={false}
         />
 
         <AuthInput

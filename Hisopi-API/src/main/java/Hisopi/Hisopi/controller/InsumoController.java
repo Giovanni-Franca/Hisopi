@@ -58,7 +58,7 @@ public class InsumoController {
     private SerialInsumoService serialInsumoService;
 
     private static final Set<TipoMovimentacao> TIPOS_DE_PERDA =
-	        EnumSet.of(TipoMovimentacao.PERDA_VALIDADE, TipoMovimentacao.PERDA_OUTRO);
+	        EnumSet.of(TipoMovimentacao.PERDA_VALIDADE, TipoMovimentacao.PERDA_OUTRO, TipoMovimentacao.SAIDA_USO,TipoMovimentacao.AJUSTE,TipoMovimentacao.DOACAO);
 
     
     // =====================================================

@@ -1,12 +1,13 @@
 package Hisopi.Hisopi.DTO;
 
+import Hisopi.Hisopi.Enum.UnidadeMedida;
 import Hisopi.Hisopi.model.ReceitaInsumo;
 
 public record ReceitaInsumoResponseDTO(
     Long id, 
     Long idInsumo, 
     String nomeInsumo, 
-    String unidadeMedida, 
+    UnidadeMedida unidadeMedida, 
     Double quantidadePorUnidade) {
     public static ReceitaInsumoResponseDTO de(ReceitaInsumo v) {
         return new ReceitaInsumoResponseDTO(

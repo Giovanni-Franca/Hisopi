@@ -12,7 +12,7 @@ import {
 } from 'react-native'
 
 import { useAccessibility } from '@/src/context/AccessibilityContext'
-
+import { SelectInput } from '@/src/components/ui/SelectInput'
 import { AuthInput } from '@/src/components/auth/AuthInput'
 import { useResponsive } from '@/src/hooks/useResponsive'
 import {
@@ -20,8 +20,10 @@ import {
   listarLotes,
   registrarLote,
   registrarPerda,
+  TIPOS_PERDA,
   type Insumo,
   type LoteInsumo,
+  type TipoPerda,
 } from '@/src/services/insumoService'
 
 const DIAS_ALERTA_VENCIMENTO = 7
@@ -35,9 +37,7 @@ function diasAteVencimento(dataValidade: string) {
 
 export default function InsumoDetalheScreen() {
   const { espacoID, id } = useLocalSearchParams<{ espacoID: string; id: string }>()
-
   const { isDesktop } = useResponsive()
-
   const { colors, fontScale } = useAccessibility()
 
   const styles = useMemo(
@@ -61,6 +61,7 @@ export default function InsumoDetalheScreen() {
   const [quantidadePerda, setQuantidadePerda] = useState('')
   const [motivoPerda, setMotivoPerda] = useState('')
   const [savingPerda, setSavingPerda] = useState(false)
+  const [tipoPerda, setTipoPerda] = useState<TipoPerda | null>(null)
 
   const load = useCallback(async () => {
     if (!espacoID || !id) return
@@ -121,32 +122,29 @@ export default function InsumoDetalheScreen() {
   }
 
   async function handleRegistrarPerda() {
-    if (!loteSelecionado) return
-    
-    const quantidade = Number(quantidadePerda.replace(',','.'))
-    if(!Number.isFinite(quantidade) || quantidade <=0) {
+    if (!loteSelecionado || !tipoPerda) return
+
+    const quantidade = Number(quantidadePerda.replace(',', '.'))
+    if (!Number.isFinite(quantidade) || quantidade <= 0) {
       return
     }
-
-    const tipo =
-      diasAteVencimento(loteSelecionado.dataValidade) <= 0
-        ? 'PERDA_VALIDADE'
-        : 'PERDA_OUTRO'
 
     try {
       setSavingPerda(true)
 
       await registrarPerda(espacoID, loteSelecionado.id, {
         quantidade,
-        tipo,
+        tipo: tipoPerda,
         motivo: motivoPerda.trim() || null,
       })
 
       setPerdaModalVisible(false)
       setLoteSelecionado(null)
+      setTipoPerda(null)
       setMotivoPerda('')
       setQuantidadePerda('')
 
+      console.log('payload perda:', { quantidade, tipo: tipoPerda, motivo: motivoPerda })
       await load()
     } catch (error) {
       console.log('Erro ao registrar perda:', error)
@@ -230,6 +228,11 @@ export default function InsumoDetalheScreen() {
                   style={styles.perdaButton}
                   onPress={() => {
                     setLoteSelecionado(item)
+                    setTipoPerda(
+                      diasAteVencimento(item.dataValidade) <= 0
+                        ? 'PERDA_VALIDADE'
+                        : 'PERDA_OUTRO',
+                    )
                     setPerdaModalVisible(true)
                   }}
                 >
@@ -320,8 +323,7 @@ export default function InsumoDetalheScreen() {
             <Text style={styles.modalTitle}>Registrar perda do lote</Text>
 
             <Text style={styles.modalText}>
-              {loteSelecionado?.quantidadeAtual} {insumo?.unidadeMedida} serão
-              descartados deste lote.
+              Disponível neste lote: {loteSelecionado?.quantidadeAtual} {insumo?.unidadeMedida}
             </Text>
 
             <AuthInput
@@ -331,10 +333,12 @@ export default function InsumoDetalheScreen() {
               keyboardType='decimal-pad'
             />
 
-            <AuthInput
-              label="Motivo (opcional)"
-              value={motivoPerda}
-              onChangeText={setMotivoPerda}
+            <SelectInput
+              label="Tipo de perda"
+              options={TIPOS_PERDA}
+              value={tipoPerda}
+              onChange={setTipoPerda}
+              allowClear={false}
             />
 
             <View style={styles.modalActions}>

@@ -3,7 +3,7 @@ import { apiFetch } from './api'
 export type Insumo = {
   id: number
   nome: string
-  categoria: string | null
+  categoria: Categoria | null
   unidadeMedida: string
   estoqueAtual: number
   estoqueMinimo: number
@@ -25,9 +25,74 @@ export type LoteInsumo = {
   }
 }
 
+export type Categoria =
+  | 'CARNES'
+  | 'CEREAIS'
+  | 'GRAOS'
+  | 'OVOS'
+  | 'LATICINIOS'
+  | 'MASSAS'
+  | 'FRUTAS'
+  | 'LEGUMES'
+  | 'VERDURAS'
+  | 'FARINACEOS'
+  | 'OLEOS_E_GORDURAS'
+  | 'TEMPEROS'
+  | 'BEBIDAS' 
+  | 'OUTROS'
+
+export const CATEGORIAS: { value: Categoria; label: string }[] = [
+  { value: 'CARNES', label: 'Carnes'},
+  { value: 'CEREAIS', label: 'Cereais'},
+  { value: 'GRAOS', label: 'Grãos' },
+  { value: 'OVOS', label: 'Ovos'},
+  { value: 'LATICINIOS', label: 'Laticínios' },
+  { value: 'MASSAS', label: 'Massas' },
+  { value: 'FRUTAS', label: 'Frutas'},
+  { value: 'LEGUMES', label: 'Legumes' },
+  { value: 'VERDURAS', label: 'Verduras' },
+  { value: 'FARINACEOS', label: 'Farináceos' },
+  { value: 'OLEOS_E_GORDURAS', label: 'Óleos e gorduras' },
+  { value: 'TEMPEROS', label: 'Temperos'},
+  { value: 'BEBIDAS', label: 'Bebidas'},
+  { value: 'OUTROS', label: 'Outros'},
+]
+
+export type UnidadeMedida = 'KG' | 'G' | 'L' | 'ML' | 'UN' | 'CX' | 'PCT' | 'DUZIA'
+
+export const UNIDADES_MEDIDA: {
+  value: UnidadeMedida
+  label: string
+  sigla: string
+}[] = [
+  { value: 'KG', label: 'Quilograma (kg)', sigla: 'kg' },
+  { value: 'G', label: 'Grama (g)', sigla: 'g' },
+  { value: 'L', label: 'Litro (l)', sigla: 'l' },
+  { value: 'ML', label: 'Mililitro (ml)', sigla: 'ml' },
+  { value: 'UN', label: 'Unidade (un)', sigla: 'un' },
+  { value: 'CX', label: 'Caixa (cx)', sigla: 'cx' },
+  { value: 'PCT', label: 'Pacote (pct)', sigla: 'pct' },
+  { value: 'DUZIA', label: 'Dúzia (dz)', sigla: 'dz' },
+]
+
+export type TipoPerda = 
+| 'SAIDA_USO'
+| 'PERDA_VALIDADE' 
+| 'PERDA_OUTRO'
+| 'DOACAO'
+| 'AJUSTE'
+
+export const TIPOS_PERDA: { value: TipoPerda; label: string }[] = [
+  { value: 'SAIDA_USO', label: 'Utilizado em preparo'},
+  { value: 'PERDA_VALIDADE', label: 'Perda por validade' },
+  { value: 'PERDA_OUTRO', label: 'Outro motivo' },
+  { value: 'DOACAO', label: 'Insumos doados'},
+  { value: 'AJUSTE', label: 'Ajuste de inventário'}
+]
+
 export type InsumoPayload = {
   nome: string
-  categoria?: string | null
+  categoria?: Categoria | null
   unidadeMedida: string
   estoqueMinimo: number
   custoUnitario?: number | null
@@ -41,8 +106,16 @@ export type LotePayload = {
 
 export type PerdaPayload = {
   quantidade?: number 
-  tipo: 'PERDA_VALIDADE' | 'PERDA_OUTRO'
+  tipo: TipoPerda
   motivo?: string | null
+}
+
+export function labelCategoria(categoria: Categoria | null): string {
+  return CATEGORIAS.find((c) => c.value === categoria)?.label ?? '—'
+}
+
+export function siglaUnidade(unidade: UnidadeMedida): string {
+  return UNIDADES_MEDIDA.find((u) => u.value === unidade)?.sigla ?? unidade
 }
 
 export async function listarInsumos(idEspaco: string | number): Promise<Insumo[]> {

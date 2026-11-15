@@ -2,7 +2,18 @@ package Hisopi.Hisopi.model;
 
 import java.time.LocalDateTime;
 
-import jakarta.persistence.*;
+import Hisopi.Hisopi.Enum.Categoria;
+import Hisopi.Hisopi.Enum.UnidadeMedida;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -30,10 +41,13 @@ public class Insumo {
 
     // Livre (ex: "Laticínios", "Grãos", "Embalagens") — opcional,
     // útil para filtros e relatórios por categoria.
-    private String categoria;
+    @Enumerated(EnumType.STRING)
+    @Column(length = 30)
+    private Categoria categoria;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String unidadeMedida; // "g", "kg", "ml", "l", "un"
+    private UnidadeMedida unidadeMedida; // "g", "kg", "ml", "l", "un"
 
     @Column(nullable = false)
     private Double estoqueAtual = 0.0;

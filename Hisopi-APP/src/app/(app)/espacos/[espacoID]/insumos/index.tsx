@@ -16,6 +16,7 @@ import { useResponsive } from '@/src/hooks/useResponsive'
 import {
   listarInsumos,
   listarVencendo,
+  labelCategoria,
   type Insumo,
   type LoteInsumo,
 } from '@/src/services/insumoService'
@@ -181,7 +182,7 @@ export default function InsumosScreen() {
                   </Text>
 
                   {item.categoria && (
-                    <Text style={styles.cardCategoria}>{item.categoria}</Text>
+                    <Text style={styles.cardCategoria}>{labelCategoria(item.categoria)}</Text>
                   )}
 
                   <Text style={styles.cardQuantidade}>
