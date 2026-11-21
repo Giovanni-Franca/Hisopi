@@ -1,9 +1,11 @@
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router'
 import { useCallback, useMemo, useState } from 'react'
 import { useAccessibility } from '@/src/context/AccessibilityContext'
+import { SelectInput } from '@/src/components/ui/SelectInput'
 import {
   ActivityIndicator,
   FlatList,
+  Modal,
   Pressable,
   StyleSheet,
   Text,
@@ -16,7 +18,13 @@ import { useResponsive } from '@/src/hooks/useResponsive'
 import {
   listarInsumos,
   listarVencendo,
+  desativarInsumo,
+  editarInsumo,
   labelCategoria,
+  CATEGORIAS, 
+  Categoria,
+  UNIDADES_MEDIDA,
+  UnidadeMedida,
   type Insumo,
   type LoteInsumo,
 } from '@/src/services/insumoService'
@@ -43,6 +51,18 @@ export default function InsumosScreen() {
   const [loading, setLoading] = useState(true)
   const [query, setQuery] = useState('')
   const [filtro, setFiltro] = useState<'todos' | 'baixo'>('todos')
+  const [insumoParaRemover, setInsumoParaRemover] = useState<Insumo | null>(null)
+  const [removendo, setRemovendo] = useState(false)
+  const [erroRemocao, setErroRemocao] = useState<string | null>(null)
+  const [menuAbertoId, setMenuAbertoId] = useState<number | null>(null)
+  const [insumoParaEditar, setInsumoParaEditar] = useState<Insumo | null>(null)
+  const [unidadeMedida, setUnidadeMedida] = useState<UnidadeMedida | null>(null)
+  const [editCategoria, setEditCategoria] = useState<Categoria | null>(null)  
+  const [editNome, setEditNome] = useState('')
+  const [editEstoqueMin, setEditEstoqueMin] = useState('')
+  const [editCusto, setEditCusto] = useState('')
+  const [salvando, setSalvando] = useState(false)
+  const [erroEdicao, setErroEdicao] = useState<string | null>(null)
 
   const load = useCallback(async () => {
     if (!espacoID) return
@@ -76,6 +96,93 @@ export default function InsumosScreen() {
       return true
     })
   }, [insumos, query, filtro])
+
+  const fecharModalRemocao = () => {
+    if (removendo) return
+    setInsumoParaRemover(null)
+    setErroRemocao(null)
+  }
+
+  const confirmarRemocao = async () => {
+    if (!insumoParaRemover || !espacoID) return
+
+    try {
+      setRemovendo(true)
+      setErroRemocao(null)
+      await desativarInsumo(espacoID, insumoParaRemover.id)
+      setInsumoParaRemover(null)
+      await load()
+    } catch (error) {
+      console.log('Erro ao remover insumo:', error)
+      setErroRemocao('Não foi possível remover o insumo. Tente novamente.')
+    } finally {
+      setRemovendo(false)
+    }
+  }
+
+  const abrirEdicao = (item: Insumo) => {
+    setMenuAbertoId(null)
+    setInsumoParaEditar(item)
+    setEditNome(item.nome)
+    setUnidadeMedida((item.unidadeMedida as UnidadeMedida) ?? null)
+    setEditCategoria((item.categoria as Categoria) ?? null)
+    setEditEstoqueMin(String(item.estoqueMinimo ?? 0))
+    setEditCusto(String(item.custoUnitario ?? 0))
+    setErroEdicao(null)
+  }
+
+  const abrirRemocao = (item: Insumo) => {
+    setMenuAbertoId(null)
+    setInsumoParaRemover(item)
+  }
+
+  const fecharModalEdicao = () => {
+    if (salvando) return
+    setInsumoParaEditar(null)
+    setErroEdicao(null)
+  }
+
+  const parseNumero = (valor: string) =>
+    Number(valor.trim().replace(',', '.'))
+
+  const salvarEdicao = async () => {
+    if (!insumoParaEditar || !espacoID) return
+
+    const estoqueMinimo = parseNumero(editEstoqueMin)
+    const custoUnitario = parseNumero(editCusto)
+
+    if (!editNome.trim()) {
+      setErroEdicao('Informe o nome do insumo.')
+      return
+    }
+    if (!unidadeMedida) {
+      setErroEdicao('Selecione a unidade de medida.')
+      return
+    }
+    if (Number.isNaN(estoqueMinimo) || Number.isNaN(custoUnitario)) {
+      setErroEdicao('Estoque mínimo e custo devem ser números válidos.')
+      return
+    }
+
+    try {
+      setSalvando(true)
+      setErroEdicao(null)
+      await editarInsumo(espacoID, insumoParaEditar.id, {
+        nome: editNome.trim(),
+        categoria: editCategoria,
+        unidadeMedida,
+        estoqueMinimo,
+        custoUnitario,
+      } as any)
+      setInsumoParaEditar(null)
+      await load()
+    } catch (error) {
+      console.log('Erro ao editar insumo:', error)
+      setErroEdicao('Não foi possível salvar as alterações. Tente novamente.')
+    } finally {
+      setSalvando(false)
+    }
+  }
 
   if (loading) {
     return (
@@ -172,11 +279,44 @@ export default function InsumosScreen() {
 
               return (
                 <Pressable
-                  style={[styles.card, isDesktop && styles.cardDesktop]}
-                  onPress={() =>
+                  style={[
+                    styles.card,
+                    isDesktop && styles.cardDesktop,
+                    menuAbertoId === item.id && styles.cardMenuAberto,
+                  ]}
+                  onPress={() => {
+                    setMenuAbertoId(null)
                     router.push(`/espacos/${espacoID}/insumos/${item.id}` as any)
-                  }
+                  }}
                 >
+                  <Pressable
+                    style={styles.menuButton}
+                    hitSlop={8}
+                    onPress={() =>
+                      setMenuAbertoId(menuAbertoId === item.id ? null : item.id)
+                    }
+                    accessibilityRole="button"
+                    accessibilityLabel={`Opções do insumo ${item.nome}`}
+                  >
+                    <Text style={styles.menuButtonText}>⋮</Text>
+                  </Pressable>
+
+                  {menuAbertoId === item.id && (
+                    <View style={styles.dropdown}>
+                      <Pressable style={styles.dropdownItem} onPress={() => abrirEdicao(item)}>
+                        <Text style={styles.dropdownText}>Editar</Text>
+                      </Pressable>
+
+                      <View style={styles.dropdownDivider} />
+
+                      <Pressable style={styles.dropdownItem} onPress={() => abrirRemocao(item)}>
+                        <Text style={[styles.dropdownText, styles.dropdownTextDanger]}>
+                          Remover
+                        </Text>
+                      </Pressable>
+                    </View>
+                  )}
+
                   <Text style={styles.cardNome} numberOfLines={1}>
                     {item.nome}
                   </Text>
@@ -210,6 +350,117 @@ export default function InsumosScreen() {
           />
         )}
       </View>
+      <Modal
+        visible={!!insumoParaRemover}
+        transparent
+        animationType="fade"
+        onRequestClose={fecharModalRemocao}
+      >
+        <Pressable style={styles.modalOverlay} onPress={fecharModalRemocao}>
+          <Pressable style={styles.modalBox} onPress={() => {}}>
+            <Text style={styles.modalTitle}>Remover insumo?</Text>
+            <Text style={styles.modalText}>
+              “{insumoParaRemover?.nome}” será removido da lista de insumos.
+            </Text>
+
+            {erroRemocao && <Text style={styles.modalError}>{erroRemocao}</Text>}
+
+            <View style={styles.modalActions}>
+              <Pressable
+                style={styles.modalCancel}
+                onPress={fecharModalRemocao}
+                disabled={removendo}
+              >
+                <Text style={styles.modalCancelText}>Cancelar</Text>
+              </Pressable>
+
+              <Pressable
+                style={[styles.modalDelete, removendo && { opacity: 0.6 }]}
+                onPress={confirmarRemocao}
+                disabled={removendo}
+              >
+                {removendo ? (
+                  <ActivityIndicator size="small" color="#fff" />
+                ) : (
+                  <Text style={styles.modalDeleteText}>Remover</Text>
+                )}
+              </Pressable>
+            </View>
+          </Pressable>
+        </Pressable>
+      </Modal>
+      <Modal
+        visible={!!insumoParaEditar}
+        transparent
+        animationType="fade"
+        onRequestClose={fecharModalEdicao}
+      >
+        <Pressable style={styles.modalOverlay} onPress={fecharModalEdicao}>
+          <Pressable style={styles.modalBox} onPress={() => {}}>
+            <Text style={styles.modalTitle}>Editar insumo</Text>
+
+            <Text style={styles.modalLabel}>Nome</Text>
+            <TextInput
+              value={editNome}
+              onChangeText={setEditNome}
+              style={styles.modalInput}
+              placeholder="Nome do insumo"
+              placeholderTextColor={colors.textMuted}
+            />
+
+            <SelectInput
+              label="Unidade de medida"
+              placeholder="Selecione a unidade"
+              options={UNIDADES_MEDIDA}
+              value={unidadeMedida}
+              onChange={setUnidadeMedida}
+              allowClear={false}
+            />
+
+            <Text style={styles.modalLabel}>Estoque mínimo</Text>
+            <TextInput
+              value={editEstoqueMin}
+              onChangeText={setEditEstoqueMin}
+              style={styles.modalInput}
+              keyboardType="decimal-pad"
+              placeholderTextColor={colors.textMuted}
+            />
+
+            <Text style={styles.modalLabel}>Custo unitário (R$)</Text>
+            <TextInput
+              value={editCusto}
+              onChangeText={setEditCusto}
+              style={styles.modalInput}
+              keyboardType="decimal-pad"
+              placeholderTextColor={colors.textMuted}
+            />
+
+            {erroEdicao && <Text style={styles.modalError}>{erroEdicao}</Text>}
+
+            <View style={styles.modalActions}>
+              <Pressable
+                style={styles.modalCancel}
+                onPress={fecharModalEdicao}
+                disabled={salvando}
+              >
+                <Text style={styles.modalCancelText}>Cancelar</Text>
+              </Pressable>
+
+              <Pressable
+                style={[styles.modalSave, salvando && { opacity: 0.6 }]}
+                onPress={salvarEdicao}
+                disabled={salvando}
+              >
+                {salvando ? (
+                  <ActivityIndicator size="small" color="#fff" />
+                ) : (
+                  <Text style={styles.modalSaveText}>Salvar</Text>
+                )}
+              </Pressable>
+            </View>
+          </Pressable>
+        </Pressable>
+      </Modal>
     </ScrollView>
   )
 }
@@ -402,6 +653,153 @@ function createStyles(
       color: colors.textMuted,
       textAlign: 'center',
       paddingHorizontal: 24,
+    },
+
+    menuButton: {
+      position: 'absolute',
+      top: 8,
+      right: 8,
+      width: 28,
+      height: 28,
+      borderRadius: 14,
+      alignItems: 'center',
+      justifyContent: 'center',
+      zIndex: 1,
+    },
+    menuButtonText: {
+      fontSize: 20 * fontScale,
+      fontWeight: '800',
+      color: colors.textMuted,
+      lineHeight: 22 * fontScale,
+    },
+    modalOverlay: {
+      flex: 1,
+      backgroundColor: 'rgba(0,0,0,0.5)',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: 24,
+    },
+    modalBox: {
+      width: '100%',
+      maxWidth: 400,
+      backgroundColor: colors.surface,
+      borderRadius: 16,
+      padding: 20,
+      borderWidth: 1,
+      borderColor: colors.border,
+    },
+    modalTitle: {
+      fontSize: 18 * fontScale,
+      fontWeight: '800',
+      color: colors.text,
+      marginBottom: 8,
+    },
+    modalText: {
+      fontSize: 14 * fontScale,
+      color: colors.textMuted,
+      marginBottom: 16,
+    },
+    modalError: {
+      fontSize: 13 * fontScale,
+      color: colors.danger,
+      fontWeight: '600',
+      marginBottom: 12,
+    },
+    modalActions: {
+      flexDirection: 'row',
+      justifyContent: 'flex-end',
+      gap: 10,
+    },
+    modalCancel: {
+      paddingVertical: 10,
+      paddingHorizontal: 16,
+      borderRadius: 10,
+      borderWidth: 1,
+      borderColor: colors.border,
+    },
+    modalCancelText: {
+      color: colors.text,
+      fontWeight: '600',
+      fontSize: 14 * fontScale,
+    },
+    modalDelete: {
+      paddingVertical: 10,
+      paddingHorizontal: 16,
+      borderRadius: 10,
+      backgroundColor: colors.danger,
+      minWidth: 90,
+      alignItems: 'center',
+    },
+    modalDeleteText: {
+      color: '#fff',
+      fontWeight: '700',
+      fontSize: 14 * fontScale,
+    },
+    cardMenuAberto: {
+      zIndex: 10,
+    },
+    dropdown: {
+      position: 'absolute',
+      top: 38,
+      right: 8,
+      minWidth: 130,
+      backgroundColor: colors.surface,
+      borderRadius: 10,
+      borderWidth: 1,
+      borderColor: colors.border,
+      zIndex: 20,
+      elevation: 6,
+      shadowColor: '#000',
+      shadowOpacity: 0.15,
+      shadowRadius: 8,
+      shadowOffset: { width: 0, height: 4 },
+      overflow: 'hidden',
+    },
+    dropdownItem: {
+      paddingVertical: 10,
+      paddingHorizontal: 14,
+    },
+    dropdownText: {
+      fontSize: 14 * fontScale,
+      fontWeight: '600',
+      color: colors.text,
+    },
+    dropdownTextDanger: {
+      color: colors.danger,
+    },
+    dropdownDivider: {
+      height: 1,
+      backgroundColor: colors.border,
+    },
+    modalLabel: {
+      fontSize: 13 * fontScale,
+      fontWeight: '600',
+      color: colors.textMuted,
+      marginBottom: 4,
+    },
+    modalInput: {
+      backgroundColor: colors.background,
+      borderWidth: 1,
+      borderColor: colors.border,
+      borderRadius: 10,
+      paddingHorizontal: 12,
+      paddingVertical: 10,
+      fontSize: 14 * fontScale,
+      color: colors.text,
+      marginBottom: 12,
+    },
+    modalSave: {
+      paddingVertical: 10,
+      paddingHorizontal: 16,
+      borderRadius: 10,
+      backgroundColor: colors.primary,
+      minWidth: 90,
+      alignItems: 'center',
+    },
+    modalSaveText: {
+      color: '#fff',
+      fontWeight: '700',
+      fontSize: 14 * fontScale,
     },
   })
 }
