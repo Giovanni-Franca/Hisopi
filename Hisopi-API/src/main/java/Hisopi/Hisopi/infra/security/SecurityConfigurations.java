@@ -97,7 +97,8 @@ public class SecurityConfigurations {
 				"http://localhost:5173",
 				"http://localhost:3000",
 				"http://localhost:8090",
-				"https://hisopi-app.vercel.app"
+				"https://hisopi-app.vercel.app",
+				"https://linguremi2.vercel.app"
 		));
 
 		configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));

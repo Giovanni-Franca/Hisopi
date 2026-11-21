@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage'
 import { apiFetch, saveTokens, clearTokens } from './api'
 
 export type Usuario = {
@@ -40,5 +41,8 @@ export async function buscarUsuarioLogado(): Promise<Usuario> {
 }
 
 export async function logout(): Promise<void> {
-  await clearTokens()
+  await clearTokens();
+  AsyncStorage.clear();
+  localStorage.clear();
+  sessionStorage.clear();  
 }
