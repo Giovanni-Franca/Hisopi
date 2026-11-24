@@ -15,6 +15,7 @@ import { useAccessibility } from '@/src/context/AccessibilityContext'
 import { AuthInput } from '@/src/components/auth/AuthInput'
 import { listarInsumos, type Insumo } from '@/src/services/insumoService'
 import { useResponsive } from '@/src/hooks/useResponsive'
+import { SelectInput } from '@/src/components/ui/SelectInput'
 import {
   listarReceitas,
   listarFichaTecnica,
@@ -32,11 +33,9 @@ const TIPO_LABEL: Record<TipoReceita, string> = {
 
 export default function ReceitaDetalheScreen() {
   const { espacoID, id } = useLocalSearchParams<{ espacoID: string; id: string }>()
-
   const { isDesktop } = useResponsive()
-
   const { colors, fontScale } = useAccessibility()
-
+  
   const styles = useMemo(
     () => createStyles(colors, fontScale),
     [colors, fontScale]
@@ -48,7 +47,7 @@ export default function ReceitaDetalheScreen() {
   const [loading, setLoading] = useState(true)
 
   const [modalVisible, setModalVisible] = useState(false)
-  const [insumoSelecionado, setInsumoSelecionado] = useState<Insumo | null>(null)
+  const [insumoSelecionadoId, setInsumoSelecionadoId] = useState<string | null>(null)
   const [quantidade, setQuantidade] = useState('')
   const [erroModal, setErroModal] = useState('')
   const [saving, setSaving] = useState(false)
@@ -86,8 +85,18 @@ export default function ReceitaDetalheScreen() {
     return insumosDisponiveis.filter((i) => !idsVinculados.has(i.id))
   }, [insumosDisponiveis, fichaTecnica])
 
+  const insumoSelecionado = useMemo(
+    () => insumosParaVincular.find((i) => String(i.id) === insumoSelecionadoId) ?? null,
+    [insumosParaVincular, insumoSelecionadoId],
+  )
+
+  const opcoesInsumo = useMemo(
+    () => insumosParaVincular.map((i) => ({ value: String(i.id), label: i.nome })),
+    [insumosParaVincular],
+  )
+
   function abrirModal() {
-    setInsumoSelecionado(null)
+    setInsumoSelecionadoId(null)
     setQuantidade('')
     setErroModal('')
     setModalVisible(true)
@@ -249,31 +258,14 @@ export default function ReceitaDetalheScreen() {
               </Text>
             ) : (
               <>
-                <Text style={styles.fieldLabel}>Insumo</Text>
-
-                <View style={styles.insumoPicker}>
-                  {insumosParaVincular.map((insumo) => (
-                    <Pressable
-                      key={insumo.id}
-                      style={[
-                        styles.insumoOption,
-                        insumoSelecionado?.id === insumo.id &&
-                          styles.insumoOptionActive,
-                      ]}
-                      onPress={() => setInsumoSelecionado(insumo)}
-                    >
-                      <Text
-                        style={[
-                          styles.insumoOptionText,
-                          insumoSelecionado?.id === insumo.id &&
-                            styles.insumoOptionTextActive,
-                        ]}
-                      >
-                        {insumo.nome}
-                      </Text>
-                    </Pressable>
-                  ))}
-                </View>
+                <SelectInput
+                  label="Insumo"
+                  options={opcoesInsumo}
+                  value={insumoSelecionadoId}
+                  onChange={setInsumoSelecionadoId}
+                  placeholder="Selecione um insumo"
+                  allowClear={false}
+                />
 
                 <AuthInput
                   label={`Quantidade por unidade (${insumoSelecionado?.unidadeMedida ?? ''})`}

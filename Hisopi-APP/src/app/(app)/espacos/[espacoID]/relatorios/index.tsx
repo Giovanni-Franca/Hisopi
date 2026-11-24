@@ -11,6 +11,7 @@ import {
 } from 'react-native'
 
 import { AuthInput } from '@/src/components/auth/AuthInput'
+import { DateInput } from '@/src/components/ui/DateInput'
 import {
   listarInsumosResumo,
   listarMovimentacoes,
@@ -24,9 +25,13 @@ type Aba = 'perdas' | 'historico'
 
 const TIPO_LABEL: Record<string, string> = {
   ENTRADA: 'Entrada',
+  SAIDA_USO: 'Uso / consumo',
   PERDA_VALIDADE: 'Perda por validade',
   PERDA_OUTRO: 'Outra perda',
+  DOACAO: 'Doação',
+  AJUSTE: 'Ajuste',
 }
+
 
 const DATA_REGEX = /^\d{4}-\d{2}-\d{2}$/
 
@@ -184,21 +189,17 @@ export default function MovimentacoesScreen() {
           <View style={styles.card}>
             <View style={styles.dateRow}>
               <View style={{ flex: 1 }}>
-                <AuthInput
+                <DateInput
                   label="De"
-                  placeholder="AAAA-MM-DD"
                   value={inicio}
-                  onChangeText={setInicio}
-                  autoCapitalize="none"
+                  onChange={setInicio}
                 />
               </View>
               <View style={{ flex: 1 }}>
-                <AuthInput
+                <DateInput
                   label="Até"
-                  placeholder="AAAA-MM-DD"
                   value={fim}
-                  onChangeText={setFim}
-                  autoCapitalize="none"
+                  onChange={setFim}
                 />
               </View>
             </View>
@@ -262,6 +263,41 @@ export default function MovimentacoesScreen() {
                 colors={colors}
                 fontScale={fontScale}
               />
+              {relatorio.saidasUso?.length > 0 && (
+                <ListaMovimentacoes
+                  titulo="Saídas por uso"
+                  itens={relatorio.saidasUso}
+                  vazio=""
+                  mostrarInsumo
+                  styles={styles}
+                  colors={colors}
+                  fontScale={fontScale}
+                />
+              )}
+
+              {relatorio.doacoes?.length > 0 && (
+                <ListaMovimentacoes
+                  titulo="Doações"
+                  itens={relatorio.doacoes}
+                  vazio=""
+                  mostrarInsumo
+                  styles={styles}
+                  colors={colors}
+                  fontScale={fontScale}
+                />
+              )}
+
+              {relatorio.ajustes?.length > 0 && (
+                <ListaMovimentacoes
+                  titulo="Ajustes"
+                  itens={relatorio.ajustes}
+                  vazio=""
+                  mostrarInsumo
+                  styles={styles}
+                  colors={colors}
+                  fontScale={fontScale}
+                />
+              )}
             </>
           )}
         </View>
@@ -353,8 +389,8 @@ function ListaMovimentacoes({
       ) : (
         <View style={{ gap: 10 }}>
           {itens.map((m) => {
-            const nome = m.insumo?.nome ?? m.nomeInsumo
-            const unidade = m.insumo?.unidadeMedida ?? m.unidadeMedida ?? unidadePadrao
+            const nome = m.nomeInsumo
+            const unidade = m.unidadeMedida ?? unidadePadrao
             const entrada = m.tipo === 'ENTRADA'
 
             return (

@@ -15,6 +15,7 @@ import { useAccessibility } from '@/src/context/AccessibilityContext'
 import { SelectInput } from '@/src/components/ui/SelectInput'
 import { AuthInput } from '@/src/components/auth/AuthInput'
 import { useResponsive } from '@/src/hooks/useResponsive'
+import { DateInput } from '@/src/components/ui/DateInput'
 import {
   listarInsumos,
   listarLotes,
@@ -29,10 +30,11 @@ import {
 const DIAS_ALERTA_VENCIMENTO = 7
 
 function diasAteVencimento(dataValidade: string) {
+  const [y, m, d] = dataValidade.slice(0, 10).split('-').map(Number)
+  const validade = new Date(y, m - 1, d)
   const hoje = new Date()
-  const validade = new Date(dataValidade)
-  const diffMs = validade.getTime() - hoje.getTime()
-  return Math.ceil(diffMs / (1000 * 60 * 60 * 24))
+  hoje.setHours(0, 0, 0, 0)
+  return Math.round((validade.getTime() - hoje.getTime()) / 86400000)
 }
 
 export default function InsumoDetalheScreen() {
@@ -270,11 +272,10 @@ export default function InsumoDetalheScreen() {
               keyboardType="numeric"
             />
 
-            <AuthInput
+            <DateInput
               label="Validade"
-              placeholder="AAAA-MM-DD"
               value={novaValidade}
-              onChangeText={setNovaValidade}
+              onChange={setNovaValidade}
             />
 
             <AuthInput

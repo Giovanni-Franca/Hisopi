@@ -1,21 +1,32 @@
 import { apiFetch } from './api'
 
+
 export type Movimentacao = {
   id: number
-  tipo: string // ENTRADA, PERDA_VALIDADE, PERDA_OUTRO...
+  tipo: TipoMovimentacao
   quantidade: number
   motivo?: string | null
   dataMovimentacao: string
-  // tolera tanto a entidade (insumo aninhado) quanto um DTO plano
-  insumo?: { id: number; nome: string; unidadeMedida?: string } | null
+  idInsumo?: number
   nomeInsumo?: string
   unidadeMedida?: string
 }
+
+export type TipoMovimentacao =
+  | 'ENTRADA'
+  | 'SAIDA_USO'
+  | 'PERDA_VALIDADE'
+  | 'PERDA_OUTRO'
+  | 'DOACAO'
+  | 'AJUSTE'
 
 export type RelatorioPerdas = {
   perdasPorValidade: Movimentacao[]
   perdasPorOutroMotivo: Movimentacao[]
   quantidadeTotalPerdida: number
+  saidasUso: Movimentacao[]
+  doacoes: Movimentacao[]
+  ajustes: Movimentacao[]
 }
 
 export type InsumoResumo = {

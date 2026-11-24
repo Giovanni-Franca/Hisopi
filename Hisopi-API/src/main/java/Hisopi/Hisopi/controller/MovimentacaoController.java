@@ -60,27 +60,36 @@ public class MovimentacaoController {
             throw new RegraNegocioException("A data inicial não pode ser maior que a final");
         }
 
-        // [inicio 00:00, dia seguinte ao fim 00:00): cobre o último dia inteiro
         LocalDateTime de = inicio.atStartOfDay();
         LocalDateTime ate = fim.plusDays(1).atStartOfDay();
 
-        List<MovimentacaoEstoque> perdas = repM.buscarPorTipos(
+        List<MovimentacaoEstoque> movs = repM.buscarPorTipos(
             idEspaco,
-            List.of(TipoMovimentacao.PERDA_VALIDADE, TipoMovimentacao.PERDA_OUTRO),
+            List.of(
+                TipoMovimentacao.PERDA_VALIDADE,
+                TipoMovimentacao.PERDA_OUTRO,
+                TipoMovimentacao.SAIDA_USO,
+                TipoMovimentacao.DOACAO,
+                TipoMovimentacao.AJUSTE),
             de, ate);
 
-        Map<Boolean, List<MovimentacaoResponseDTO>> grupos = perdas.stream()
+        Map<TipoMovimentacao, List<MovimentacaoResponseDTO>> porTipo = movs.stream()
             .map(MovimentacaoResponseDTO::de)
-            .collect(Collectors.partitioningBy(
-                m -> m.tipo() == TipoMovimentacao.PERDA_VALIDADE));
+            .collect(Collectors.groupingBy(MovimentacaoResponseDTO::tipo));
 
-        double total = perdas.stream()
+        // total continua sendo só perdas de fato
+        double total = movs.stream()
+            .filter(m -> m.getTipo() == TipoMovimentacao.PERDA_VALIDADE
+                      || m.getTipo() == TipoMovimentacao.PERDA_OUTRO)
             .mapToDouble(MovimentacaoEstoque::getQuantidade)
             .sum();
 
         return ResponseEntity.ok(new RelatorioPerdasDTO(
-            grupos.get(true),
-            grupos.get(false),
-            total));
+            porTipo.getOrDefault(TipoMovimentacao.PERDA_VALIDADE, List.of()),
+            porTipo.getOrDefault(TipoMovimentacao.PERDA_OUTRO, List.of()),
+            total,
+            porTipo.getOrDefault(TipoMovimentacao.SAIDA_USO, List.of()),
+            porTipo.getOrDefault(TipoMovimentacao.DOACAO, List.of()),
+            porTipo.getOrDefault(TipoMovimentacao.AJUSTE, List.of())));
     }
 }
